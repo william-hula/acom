@@ -11,7 +11,7 @@ library(DT)
 
 # This file holds the instructions. I've organized the text like this so that
 # translating to another language is easy and finding text is easy.
-source('www/english_structure.R')
+source('www/text.R')
 item_names = read.csv('www/items.csv')
 
 # These indicate errors (1) and correct responses (2)
@@ -39,7 +39,7 @@ ui <- fluidPage(
                   intro2,
                   br(), br(),
                   textInput("name", nameinput),
-                  textAreaInput("other", otherinput),
+                  textAreaInput("notes", otherinput),
                   airDatepickerInput(
                       inputId = "date",
                       label = dateinput,
@@ -57,6 +57,12 @@ ui <- fluidPage(
                   column(width = 6,
                          h3("Instructions:"), br(),
                          instruction1,
+                         br(),
+                         br(),
+                         instruction2,
+                         br(),
+                         br(),
+                         instruction3,
                          br(), br(), br(),
                          div(align = "center",
                          actionButton("start", inputstart)
@@ -203,13 +209,18 @@ server <- function(input, output, session) {
     
   # holds the item-level responses. 
   results_data_long <- reactive({
-     dplyr::bind_rows(values$response) %>%
+     tmp = dplyr::bind_rows(values$response) %>%
           full_join(item_names, by = "slide_num") %>%
           group_by(slide_type) %>%
           mutate(test_num = row_number(),
                  test_num = ifelse(slide_type == "INSTRUCTIONS", NA,
                                    ifelse(slide_type == "END SLIDE", NA,
-                                          test_num)))
+                                          test_num)),
+                 date = input$date,
+                 notes = NA)
+     
+     tmp$notes[[1]] = input$notes
+     return(tmp)
   })
   
   # holds the mean accuracy
@@ -230,6 +241,17 @@ server <- function(input, output, session) {
   output$results_summary <- renderUI({
       paste0("The total accuracy for this test was ", round(results_data_summary()*100, 1), "%.")
   })
+  
+  ########### download function ##############3
+  
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste(gsub(" ", "-", input$name), as.character(lubridate::date(input$date)), "pnt.csv", sep = "_")
+    },
+    content = function(file) {
+      write.csv(results_data_long(), file, row.names = FALSE)
+    }
+  )
   
  ##### tab UI ###############################################################
   
@@ -260,9 +282,12 @@ server <- function(input, output, session) {
           "Hmmm....No results to show yet. "
       } else {
           div(
-          resultstext, br(), br(),
+          h3("Example of data that is collected during testing"),
           uiOutput("results_summary"), br(),
-          DTOutput("results_long")
+          DTOutput("results_long"),
+          tags$div(align = "center",
+          downloadButton("downloadData", "Download results")
+          )
           )
       }
       

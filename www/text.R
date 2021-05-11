@@ -4,9 +4,9 @@ pagetitle = "Philadelphia Naming Test"
 
 welcome = "Welcome to the Philadelphia Naming Test - Shiny edition"
 
-intro1 = "Here you can enter for creating a downloadable record."
+intro1 = "This is an introductory sentence."
 
-intro2 = "Data entered here can be downloaded with performance. Any other inputs can be added"
+intro2 = "Lorem Ipsum and all that jazz"
 
 nameinput = "Enter a Name"
 
@@ -14,13 +14,11 @@ otherinput = "Enter any other notes"
 
 dateinput = "Select date and time"
 
-instruction1 = "This is a place for instructions."
+instruction1 = "Click start assessment when ready."
 
-instruction2 =  "For example, the pictures here are scraped from the QAB"
+instruction2 =  "Press '1' for an incorrect response and '2' for a correct response. Press 'enter' to progress to the next item."
 
-instruction3 =  "Also here's something to do"
-
-instruction4 =  "Ready?"
+instruction3 = "Also, if you open this locally, watch the R console as you enter answers to see how the data is appended. "
 
 inputstart = "Start Assessment"
 
