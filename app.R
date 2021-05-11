@@ -99,7 +99,7 @@ server <- function(input, output, session) {
         values$i = 1
         updateNavbarPage(session, "mainpage",
                          selected = tabtitle1)
-        updateProgressBar(session = session, id = "progress_bar", value = 0, total = 100)
+        updateProgressBar(session = session, id = "progress_bar", value = 0)
     })
     
     # tracks the inputs
@@ -128,8 +128,7 @@ server <- function(input, output, session) {
                 # add one to values$i to progress the slides
                 values$i = values$i+1
                 # update the progress bar
-                updateProgressBar(session = session, id = "progress_bar", value = values$i, total = 190)
-                
+
             # if not an instructions slide, but less than i = 13, must be a practice slide
             # fill out values$response accordingly. 
             } else if (values$i < 13){
@@ -142,8 +141,7 @@ server <- function(input, output, session) {
                 )
                 print(dplyr::bind_rows(values$response))
                 values$i = values$i+1
-                updateProgressBar(session = session, id = "progress_bar", value = values$i, total = 190)
-                
+
             # otherwise, as long as its not the last slide, save key presses that we want
             # note, in this case, if the clinician changes their mind about a response, that's ok
             # it will save the most recent key press before the enter key or next button are pressed
@@ -159,8 +157,7 @@ server <- function(input, output, session) {
                     )
                     print(dplyr::bind_rows(values$response))
                     values$i = values$i+1
-                    updateProgressBar(session = session, id = "progress_bar", value = values$i, total = 190)
-                   
+
                 # if its the last slide, then go to the results page automatically .
                 } else {
                     
@@ -249,7 +246,7 @@ server <- function(input, output, session) {
                          div(align = "center", style = "width: 50%;",
                              actionButton("back", backbutton),
                              actionButton("nxt", nextbutton), br(), br(),
-                             progressBar(id = "progress_bar", value = 0, display_pct = F, size = "xs"), br(),
+                             progressBar(id = "progress_bar", value = values$i, display_pct = F, size = "xs", range_value = c(0,values$n)), br(),
                              
                          )
                      )
