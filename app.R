@@ -66,10 +66,7 @@ ui <- fluidPage(
                          br(), br(), br(),
                          div(align = "center",
                          actionButton("start", inputstart)
-                         ),
-                        br(), br(),
-                        citation, a("Link to website", href = "https://mrri.org/philadelphia-naming-test/", target = "_blank")
-                         
+                         )
                   )
 
          ),
