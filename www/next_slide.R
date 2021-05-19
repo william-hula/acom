@@ -15,15 +15,15 @@ library(irtoys)
 library(ltm)
 library(catR)
 
-
-items = read.csv("www/item_difficulty.csv") %>% arrange(Item.Difficulty) %>%
+items = read.csv("www/item_difficulty.csv") %>% 
   dplyr::select(target, itemDifficulty = Item.Difficulty, discrimination = Discrimination, slide_num) %>%
   mutate(response = NA)
 
-item_key = read.csv("www/item_difficulty.csv") %>% arrange(Item.Difficulty) %>%
+item_key = read.csv("www/item_difficulty.csv") %>% 
   dplyr::select(target, slide_num, itemDifficulty = Item.Difficulty)
 
-  irt_function <- function(all_items){
+
+irt_function <- function(all_items){
     tmp_list = list()
     pars = data.frame(a = all_items$discrimination,
                       b = all_items$itemDifficulty,

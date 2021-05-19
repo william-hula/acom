@@ -9,6 +9,7 @@ library(dplyr)
 library(shinyWidgets)
 library(keys)
 library(DT)
+library(here)
 
 # This file holds the instructions. I've organized the text like this so that
 # translating to another language is easy and finding text is easy.
@@ -141,9 +142,9 @@ server <- function(input, output, session) {
           print(dplyr::bind_rows(values$response))
           values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <- ifelse(values$key_val == "1", 0,
                                                               ifelse(values$key_val == "2", 1, "NR"))
-          irt_out = irt_function(values$item_difficulty)
-          print(irt_out[[2]]$name)
-          values$n = values$item_difficulty[values$item_difficulty$target == irt_out[[2]]$name,]$slide_num
+          values$irt_out = irt_function(values$item_difficulty)
+          print(values$irt_out[[2]]$name)
+          values$n = values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
           values$i = values$i + 1
           
           #print(paste0("The number of remaining available items is ", nrow(values$item_difficulty)))
@@ -203,6 +204,11 @@ server <- function(input, output, session) {
           pull(accuracy)
   })
   
+  # holds the mean accuracy
+  output$results_irt <- renderPrint({
+    print(as.character(values$irt_out))
+  })
+  
   # outputs a table of the item level responses
   output$results_long <- renderDT({
       results_data_long()
@@ -258,7 +264,8 @@ server <- function(input, output, session) {
           DTOutput("results_long"),
           tags$div(align = "center",
           downloadButton("downloadData", "Download results")
-          )
+          ),
+          uiOutput("results_irt")
           )
       }
       
