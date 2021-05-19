@@ -12,11 +12,14 @@
 
 next_slide <- function (resp) {
   
-  
+  # resp will be a "1" or "2" based on the key input. 
+  # change to 0 or 1
   tmp = response = ifelse(resp == "1", "0",
                           ifelse( resp == "2", "1", "NR")
   )
   
+  # if 0, then....else if 1 then...
+  # third condition shouldn't be able to happen, but just in case...
   if (tmp == 0){
     est = runif(1, min = -1.8, max = 0)
   } else if (tmp == 1) {
@@ -25,12 +28,16 @@ next_slide <- function (resp) {
     est = NA
   }
   
+  # find the item closest to a random estimate
   item_difficulty_2 <- item_difficulty %>%
     mutate(est = est,
            difference = abs(diff - est)) %>%
+    # top row has lowest absolute difference. 
     arrange(difference) %>%
+    # grabs top row
     slice(1)
     
+  # return a 1 row dataframe that can be accessed. 
   return(item_difficulty_2)
   
 }
