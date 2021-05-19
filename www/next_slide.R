@@ -18,6 +18,9 @@ next_slide <- function (resp) {
                           ifelse( resp == "2", "1", "NR")
   )
   
+  
+  # This is the area where you calculate a new ability estimate!!!!!!!!!!1
+  # -----------------------------------------------------------------------------
   # if 0, then....else if 1 then...
   # third condition shouldn't be able to happen, but just in case...
   if (tmp == 0){
@@ -27,6 +30,7 @@ next_slide <- function (resp) {
   } else {
     est = NA
   }
+  # -----------------------------------------------------------------------------
   
   # find the item closest to a random estimate
   item_difficulty_2 <- item_difficulty %>%
