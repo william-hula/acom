@@ -15,9 +15,6 @@ library(DT)
 source('www/text.R')
 source('www/next_slide.R')
 #item_names = read.csv('www/items.csv')
-items = read_csv("www/item_difficulty.csv") %>% arrange(`Item Difficulty`) %>%
-  select(target, diff = "Item Difficulty", slide_num)
-item_difficulty = items
 
 # These indicate errors (1) and correct responses (2)
 response_keys <- c(

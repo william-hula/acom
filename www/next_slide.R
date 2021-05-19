@@ -8,7 +8,11 @@
 # the r script in the app then deletes that item from being pulled again. (not in this function)
 # it returns a row of a data frame with the chosen target name, difficulty, slide number, est and difference between the 
 # randomly drawn value and the difficulty. 
-
+library(tibble)
+library(dplyr)
+items = read.csv("www/item_difficulty.csv") %>% arrange(Item.Difficulty) %>%
+  select(target, diff = Item.Difficulty, slide_num)
+item_difficulty = items
 
 next_slide <- function (resp) {
   
