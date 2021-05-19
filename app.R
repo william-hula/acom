@@ -158,7 +158,7 @@ server <- function(input, output, session) {
                              selected = tabtitle2)
             # probably should add something to disable enter key here. 
         } else {
-          print("nothing done now")
+          print("no more responses - on the results page.")
         }
       values$key_val = NULL
         # don't run this on start up. 
