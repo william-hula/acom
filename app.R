@@ -4,6 +4,7 @@
 
 library(shiny)
 library(tibble)
+library(tidyr)
 library(dplyr)
 library(shinyWidgets)
 library(keys)
@@ -12,7 +13,8 @@ library(DT)
 # This file holds the instructions. I've organized the text like this so that
 # translating to another language is easy and finding text is easy.
 source('www/text.R')
-item_names = read.csv('www/items.csv')
+source('www/next_slide.R')
+#item_names = read.csv('www/items.csv')
 
 # These indicate errors (1) and correct responses (2)
 response_keys <- c(
@@ -21,6 +23,9 @@ response_keys <- c(
 
 # The next button
 enter <- "enter"
+
+# number of items to run:
+#p = 10
 
 
 # Define UI for application that draws a histogram
@@ -51,7 +56,8 @@ ui <- fluidPage(
                           minutesStep = 10,
                           hoursStep = 1
                       )
-                  )
+                  ),
+                  numericInput(inputId = "numitems", label = "Number of Items to Test", value = 10, min = 10, max = 100, step = 1)
                   ),
                   column(width = 1),
                   column(width = 6,
@@ -90,10 +96,15 @@ server <- function(input, output, session) {
     values = reactiveValues()
     # default starting values
     values$i = 0 # this is the counter to track what picture to show (the "ith" slide)
+    values$n = 130 # order effects
     values$keyval = NULL # keeps track of the button press 1 or 2
     values$response = NULL # this list element holds 1-row tibbles of each response for each slide
-    values$n = 190 # the number of slides for the progress bar
+    values$item_difficulty <- items
+    values$current_item = 130
     
+    observe({
+    values$current_item <- items %>% filter(slide_num == values$n)
+    })
     
     # start button. sets the i value to 1 corresponding to the first slide
     # switches to the assessment tab
@@ -112,85 +123,63 @@ server <- function(input, output, session) {
     
     
     # observe event will take an action if an input changes. here the next button or the enter key
-    observeEvent(c(input$nxt,input$enter_key), {
+    observeEvent(input$enter_key, {
         # if not an instructions slide, require a key input response
-        if(is.null(values$key_val) && !(values$i %in% c(1,2,13,102, 190))){
+        if(is.null(values$key_val) && values$i <input$numitems){
             showNotification("Enter a score", type = "error")
         # as long as there's a response or it's an insturction slide...
+        } else if (values$i<input$numitems) {
+          
+          values$response[[values$i]] = tibble(
+            order = values$i,
+            slide_num = values$n,
+            response = ifelse(values$key_val == "1", "0",
+                              ifelse(values$key_val == "2", "1", "NR")
+            )
+          )
+          
+          print(dplyr::bind_rows(values$response))
+          tmp_num = next_slide(values$key_val, values$item_difficulty, values$current_item)$slide_num
+          values$n = tmp_num
+          values$item_difficulty <- values$item_difficulty %>%
+            filter(slide_num != tmp_num)
+          values$i = values$i + 1
+          print(nrow(values$item_difficulty))
+          # resets the key value AFTER saving the data. 
+          
+          
+        } else if (values$i == input$numitems && nrow(dplyr::bind_rows(values$response))<input$numitems) {
+          values$response[[values$i]] = tibble(
+            order = values$i,
+            slide_num = values$n,
+            response = ifelse(values$key_val == "1", "0",
+                              ifelse(values$key_val == "2", "1", "NR")
+            )
+          )
+          
+          print(dplyr::bind_rows(values$response))
+            updateNavbarPage(session, "mainpage",
+                             selected = tabtitle2)
+            # probably should add something to disable enter key here. 
         } else {
-            
-            # if an instruction slide, put an element in values$response for the instructions slide
-            if(values$i %in% c(1,2,13, 102)){
-                values$response[[values$i]] = tibble(
-                    slide_num = values$i,
-                    response = "NR",
-                    slide_type = "INSTRUCTIONS"
-                )
-                # print the result to the console to check (this can be deleted if desired)
-                print(dplyr::bind_rows(values$response))
-                # add one to values$i to progress the slides
-                values$i = values$i+1
-                # update the progress bar
-
-            # if not an instructions slide, but less than i = 13, must be a practice slide
-            # fill out values$response accordingly. 
-            } else if (values$i < 13){
-                values$response[[values$i]] = tibble(
-                    slide_num = values$i,
-                    response = ifelse(values$key_val == "1", "0",
-                                      ifelse(values$key_val == "2", "1", "NR")
-                    ),
-                    slide_type = "practice"
-                )
-                print(dplyr::bind_rows(values$response))
-                values$i = values$i+1
-
-            # otherwise, as long as its not the last slide, save key presses that we want
-            # note, in this case, if the clinician changes their mind about a response, that's ok
-            # it will save the most recent key press before the enter key or next button are pressed
-                } else if (values$i < values$n){
-                    
-                    values$response[[values$i]] = tibble(
-                        slide_num = values$i,
-                        response = ifelse(values$key_val == "1", "0",
-                                          ifelse(values$key_val == "2", "1",
-                                                 "NR")
-                        ),
-                        slide_type = "test"
-                    )
-                    print(dplyr::bind_rows(values$response))
-                    values$i = values$i+1
-
-                # if its the last slide, then go to the results page automatically .
-                } else {
-                    
-                    values$response[[values$i]] = tibble(
-                        slide_num = values$i,
-                        response = "NR",
-                        slide_type = "END SLIDE"
-                    )
-                    print(dplyr::bind_rows(values$response))
-                    updateNavbarPage(session, "mainpage",
-                                     selected = tabtitle2)
-                }
-            # resets the key value AFTER saving the data. 
-            values$key_val = NULL
+          print("no more responses - on the results page.")
         }
+      values$key_val = NULL
         # don't run this on start up. 
     }, ignoreInit = T)
     
     # Probably the back button will be disabled in production. 
     # note right now, if you hit the back button, you will have 
     # to re-enter a response. 
-    observeEvent(input$back, {
-        values$i = values$i-1
-        if(values$i < 1){
-            values$i = 1
-            updateNavbarPage(session, "mainpage",
-                             selected = tabtitle0)
-        } else {
-        }
-    })
+    # observeEvent(input$back, {
+    #     values$i = values$i-1
+    #     if(values$i < 1){
+    #         values$i = 1
+    #         updateNavbarPage(session, "mainpage",
+    #                          selected = tabtitle0)
+    #     } else {
+    #     }
+    # })
     
     
 #### Outputs ##################################################################
@@ -198,7 +187,7 @@ server <- function(input, output, session) {
     # this shows the slide for the i'th value
     output$slide <- renderUI({
         
-        tmp = paste0("PNT/slide", values$i, ".jpeg")
+        tmp = paste0("PNT/slide", values$n, ".jpeg")
         #print(tmp)
         tags$img(src = tmp)
  
@@ -207,14 +196,10 @@ server <- function(input, output, session) {
   # holds the item-level responses. 
   results_data_long <- reactive({
      tmp = dplyr::bind_rows(values$response) %>%
-          full_join(item_names, by = "slide_num") %>%
-          group_by(slide_type) %>%
-          mutate(test_num = row_number(),
-                 test_num = ifelse(slide_type == "INSTRUCTIONS", NA,
-                                   ifelse(slide_type == "END SLIDE", NA,
-                                          test_num)),
-                 date = input$date,
-                 notes = NA)
+          full_join(items, by = "slide_num") %>%
+          mutate(date = input$date,
+                 notes = NA) %>%
+          drop_na(response)
      
      tmp$notes[[1]] = input$notes
      return(tmp)
@@ -223,7 +208,6 @@ server <- function(input, output, session) {
   # holds the mean accuracy
   results_data_summary <- reactive({
       dplyr::bind_rows(values$response) %>%
-          filter(slide_type == "test") %>%
           mutate(response = as.numeric(response)) %>%
           summarize(accuracy = mean(response)) %>%
           pull(accuracy)
@@ -263,9 +247,9 @@ server <- function(input, output, session) {
                      # are their  own static area below the slides. 
                      fluidRow(
                          div(align = "center", style = "width: 50%;",
-                             actionButton("back", backbutton),
+                             #actionButton("back", backbutton),
                              actionButton("nxt", nextbutton), br(), br(),
-                             progressBar(id = "progress_bar", value = values$i, display_pct = F, size = "xs", range_value = c(0,values$n)), br(),
+                             progressBar(id = "progress_bar", value = values$i, display_pct = F, size = "xs", range_value = c(1,input$numitems+1)), br(),
                              
                          )
                      )
@@ -275,7 +259,7 @@ server <- function(input, output, session) {
   })
   
   output$results_tab <- renderUI({
-      if(values$i < 15){
+      if(values$i < 2){
           "Hmmm....No results to show yet. "
       } else {
           div(
