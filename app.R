@@ -100,7 +100,11 @@ server <- function(input, output, session) {
     values$keyval = NULL # keeps track of the button press 1 or 2
     values$response = NULL # this list element holds 1-row tibbles of each response for each slide
     values$item_difficulty <- items
+    values$current_item = 130
     
+    observe({
+    values$current_item <- items %>% filter(slide_num == values$n)
+    })
     
     # start button. sets the i value to 1 corresponding to the first slide
     # switches to the assessment tab
@@ -135,7 +139,7 @@ server <- function(input, output, session) {
           )
           
           print(dplyr::bind_rows(values$response))
-          tmp_num = next_slide(values$key_val, values$item_difficulty)$slide_num
+          tmp_num = next_slide(values$key_val, values$item_difficulty, values$current_item)$slide_num
           values$n = tmp_num
           values$item_difficulty <- values$item_difficulty %>%
             filter(slide_num != tmp_num)
