@@ -12,9 +12,8 @@ library(tibble)
 library(dplyr)
 items = read.csv("www/item_difficulty.csv") %>% arrange(Item.Difficulty) %>%
   select(target, diff = Item.Difficulty, slide_num)
-item_difficulty = items
 
-next_slide <- function (resp) {
+next_slide <- function (resp, df) {
   
   # resp will be a "1" or "2" based on the key input. 
   # change to 0 or 1
@@ -37,7 +36,7 @@ next_slide <- function (resp) {
   # -----------------------------------------------------------------------------
   
   # find the item closest to a random estimate
-  item_difficulty_2 <- item_difficulty %>%
+  item_difficulty_2 <- df %>%
     mutate(est = est,
            difference = abs(diff - est)) %>%
     # top row has lowest absolute difference. 

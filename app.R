@@ -99,7 +99,8 @@ server <- function(input, output, session) {
     values$n = 130 # order effects
     values$keyval = NULL # keeps track of the button press 1 or 2
     values$response = NULL # this list element holds 1-row tibbles of each response for each slide
-
+    values$item_difficulty <- items
+    
     
     # start button. sets the i value to 1 corresponding to the first slide
     # switches to the assessment tab
@@ -134,17 +135,16 @@ server <- function(input, output, session) {
           )
           
           print(dplyr::bind_rows(values$response))
-          tmp_num = next_slide(values$key_val)$slide_num
+          tmp_num = next_slide(values$key_val, values$item_difficulty)$slide_num
           values$n = tmp_num
-          item_difficulty <- item_difficulty %>%
+          values$item_difficulty <- values$item_difficulty %>%
             filter(slide_num != tmp_num)
           values$i = values$i + 1
-          
+          print(nrow(values$item_difficulty))
           # resets the key value AFTER saving the data. 
-          values$key_val = NULL
           
           
-        } else {
+        } else if (values$i == input$numitems && nrow(dplyr::bind_rows(values$response))<input$numitems) {
           values$response[[values$i]] = tibble(
             order = values$i,
             slide_num = values$n,
@@ -157,7 +157,10 @@ server <- function(input, output, session) {
             updateNavbarPage(session, "mainpage",
                              selected = tabtitle2)
             # probably should add something to disable enter key here. 
+        } else {
+          print("nothing done now")
         }
+      values$key_val = NULL
         # don't run this on start up. 
     }, ignoreInit = T)
     
