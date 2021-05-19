@@ -60,7 +60,7 @@ ui <- fluidPage(
                           hoursStep = 1
                       )
                   ),
-                  numericInput(inputId = "numitems", label = "Number of Items to Test", value = 30, min = 10, max = 100, step = 1)
+                  numericInput(inputId = "numitems", label = "Number of Items to Test", value = 10, min = 10, max = 100, step = 1)
                   ),
                   column(width = 1),
                   column(width = 6,
