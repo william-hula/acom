@@ -28,7 +28,7 @@ response_keys <- c(
 enter <- "enter"
 
 # number of items to run:
-p = 30
+#p = 10
 
 
 # Define UI for application that draws a histogram
@@ -59,7 +59,8 @@ ui <- fluidPage(
                           minutesStep = 10,
                           hoursStep = 1
                       )
-                  )
+                  ),
+                  numericInput(inputId = "numitems", label = "Number of Items to Test", value = 30, min = 10, max = 100, step = 1)
                   ),
                   column(width = 1),
                   column(width = 6,
@@ -98,7 +99,7 @@ server <- function(input, output, session) {
     values = reactiveValues()
     # default starting values
     values$i = 0 # this is the counter to track what picture to show (the "ith" slide)
-    values$n = 50 # order effects
+    values$n = 130 # order effects
     values$keyval = NULL # keeps track of the button press 1 or 2
     values$response = NULL # this list element holds 1-row tibbles of each response for each slide
 
@@ -122,10 +123,10 @@ server <- function(input, output, session) {
     # observe event will take an action if an input changes. here the next button or the enter key
     observeEvent(input$enter_key, {
         # if not an instructions slide, require a key input response
-        if(is.null(values$key_val) && values$i <30){
+        if(is.null(values$key_val) && values$i <input$numitems){
             showNotification("Enter a score", type = "error")
         # as long as there's a response or it's an insturction slide...
-        } else if (values$i<30) {
+        } else if (values$i<input$numitems) {
           
           values$response[[values$i]] = tibble(
             order = values$i,
@@ -158,6 +159,7 @@ server <- function(input, output, session) {
           print(dplyr::bind_rows(values$response))
             updateNavbarPage(session, "mainpage",
                              selected = tabtitle2)
+            # probably should add something to disable enter key here. 
         }
         # don't run this on start up. 
     }, ignoreInit = T)
@@ -243,7 +245,7 @@ server <- function(input, output, session) {
                          div(align = "center", style = "width: 50%;",
                              #actionButton("back", backbutton),
                              actionButton("nxt", nextbutton), br(), br(),
-                             progressBar(id = "progress_bar", value = values$i, display_pct = F, size = "xs", range_value = c(0,p+1)), br(),
+                             progressBar(id = "progress_bar", value = values$i, display_pct = F, size = "xs", range_value = c(1,input$numitems+1)), br(),
                              
                          )
                      )
@@ -253,7 +255,7 @@ server <- function(input, output, session) {
   })
   
   output$results_tab <- renderUI({
-      if(values$i < 15){
+      if(values$i < 2){
           "Hmmm....No results to show yet. "
       } else {
           div(
