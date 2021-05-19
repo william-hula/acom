@@ -17,7 +17,8 @@ library(catR)
 
 items = read.csv("www/item_difficulty.csv") %>% 
   dplyr::select(target, itemDifficulty = Item.Difficulty, discrimination = Discrimination, slide_num) %>%
-  mutate(response = NA)
+  mutate(response = NA,
+         item_number = row_number())
 
 item_key = read.csv("www/item_difficulty.csv") %>% 
   dplyr::select(target, slide_num, itemDifficulty = Item.Difficulty)
@@ -25,6 +26,12 @@ item_key = read.csv("www/item_difficulty.csv") %>%
 
 irt_function <- function(all_items){
     tmp_list = list()
+    
+    # this is for the out argument
+    completed = all_items %>% 
+      drop_na(response) %>%
+      pull(item_number)
+    
     pars = data.frame(a = all_items$discrimination,
                       b = all_items$itemDifficulty,
                       c = rep(1), #1PL has no guessing parameter ,
@@ -36,7 +43,7 @@ irt_function <- function(all_items){
     rownames(bank) <- all_items$target
     x = all_items$response
      ability = thetaEst(bank, x, method = "BM")
-     next_item = nextItem(itemBank = bank, theta = ability)
+     next_item = nextItem(itemBank = bank, theta = ability, out = completed)
      tmp_list[[1]] = ability
      tmp_list[[2]] = next_item
     
