@@ -139,12 +139,14 @@ server <- function(input, output, session) {
           )
           
           print(dplyr::bind_rows(values$response))
-          tmp_num = next_slide(values$key_val, values$item_difficulty, values$current_item)$slide_num
-          values$n = tmp_num
-          values$item_difficulty <- values$item_difficulty %>%
-            filter(slide_num != tmp_num)
+          values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <- ifelse(values$key_val == "1", 0,
+                                                              ifelse(values$key_val == "2", 1, "NR"))
+          irt_out = irt_function(values$item_difficulty)
+          print(irt_out[[2]]$name)
+          values$n = values$item_difficulty[values$item_difficulty$target == irt_out[[2]]$name,]$slide_num
           values$i = values$i + 1
-          print(nrow(values$item_difficulty))
+          
+          #print(paste0("The number of remaining available items is ", nrow(values$item_difficulty)))
           # resets the key value AFTER saving the data. 
           
           
@@ -168,18 +170,6 @@ server <- function(input, output, session) {
         # don't run this on start up. 
     }, ignoreInit = T)
     
-    # Probably the back button will be disabled in production. 
-    # note right now, if you hit the back button, you will have 
-    # to re-enter a response. 
-    # observeEvent(input$back, {
-    #     values$i = values$i-1
-    #     if(values$i < 1){
-    #         values$i = 1
-    #         updateNavbarPage(session, "mainpage",
-    #                          selected = tabtitle0)
-    #     } else {
-    #     }
-    # })
     
     
 #### Outputs ##################################################################
@@ -196,7 +186,7 @@ server <- function(input, output, session) {
   # holds the item-level responses. 
   results_data_long <- reactive({
      tmp = dplyr::bind_rows(values$response) %>%
-          full_join(items, by = "slide_num") %>%
+          full_join(item_key, by = "slide_num") %>%
           mutate(date = input$date,
                  notes = NA) %>%
           drop_na(response)

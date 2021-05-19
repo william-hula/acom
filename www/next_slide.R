@@ -10,42 +10,35 @@
 # randomly drawn value and the difficulty. 
 library(tibble)
 library(dplyr)
-items = read.csv("www/item_difficulty.csv") %>% arrange(Item.Difficulty) %>%
-  select(target, diff = Item.Difficulty, slide_num)
+library(catIrt)
+library(irtoys)
+library(ltm)
+library(catR)
 
-next_slide <- function (resp, df, current) {
-  
-  last_item <- current %>%
-    mutate(tmp = ifelse(resp == "1", "0",
-                        ifelse( resp == "2", "1", "NR"))
-    )
-  # resp will be a "1" or "2" based on the key input. 
-  # change to 0 or 1
-  print(last_item)
-  
-  # This is the area where you calculate a new ability estimate!!!!!!!!!!1
-  # -----------------------------------------------------------------------------
-  # if 0, then....else if 1 then...
-  # third condition shouldn't be able to happen, but just in case...
-  if (last_item$tmp == 0){
-    est = runif(1, min = -1.8, max = 0)
-  } else if (last_item$tmp == 1) {
-    est = runif(1, 0, 1.8)
-  } else {
-    est = NA
-  }
-  # -----------------------------------------------------------------------------
-  
-  # find the item closest to a random estimate
-  item_difficulty_2 <- df %>%
-    mutate(est = est,
-           difference = abs(diff - est)) %>%
-    # top row has lowest absolute difference. 
-    arrange(difference) %>%
-    # grabs top row
-    slice(1)
+
+items = read.csv("www/item_difficulty.csv") %>% arrange(Item.Difficulty) %>%
+  dplyr::select(target, itemDifficulty = Item.Difficulty, discrimination = Discrimination, slide_num) %>%
+  mutate(response = NA)
+
+item_key = read.csv("www/item_difficulty.csv") %>% arrange(Item.Difficulty) %>%
+  dplyr::select(target, slide_num, itemDifficulty = Item.Difficulty)
+
+  irt_function <- function(all_items){
+    tmp_list = list()
+    pars = data.frame(a = all_items$discrimination,
+                      b = all_items$itemDifficulty,
+                      c = rep(1), #1PL has no guessing parameter ,
+                      d = rep(0), #1PL has no innatention parameter,
+                      cbGroup = rep(1))
     
-  # return a 1 row dataframe that can be accessed. 
-  return(item_difficulty_2)
-  
-}
+    prov = breakBank(pars)
+    bank = prov$itemPar
+    rownames(bank) <- all_items$target
+    x = all_items$response
+     ability = thetaEst(bank, x, method = "BM")
+     next_item = nextItem(itemBank = bank, theta = ability)
+     tmp_list[[1]] = ability
+     tmp_list[[2]] = next_item
+    
+    return(tmp_list)
+  }
