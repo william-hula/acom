@@ -11,11 +11,9 @@ library(keys)
 library(DT)
 library(here)
 
-# This file holds the instructions. I've organized the text like this so that
-# translating to another language is easy and finding text is easy.
-source(here('R','text.R'))
-source(here('R','next_slide.R'))
-#item_names = read.csv('www/items.csv')
+# Turns out if you put these in a folder called R you don't have to source them
+# source(here('R','text.R'))
+# source(here('R','next_slide.R'))
 
 # These indicate errors (1) and correct responses (2)
 response_keys <- c(
