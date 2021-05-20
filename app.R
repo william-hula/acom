@@ -201,11 +201,14 @@ server <- function(input, output, session) {
      tmp = dplyr::bind_rows(values$response) %>%
           full_join(item_key, by = "slide_num") %>%
           mutate(date = as.Date(input$date),
-                 notes = NA) %>%
+                 name = NA,
+                 notes = NA
+                 ) %>%
           drop_na(resp_num) %>%
        dplyr::select(-slide_num)
      
      tmp$notes[[1]] = input$notes
+     tmp$name[[1]] = input$name
      return(tmp)
   })
   
