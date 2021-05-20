@@ -295,7 +295,7 @@ server <- function(input, output, session) {
                date = as.Date(input$date),
                notes = NA
         ) %>%
-        drop_na(response) %>%
+        #drop_na(response) %>%
         dplyr::select(-slide_num) %>%
         arrange(order)
       
@@ -335,7 +335,8 @@ server <- function(input, output, session) {
   
   # outputs a table of the item level responses
   output$results_long <- renderDT({
-      results_data_long()
+      results_data_long() %>%
+      drop_na(response)
   }, rownames = F)
   
   #  outputs a summary sentence
@@ -369,9 +370,6 @@ server <- function(input, output, session) {
   
   # UI for slides with pictures.
   output$slides_tab <- renderUI({
-      if(values$i == 0){
-          "To start the test, hit 'Start Assessment' on the home page"
-      } else {
       
               column(width = 12, align = "center",
                      fluidRow(uiOutput("slide")),
@@ -391,15 +389,12 @@ server <- function(input, output, session) {
                          )
                      )
               )
-      }
-      
+
   })
   
   # UI for results page
   output$results_tab <- renderUI({
-      if(values$i < 2){
-          "Hmmm....No results to show yet. "
-      } else {
+
           div(
           h3("Example of data that is collected during testing"),
           uiOutput("results_summary"), br(),
@@ -409,7 +404,7 @@ server <- function(input, output, session) {
                    actionButton("start_over", "Start Over")
           )
           )
-      }
+
       
   })
     
