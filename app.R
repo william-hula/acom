@@ -104,18 +104,48 @@ server <- function(input, output, session) {
     # disable navigating by clicking on tabs
     shinyjs::disable(selector = '.navbar-nav a')
   
+  # reactive list. 
+  # see observeEvent(input$start) for more values initialized when starting assessment
+  
     # reactiveValues is like a list where elements of the list can change based on user input
     values = reactiveValues()
     # default starting values
     values$i = 0 # this is the counter to track the slide number
-    #values$n = 130 # this selects the picture. 130 = pumpkin
-    #values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
-    #values$response = NULL # this list element holds 1-row tibbles of each response for each slide. (bind_rows to combine)
-    #values$item_difficulty <- items # dataframe of items, difficulty, discrimination; NA column for responses to start. 
     values$test_length <- NULL
     values$irt_out <- list(0, 0, 1)
     values$min_sem <- NULL
     
+    
+    
+    
+    
+    
+################################## OBSERVERS ##############################################    
+# -----------------------------------------------------------------------------------------
+###########################################################################################    
+    
+    # start button. sets the i value to 1 corresponding to the first slide
+    # switches to the assessment tab
+    # updates the progress bar very slightly. 
+    # initialize values in here so that they reset whever someone hits start. 
+    observeEvent(input$start, {
+      values$item_difficulty <- items # dataframe of items, difficulty, discrimination; NA column for responses to start. 
+      values$i = 1
+      values$n = 130 # this selects the picture. 130 = pumpkin
+      values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
+      values$response = NULL # this list element holds 1-row tibbles of each response for each slide. (bind_rows to combine)
+      #values$irt_out = NULL
+      values$irt_out <- list(0, 0, 1)
+      updateNavbarPage(session, "mainpage",
+                       selected = tabtitle1)
+      if(input$numitems != "SEM"){
+        updateProgressBar(session = session, id = "progress_bar", value = 0)
+      }
+    })
+    
+    # enables or disables precision option if SEM is or isn't selected. 
+    # also converts the numeric option to a number
+    # saves either to values$test_length
     observeEvent(input$numitems,{
         if(input$numitems == "SEM"){
           values$test_length <- "SEM"
@@ -126,44 +156,34 @@ server <- function(input, output, session) {
         }
     })
     
+    # records the sem input
     observeEvent(input$sem,{
       values$min_sem <- input$sem
     })
     
+    # no key presses on home or results page
     observe({
-      if(input$mainpage==tabtitle2){
+      if(input$mainpage==tabtitle2 || input$mainpage==tabtitle0){
         pauseKey()
       } else {
         unpauseKey()
       }
     })
   
-    
-    # start button. sets the i value to 1 corresponding to the first slide
-    # switches to the assessment tab
-    # updates the progress bar very slightly. 
-    # initialize values in here so that they reset whever someone hits start. 
-    observeEvent(input$start, {
-        values$item_difficulty <- items # dataframe of items, difficulty, discrimination; NA column for responses to start. 
-        values$i = 1
-        values$n = 130 # this selects the picture. 130 = pumpkin
-        values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
-        values$response = NULL # this list element holds 1-row tibbles of each response for each slide. (bind_rows to combine)
-        #values$irt_out = NULL
-        values$irt_out <- list(0, 0, 1)
-        updateNavbarPage(session, "mainpage",
-                         selected = tabtitle1)
-        if(input$numitems != "SEM"){
-        updateProgressBar(session = session, id = "progress_bar", value = 0)
-        }
-    })
-    
-    # tracks the inputs
+    # tracks the key inputs
     observeEvent(input$keys, {
         values$key_val = input$keys
     })
     
+    # if start over is hit, go to home page
+    # start assessment button then resets everything
+    observeEvent(input$start_over,{
+      updateNavbarPage(session, "mainpage",
+                       selected = tabtitle0)
+    })
     
+    
+################################### THIS IS WHRERE IRT STUFF GETS INCORPORATED ########################
     # observe event will take an action if an input changes. here the next button or the enter key
     # This is where the app will interact with the IRT algorithm
     observeEvent(input$enter_key, {
@@ -259,15 +279,55 @@ server <- function(input, output, session) {
       values$key_val = NULL
         # don't run this on start up. 
     }, ignoreInit = T)
+######################### END OF IRT OBSERVER ################################# 
     
-    observeEvent(input$start_over,{
-      updateNavbarPage(session, "mainpage",
-                       selected = tabtitle0)
+
+################################## REACTIVE DATA ##########################################  
+# -----------------------------------------------------------------------------------------
+###########################################################################################  
+    
+    # holds the item-level responses. 
+    results_data_long <- reactive({
+      precision = if(input$numitems == "SEM"){
+        paste0("SEM: ", input$sem)
+      } else {
+        paste0(input$numitems, " items")
+      }
+      
+      tmp = dplyr::bind_rows(values$response) %>%
+        full_join(item_key, by = "slide_num") %>%
+        mutate(precision = precision,
+               name = input$name,
+               date = as.Date(input$date),
+               notes = NA
+        ) %>%
+        drop_na(resp_num) %>%
+        dplyr::select(-slide_num)
+      
+      tmp$notes[[1]] = input$notes
+      return(tmp)
     })
     
+    # holds the mean accuracy
+    results_data_summary <- reactive({
+      dplyr::bind_rows(values$response) %>%
+        # have to switch 0s and 1s because IRT is dumb. 
+        mutate(response = as.numeric(ifelse(resp_num == 0, 1, 0))) %>%
+        summarize(accuracy = mean(response)) %>%
+        pull(accuracy)
+    })
     
+    # tracks final irt data.
+    irt_final <- reactive({
+      tibble(
+        ability = values$irt_out[[1]],
+        sem = values$irt_out[[3]]
+      )
+    })
     
-#### Outputs ##################################################################
+################################## OUTPUTS ##############################################    
+# ---------------------------------------------------------------------------------------
+#########################################################################################
     
     # this shows the slide for the i'th value
     output$slide <- renderUI({
@@ -277,47 +337,6 @@ server <- function(input, output, session) {
         tags$img(src = tmp)
  
     })
-    
-  # holds the item-level responses. 
-  results_data_long <- reactive({
-    precision = if(input$numitems == "SEM"){
-      paste0("SEM: ", input$sem)
-    } else {
-      paste0(input$numitems, " items")
-    }
-    
-     tmp = dplyr::bind_rows(values$response) %>%
-          full_join(item_key, by = "slide_num") %>%
-          mutate(precision = precision,
-                 name = input$name,
-                 date = as.Date(input$date),
-                 notes = NA
-                 ) %>%
-          drop_na(resp_num) %>%
-       dplyr::select(-slide_num)
-     
-     tmp$notes[[1]] = input$notes
-     return(tmp)
-  })
-  
-  # holds the mean accuracy
-  results_data_summary <- reactive({
-      dplyr::bind_rows(values$response) %>%
-      # have to switch 0s and 1s because IRT is dumb. 
-          mutate(response = as.numeric(ifelse(resp_num == 0, 1, 0))) %>%
-          summarize(accuracy = mean(response)) %>%
-          pull(accuracy)
-  })
-  
-  
-  # tracks final irt data.
-  irt_final <- reactive({
-    tibble(
-    ability = values$irt_out[[1]],
-    sem = values$irt_out[[3]]
-    )
-  })
-  
   
   # outputs a table of the item level responses
   output$results_long <- renderDT({
@@ -333,8 +352,10 @@ server <- function(input, output, session) {
              round(irt_final()$sem,3), ".")
       )
   })
-  
-  ########### download function ##############3
+
+################################## DOWNLOAD ##############################################    
+# ---------------------------------------------------------------------------------------
+#########################################################################################
   
   output$downloadData <- downloadHandler(
     filename = function() {
@@ -345,7 +366,9 @@ server <- function(input, output, session) {
     }
   )
   
- ##### tab UI ###############################################################
+################################## TAB UI ##############################################    
+# ---------------------------------------------------------------------------------------
+#########################################################################################
   
   # this UI is on the server side so that it can be dynamic based on other conditions in the app. 
   
