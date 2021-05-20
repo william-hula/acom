@@ -29,7 +29,8 @@ enter <- "enter"
 #p = 10
 
 
-# Define UI for application that draws a histogram
+# Define UI for the application. 
+# Just the interface.
 ui <- fluidPage(
                 # imports javascript for hotkeys
                 useKeys(),
@@ -58,7 +59,10 @@ ui <- fluidPage(
                           hoursStep = 1
                       )
                   ),
-                  numericInput(inputId = "numitems", label = "Number of Items to Test", value = 10, min = 10, max = 100, step = 1)
+                  ### Use this to set how many items to run. 
+                  numericInput(inputId = "numitems",
+                               label = "Number of Items to Test",
+                               value = 10, min = 10, max = 100, step = 1)
                   ),
                   column(width = 1),
                   column(width = 6,
@@ -151,9 +155,11 @@ server <- function(input, output, session) {
           values$n = values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
           values$i = values$i + 1
           
+          # prints to the console
           print(results_data_long())
           
-          
+          # the second argument here (nrow...) makes sure that key presses on the results page
+          # aren't recorded. 
         } else if (values$i == input$numitems && nrow(dplyr::bind_rows(values$response))<input$numitems) {
           values$response[[values$i]] = tibble(
             order = values$i,
@@ -171,12 +177,14 @@ server <- function(input, output, session) {
             sem = round(values$irt_out[[3]], 3) # you can add information here as a new column. 
           )
           
+          # prints to the console
           print(results_data_long())
           
             updateNavbarPage(session, "mainpage",
                              selected = tabtitle2)
-            # probably should add something to disable enter key here. 
+            
         } else {
+          # 
           print("no more responses - on the results page.")
         }
       values$key_val = NULL
@@ -222,6 +230,7 @@ server <- function(input, output, session) {
   })
   
   
+  # tracks final irt data.
   irt_final <- reactive({
     tibble(
     ability = values$irt_out[[1]],
@@ -258,6 +267,9 @@ server <- function(input, output, session) {
   
  ##### tab UI ###############################################################
   
+  # this UI is on the server side so that it can be dynamic based on other conditions in the app. 
+  
+  # UI for slides with pictures.
   output$slides_tab <- renderUI({
       if(values$i == 0){
           "To start the test, hit 'Start Assessment' on the home page"
@@ -279,6 +291,7 @@ server <- function(input, output, session) {
       
   })
   
+  # UI for results page
   output$results_tab <- renderUI({
       if(values$i < 2){
           "Hmmm....No results to show yet. "
