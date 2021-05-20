@@ -165,42 +165,62 @@ server <- function(input, output, session) {
     
     
     # observe event will take an action if an input changes. here the next button or the enter key
+    # This is where the app will interact with the IRT algorithm
     observeEvent(input$enter_key, {
       
+      # should the app show another item?
+      # if the stopping choice is SEM, check if the current sem is less than the desired precision
+      # if its just a static number of items, then check if this number has already been shown
+      # returns TRUE or FALSE
       another_item <- if(input$numitems == "SEM"){
         values$min_sem<values$irt_out[[3]]
       } else {
         values$i<=values$test_length
       }
       
-        # if not an instructions slide, require a key input response
-        if(is.null(values$key_val) && (values$i <values$test_length || values$min_sem<values$irt_out[[3]])){
+        # require a key input response
+        if(is.null(values$key_val)){ 
             showNotification("Enter a score", type = "error")
         # as long as there's a response or it's an insturction slide...
         } else if (another_item) {
           
-          
+          # If a keyu press was detected, store it in our dataframe of items, difficulty, discrimination etc...
           # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
           values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <- ifelse(
                                                         values$key_val == "1", 1,
                                                               ifelse(values$key_val == "2", 0, "NR"))
           
+          # see R/next_slide for this script.
+          # it takes in the current data, values$item_difficulty
+          # which also includes the most recent response (See code immediately above)
+          # returns a list of 3 elements
+          # element[[1]] is the new ability estimate
+          # element[[2]] is a list of information returned by catR::nextSlide(), 
+          # including $name, the name of the next item
+          # element[[3]] returns the sem after re-estimating the model
           values$irt_out = irt_function(values$item_difficulty)
           
+          # save everything to a dataframe for downloading later
+          # next step will be to remove this dataframe and just use values$item_difficulty
           values$response[[values$i]] = tibble(
-            
+                  # what trial was the item presented
                   order = values$i,
+                  # what picture did the item call
                   slide_num = values$n,
-                  # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
+                  # what was the key press
                   key = values$key_val,
+                  # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
                   resp = ifelse(values$key_val == "1", "incorrect",
                                      ifelse(values$key_val == "2", "correct", "NR")
-                                     
                                 ),
+                  # this is the response numeric that goes into the IRT algorithm because
+                  # the numbers need to be reversed from what is logical ¯\_(ツ)_/¯ 
                   resp_num = ifelse(values$key_val == "1", "1",
                                     ifelse(values$key_val == "2", "0", "NR")
                                     ),
+                  # NEW ability estimate after model restimation
                   ability = round(values$irt_out[[1]],3),
+                  # NEW sem 
                   sem = round(values$irt_out[[3]], 3)
                   
           )
@@ -221,6 +241,7 @@ server <- function(input, output, session) {
       print(tail(results_data_long(), 10))
       
       # decides whether to cut to the results page or not!
+      # returns TRUE or FALSE
       go_to_results <- if(is.na(values$n)){
         TRUE
       } else if(input$numitems == "SEM"){
@@ -229,6 +250,7 @@ server <- function(input, output, session) {
         values$i>values$test_length
       }
       
+      # go to results if indicated
       if (go_to_results){
         updateNavbarPage(session, "mainpage",
                          selected = tabtitle2)
