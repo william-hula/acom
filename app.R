@@ -29,6 +29,8 @@ enter <- "enter"
 # Define UI for the application. 
 # Just the interface.
 ui <- fluidPage(
+                # css no clicky on tabs
+                tags$head(tags$style(HTML('.navbar-nav a {cursor: default}'))),
                 # imports javascript for hotkeys
                 useKeys(),
                 useShinyjs(),
@@ -99,14 +101,17 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
 
+    # disable navigating by clicking on tabs
+    shinyjs::disable(selector = '.navbar-nav a')
+  
     # reactiveValues is like a list where elements of the list can change based on user input
     values = reactiveValues()
     # default starting values
     values$i = 0 # this is the counter to track the slide number
-    values$n = 130 # this selects the picture. 130 = pumpkin
-    values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
-    values$response = NULL # this list element holds 1-row tibbles of each response for each slide. (bind_rows to combine)
-    values$item_difficulty <- items # dataframe of items, difficulty, discrimination; NA column for responses to start. 
+    #values$n = 130 # this selects the picture. 130 = pumpkin
+    #values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
+    #values$response = NULL # this list element holds 1-row tibbles of each response for each slide. (bind_rows to combine)
+    #values$item_difficulty <- items # dataframe of items, difficulty, discrimination; NA column for responses to start. 
     values$test_length <- NULL
     values$irt_out <- list(0, 0, 1)
     values$min_sem <- NULL
@@ -137,8 +142,15 @@ server <- function(input, output, session) {
     # start button. sets the i value to 1 corresponding to the first slide
     # switches to the assessment tab
     # updates the progress bar very slightly. 
+    # initialize values in here so that they reset whever someone hits start. 
     observeEvent(input$start, {
+        values$item_difficulty <- items # dataframe of items, difficulty, discrimination; NA column for responses to start. 
         values$i = 1
+        values$n = 130 # this selects the picture. 130 = pumpkin
+        values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
+        values$response = NULL # this list element holds 1-row tibbles of each response for each slide. (bind_rows to combine)
+        #values$irt_out = NULL
+        values$irt_out <- list(0, 0, 1)
         updateNavbarPage(session, "mainpage",
                          selected = tabtitle1)
         if(input$numitems != "SEM"){
@@ -225,6 +237,11 @@ server <- function(input, output, session) {
       values$key_val = NULL
         # don't run this on start up. 
     }, ignoreInit = T)
+    
+    observeEvent(input$start_over,{
+      updateNavbarPage(session, "mainpage",
+                       selected = tabtitle0)
+    })
     
     
     
@@ -348,7 +365,8 @@ server <- function(input, output, session) {
           uiOutput("results_summary"), br(),
           DTOutput("results_long"),
           tags$div(align = "center",
-                   downloadButton("downloadData", "Download results")
+                   downloadButton("downloadData", "Download results"),
+                   actionButton("start_over", "Start Over")
           )
           )
       }
