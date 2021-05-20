@@ -47,6 +47,7 @@ ui <- fluidPage(
                   br(), br(),
                   textInput("name", nameinput),
                   textAreaInput("notes", otherinput),
+                  # time not currently recorded. necessary?
                   airDatepickerInput(
                       inputId = "date",
                       label = dateinput,
@@ -66,6 +67,7 @@ ui <- fluidPage(
                                selected = "10",
                                inline = T
                                ),
+                  # sets SEM precision. disabled if SEM not selected in numitems radio buttons
                   sliderInput("sem", "Minimum acceptable SEM", min = 0.1, max = 0.5, step = 0.01, value = 0.3, )
                   ),
                   column(width = 1),
