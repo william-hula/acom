@@ -44,8 +44,18 @@ irt_function <- function(all_items){
     x = all_items$response
      ability = thetaEst(bank, x, method = "BM")
      next_item = nextItem(itemBank = bank, theta = ability, out = completed)
+     sem = semTheta(ability, bank, x)
      tmp_list[[1]] = ability
      tmp_list[[2]] = next_item
+     tmp_list[[3]] = sem
     
     return(tmp_list)
-  }
+}
+
+items[3,5] = 0
+items[4,5] = 0
+items[5,5] = 0
+items[50,5] = 1
+items[60,5] = 0
+
+irt_function(items)

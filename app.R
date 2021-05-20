@@ -96,16 +96,11 @@ server <- function(input, output, session) {
     # reactiveValues is like a list where elements of the list can change based on user input
     values = reactiveValues()
     # default starting values
-    values$i = 0 # this is the counter to track what picture to show (the "ith" slide)
-    values$n = 130 # order effects
-    values$keyval = NULL # keeps track of the button press 1 or 2
-    values$response = NULL # this list element holds 1-row tibbles of each response for each slide
-    values$item_difficulty <- items
-    values$current_item = 130
-    
-    observe({
-    values$current_item <- items %>% filter(slide_num == values$n)
-    })
+    values$i = 0 # this is the counter to track the slide number
+    values$n = 130 # this selects the picture. 130 = pumpkin
+    values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
+    values$response = NULL # this list element holds 1-row tibbles of each response for each slide. (bind_rows to combine)
+    values$item_difficulty <- items # dataframe of items, difficulty, discrimination; NA column for responses to start. 
     
     # start button. sets the i value to 1 corresponding to the first slide
     # switches to the assessment tab
@@ -141,11 +136,16 @@ server <- function(input, output, session) {
             order = values$i,
             slide_num = values$n,
             # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
-            response = ifelse(values$key_val == "1", "1",
-                              ifelse(values$key_val == "2", "0", "NR")
-                              
+            key = values$key_val,
+            resp = ifelse(values$key_val == "1", "incorrect",
+                               ifelse(values$key_val == "2", "correct", "NR")
+                               
             ),
-            ability = values$irt_out[[1]]
+            resp_num = ifelse(values$key_val == "1", "1",
+                              ifelse(values$key_val == "2", "0", "NR")
+            ),
+            ability = round(values$irt_out[[1]],3),
+            sem = round(values$irt_out[[3]], 3)
           )
           
           values$n = values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
@@ -159,10 +159,16 @@ server <- function(input, output, session) {
             order = values$i,
             slide_num = values$n,
             # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
-            response = ifelse(values$key_val == "1", "1",
+            key = values$key_val,
+            resp = ifelse(values$key_val == "1", "incorrect",
+                               ifelse(values$key_val == "2", "correct", "NR")
+                               
+            ),
+            resp_num = ifelse(values$key_val == "1", "1",
                               ifelse(values$key_val == "2", "0", "NR")
             ),
-            ability = values$irt_out[[1]] # you can add information here as a new column. 
+            ability = round(values$irt_out[[1]],3),
+            sem = round(values$irt_out[[3]], 3) # you can add information here as a new column. 
           )
           
           print(results_data_long())
@@ -194,9 +200,10 @@ server <- function(input, output, session) {
   results_data_long <- reactive({
      tmp = dplyr::bind_rows(values$response) %>%
           full_join(item_key, by = "slide_num") %>%
-          mutate(date = input$date,
+          mutate(date = as.Date(input$date),
                  notes = NA) %>%
-          drop_na(response)
+          drop_na(resp_num) %>%
+       dplyr::select(-slide_num)
      
      tmp$notes[[1]] = input$notes
      return(tmp)
@@ -205,24 +212,34 @@ server <- function(input, output, session) {
   # holds the mean accuracy
   results_data_summary <- reactive({
       dplyr::bind_rows(values$response) %>%
-          mutate(response = as.numeric(response)) %>%
+      # have to switch 0s and 1s because IRT is dumb. 
+          mutate(response = as.numeric(ifelse(resp_num == 0, 1, 0))) %>%
           summarize(accuracy = mean(response)) %>%
           pull(accuracy)
   })
   
-  # holds the mean accuracy
-  output$results_irt <- renderPrint({
-    print(as.character(values$irt_out))
+  
+  irt_final <- reactive({
+    tibble(
+    ability = values$irt_out[[1]],
+    sem = values$irt_out[[3]]
+    )
   })
+  
   
   # outputs a table of the item level responses
   output$results_long <- renderDT({
       results_data_long()
-  })
+  }, rownames = F)
   
   #  outputs a summary sentence
   output$results_summary <- renderUI({
-      paste0("The total accuracy for this test was ", round(results_data_summary()*100, 1), "%.")
+      h5(
+        paste0("The total accuracy for this test was ", round(results_data_summary()*100, 1), "%.", 
+             " The final IRT ability estimate is ",
+             round(irt_final()$ability, 2), " and the standard error of the mean is ",
+             round(irt_final()$sem,2), ".")
+      )
   })
   
   ########### download function ##############3
@@ -250,7 +267,6 @@ server <- function(input, output, session) {
                      fluidRow(
                          div(align = "center", style = "width: 50%;",
                              #actionButton("back", backbutton),
-                             actionButton("nxt", nextbutton), br(), br(),
                              progressBar(id = "progress_bar", value = values$i, display_pct = F, size = "xs", range_value = c(1,input$numitems+1)), br(),
                              
                          )
@@ -269,9 +285,8 @@ server <- function(input, output, session) {
           uiOutput("results_summary"), br(),
           DTOutput("results_long"),
           tags$div(align = "center",
-          downloadButton("downloadData", "Download results")
-          ),
-          uiOutput("results_irt")
+                   downloadButton("downloadData", "Download results")
+          )
           )
       }
       
