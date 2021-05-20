@@ -52,10 +52,20 @@ irt_function <- function(all_items){
     return(tmp_list)
 }
 
-items[3,5] = 0
-items[4,5] = 0
-items[5,5] = 0
-items[50,5] = 1
-items[60,5] = 0
 
-irt_function(items)
+###### Want to test this function? 
+
+#1. Read in items above. 
+
+#2. Create some random responses:
+
+# e.g.:
+# items[3,5] = 0
+# items[4,5] = 0
+# items[5,5] = 0
+# items[50,5] = 1
+# items[60,5] = 0
+
+#3. fun the function. it just takes in this data frame with some responses.
+
+#irt_function(items)
