@@ -9,8 +9,7 @@ library(dplyr)
 library(shinyWidgets)
 library(keys)
 library(DT)
-library(here)
-
+library(shinyjs)
 # Turns out if you put these in a folder called R you don't have to source them
 # source(here('R','text.R'))
 # source(here('R','next_slide.R'))
@@ -32,6 +31,7 @@ enter <- "enter"
 ui <- fluidPage(
                 # imports javascript for hotkeys
                 useKeys(),
+                useShinyjs(),
                 keysInput("keys", response_keys),
                 keysInput("enter_key", enter),
         # layout starts here
@@ -58,9 +58,13 @@ ui <- fluidPage(
                       )
                   ),
                   ### Use this to set how many items to run. 
-                  numericInput(inputId = "numitems",
-                               label = "Number of Items to Test",
-                               value = 10, min = 10, max = 100, step = 1)
+                  radioButtons(inputId = "numitems",
+                               label = "Number of items to test (10 is for testing)",
+                               choices = c("10", "30", "40", "50", "SEM"),
+                               selected = "10",
+                               inline = T
+                               ),
+                  sliderInput("sem", "Minimum acceptable SEM", min = 0.1, max = 0.5, step = 0.01, value = 0.3, )
                   ),
                   column(width = 1),
                   column(width = 6,
@@ -103,6 +107,32 @@ server <- function(input, output, session) {
     values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
     values$response = NULL # this list element holds 1-row tibbles of each response for each slide. (bind_rows to combine)
     values$item_difficulty <- items # dataframe of items, difficulty, discrimination; NA column for responses to start. 
+    values$test_length <- NULL
+    values$irt_out <- list(0, 0, 1)
+    values$min_sem <- NULL
+    
+    observeEvent(input$numitems,{
+        if(input$numitems == "SEM"){
+          values$test_length <- "SEM"
+          shinyjs::enable("sem")
+        } else {
+          values$test_length <- as.numeric(input$numitems)
+          shinyjs::disable("sem")
+        }
+    })
+    
+    observeEvent(input$sem,{
+      values$min_sem <- input$sem
+    })
+    
+    observe({
+      if(input$mainpage==tabtitle2){
+        pauseKey()
+      } else {
+        unpauseKey()
+      }
+    })
+  
     
     # start button. sets the i value to 1 corresponding to the first slide
     # switches to the assessment tab
@@ -111,7 +141,9 @@ server <- function(input, output, session) {
         values$i = 1
         updateNavbarPage(session, "mainpage",
                          selected = tabtitle1)
+        if(input$numitems != "SEM"){
         updateProgressBar(session = session, id = "progress_bar", value = 0)
+        }
     })
     
     # tracks the inputs
@@ -122,11 +154,18 @@ server <- function(input, output, session) {
     
     # observe event will take an action if an input changes. here the next button or the enter key
     observeEvent(input$enter_key, {
+      
+      another_item <- if(input$numitems == "SEM"){
+        values$min_sem<values$irt_out[[3]]
+      } else {
+        values$i<=values$test_length
+      }
+      
         # if not an instructions slide, require a key input response
-        if(is.null(values$key_val) && values$i <input$numitems){
+        if(is.null(values$key_val) && (values$i <values$test_length || values$min_sem<values$irt_out[[3]])){
             showNotification("Enter a score", type = "error")
         # as long as there's a response or it's an insturction slide...
-        } else if (values$i<input$numitems) {
+        } else if (another_item) {
           
           
           # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
@@ -155,50 +194,34 @@ server <- function(input, output, session) {
           )
           
           # pick the next slide using the output of the irt
-          values$n = values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
+          # conditional fixes a bug for the last item if the test goes all the way to 175
+          values$n = if(!is.na(values$irt_out[[2]][[1]])){
+            values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
+          } else {
+            NA
+          }
           # iterate the order
           values$i = values$i + 1
           
-          # prints to the console
-          print(results_data_long())
-          
-          # the second argument here (nrow...) makes sure that key presses on the results page
-          # aren't recorded. 
-        } else if (values$i == input$numitems && nrow(dplyr::bind_rows(values$response))<input$numitems) {
-          
-          values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <- ifelse(
-            values$key_val == "1", 1,
-            ifelse(values$key_val == "2", 0, "NR"))
-          
-          values$irt_out = irt_function(values$item_difficulty)
-          
-          
-          values$response[[values$i]] = tibble(
-            order = values$i,
-            slide_num = values$n,
-            # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
-            key = values$key_val,
-            resp = ifelse(values$key_val == "1", "incorrect",
-                               ifelse(values$key_val == "2", "correct", "NR")
-                               
-            ),
-            resp_num = ifelse(values$key_val == "1", "1",
-                              ifelse(values$key_val == "2", "0", "NR")
-            ),
-            ability = round(values$irt_out[[1]],3),
-            sem = round(values$irt_out[[3]], 3) # you can add information here as a new column. 
-          )
-          
-          # prints to the console
-          print(results_data_long())
-          
-            updateNavbarPage(session, "mainpage",
-                             selected = tabtitle2)
-            
-        } else {
-          # 
-          print("no more responses - on the results page.")
-        }
+        } 
+      
+      # prints to the console
+      print(tail(results_data_long(), 10))
+      
+      # decides whether to cut to the results page or not!
+      go_to_results <- if(is.na(values$n)){
+        TRUE
+      } else if(input$numitems == "SEM"){
+        values$min_sem>values$irt_out[[3]]
+      } else {
+        values$i>values$test_length
+      }
+      
+      if (go_to_results){
+        updateNavbarPage(session, "mainpage",
+                         selected = tabtitle2)
+      }
+      
       values$key_val = NULL
         # don't run this on start up. 
     }, ignoreInit = T)
@@ -218,17 +241,23 @@ server <- function(input, output, session) {
     
   # holds the item-level responses. 
   results_data_long <- reactive({
+    precision = if(input$numitems == "SEM"){
+      paste0("SEM: ", input$sem)
+    } else {
+      paste0(input$numitems, " items")
+    }
+    
      tmp = dplyr::bind_rows(values$response) %>%
           full_join(item_key, by = "slide_num") %>%
-          mutate(date = as.Date(input$date),
-                 name = NA,
+          mutate(precision = precision,
+                 name = input$name,
+                 date = as.Date(input$date),
                  notes = NA
                  ) %>%
           drop_na(resp_num) %>%
        dplyr::select(-slide_num)
      
      tmp$notes[[1]] = input$notes
-     tmp$name[[1]] = input$name
      return(tmp)
   })
   
@@ -261,8 +290,8 @@ server <- function(input, output, session) {
       h5(
         paste0("The total accuracy for this test was ", round(results_data_summary()*100, 1), "%.", 
              " The final IRT ability estimate is ",
-             round(irt_final()$ability, 2), " and the standard error of the mean is ",
-             round(irt_final()$sem,2), ".")
+             round(irt_final()$ability, 3), " and the standard error of the mean is ",
+             round(irt_final()$sem,3), ".")
       )
   })
   
@@ -294,7 +323,13 @@ server <- function(input, output, session) {
                      fluidRow(
                          div(align = "center", style = "width: 50%;",
                              #actionButton("back", backbutton),
-                             progressBar(id = "progress_bar", value = values$i, display_pct = F, size = "xs", range_value = c(1,input$numitems+1)), br(),
+                             if (input$numitems != "SEM"){
+                             progressBar(id = "progress_bar",
+                                         value = values$i, display_pct = F,
+                                         size = "xs",
+                                         range_value = c(1,values$test_length+1))
+                               },
+                             br(),
                              
                          )
                      )

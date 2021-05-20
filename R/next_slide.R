@@ -4,11 +4,13 @@
 
 library(tibble)
 library(dplyr) 
-library(catIrt)
-library(irtoys) 
-library(ltm)
 library(catR)
 library(here)
+
+# we don't need these right?
+# library(catIrt)
+# library(irtoys) 
+# library(ltm)
 
 items = read.csv(here("www", "item_difficulty.csv")) %>% 
   dplyr::select(target, itemDifficulty = Item.Difficulty, discrimination = Discrimination, slide_num) %>%
@@ -46,7 +48,12 @@ irt_function <- function(all_items){
      # ability estimate using bayes modal:
      ability = thetaEst(bank, x, method = "BM")
      # generates the next item
-     next_item = nextItem(itemBank = bank, theta = ability, out = completed)
+     
+      next_item = if(length(completed)<175){
+        nextItem(itemBank = bank, theta = ability, out = completed)
+     } else {
+        NA
+     }
      # standard error of the mean
      sem = semTheta(ability, bank, x)
      
