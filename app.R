@@ -132,27 +132,33 @@ server <- function(input, output, session) {
           
           
           # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
-          values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <- ifelse(values$key_val == "1", 1,
+          values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <- ifelse(
+                                                        values$key_val == "1", 1,
                                                               ifelse(values$key_val == "2", 0, "NR"))
+          
           values$irt_out = irt_function(values$item_difficulty)
           
           values$response[[values$i]] = tibble(
-            order = values$i,
-            slide_num = values$n,
-            # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
-            key = values$key_val,
-            resp = ifelse(values$key_val == "1", "incorrect",
-                               ifelse(values$key_val == "2", "correct", "NR")
-                               
-            ),
-            resp_num = ifelse(values$key_val == "1", "1",
-                              ifelse(values$key_val == "2", "0", "NR")
-            ),
-            ability = round(values$irt_out[[1]],3),
-            sem = round(values$irt_out[[3]], 3)
+            
+                  order = values$i,
+                  slide_num = values$n,
+                  # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
+                  key = values$key_val,
+                  resp = ifelse(values$key_val == "1", "incorrect",
+                                     ifelse(values$key_val == "2", "correct", "NR")
+                                     
+                                ),
+                  resp_num = ifelse(values$key_val == "1", "1",
+                                    ifelse(values$key_val == "2", "0", "NR")
+                                    ),
+                  ability = round(values$irt_out[[1]],3),
+                  sem = round(values$irt_out[[3]], 3)
+                  
           )
           
+          # pick the next slide using the output of the irt
           values$n = values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
+          # iterate the order
           values$i = values$i + 1
           
           # prints to the console
@@ -161,6 +167,14 @@ server <- function(input, output, session) {
           # the second argument here (nrow...) makes sure that key presses on the results page
           # aren't recorded. 
         } else if (values$i == input$numitems && nrow(dplyr::bind_rows(values$response))<input$numitems) {
+          
+          values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <- ifelse(
+            values$key_val == "1", 1,
+            ifelse(values$key_val == "2", 0, "NR"))
+          
+          values$irt_out = irt_function(values$item_difficulty)
+          
+          
           values$response[[values$i]] = tibble(
             order = values$i,
             slide_num = values$n,
