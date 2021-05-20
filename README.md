@@ -12,7 +12,8 @@ To run, make sure these packages are installed on your local machine:
 
 ``` r
 # not run
-install.packages(c("here", "shiny", "tibble", "dplyr", "tidyr", "shinyWidgets", "keys", "DT", "shinyjs", "catR"))
+install.packages(c("here", "shiny", "tibble", "dplyr", "tidyr",
+                   "shinyWidgets", "keys", "DT", "shinyjs", "catR"))
 ```
 
 Then run the following:
