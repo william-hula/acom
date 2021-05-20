@@ -3,18 +3,19 @@
 # This is where all the magic happens
 
 library(tibble)
-library(dplyr)
+library(dplyr) 
 library(catIrt)
-library(irtoys)
+library(irtoys) 
 library(ltm)
 library(catR)
+library(here)
 
-items = read.csv("www/item_difficulty.csv") %>% 
+items = read.csv(here("www", "item_difficulty.csv")) %>% 
   dplyr::select(target, itemDifficulty = Item.Difficulty, discrimination = Discrimination, slide_num) %>%
   mutate(response = NA,
          item_number = row_number())
 
-item_key = read.csv("www/item_difficulty.csv") %>% 
+item_key = read.csv(here("www", "item_difficulty.csv")) %>% 
   dplyr::select(target, slide_num, itemDifficulty = Item.Difficulty)
 
 # the magic!

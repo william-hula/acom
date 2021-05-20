@@ -13,8 +13,8 @@ library(here)
 
 # This file holds the instructions. I've organized the text like this so that
 # translating to another language is easy and finding text is easy.
-source('www/text.R')
-source('www/next_slide.R')
+source(here('R','text.R'))
+source(here('R','next_slide.R'))
 #item_names = read.csv('www/items.csv')
 
 # These indicate errors (1) and correct responses (2)
