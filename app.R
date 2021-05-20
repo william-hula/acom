@@ -131,36 +131,42 @@ server <- function(input, output, session) {
         # as long as there's a response or it's an insturction slide...
         } else if (values$i<input$numitems) {
           
+          
+          # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
+          values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <- ifelse(values$key_val == "1", 1,
+                                                              ifelse(values$key_val == "2", 0, "NR"))
+          values$irt_out = irt_function(values$item_difficulty)
+          
           values$response[[values$i]] = tibble(
             order = values$i,
             slide_num = values$n,
-            response = ifelse(values$key_val == "1", "0",
-                              ifelse(values$key_val == "2", "1", "NR")
-            )
+            # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
+            response = ifelse(values$key_val == "1", "1",
+                              ifelse(values$key_val == "2", "0", "NR")
+                              
+            ),
+            ability = values$irt_out[[1]]
           )
           
-          print(dplyr::bind_rows(values$response))
-          values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <- ifelse(values$key_val == "1", 0,
-                                                              ifelse(values$key_val == "2", 1, "NR"))
-          values$irt_out = irt_function(values$item_difficulty)
-          print(values$irt_out[[2]]$name)
           values$n = values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
           values$i = values$i + 1
           
-          #print(paste0("The number of remaining available items is ", nrow(values$item_difficulty)))
-          # resets the key value AFTER saving the data. 
+          print(results_data_long())
           
           
         } else if (values$i == input$numitems && nrow(dplyr::bind_rows(values$response))<input$numitems) {
           values$response[[values$i]] = tibble(
             order = values$i,
             slide_num = values$n,
-            response = ifelse(values$key_val == "1", "0",
-                              ifelse(values$key_val == "2", "1", "NR")
-            )
+            # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
+            response = ifelse(values$key_val == "1", "1",
+                              ifelse(values$key_val == "2", "0", "NR")
+            ),
+            ability = values$irt_out[[1]] # you can add information here as a new column. 
           )
           
-          print(dplyr::bind_rows(values$response))
+          print(results_data_long())
+          
             updateNavbarPage(session, "mainpage",
                              selected = tabtitle2)
             # probably should add something to disable enter key here. 
