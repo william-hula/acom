@@ -15,7 +15,12 @@ library(here)
 items = read.csv(here("www", "item_difficulty.csv")) %>% 
   dplyr::select(target, itemDifficulty = Item.Difficulty, discrimination = Discrimination, slide_num) %>%
   mutate(response = NA,
-         item_number = row_number())
+         item_number = row_number(),
+         order = NA,
+         key = NA,
+         resp = NA,
+         ability = NA,
+         sem = NA)
 
 item_key = read.csv(here("www", "item_difficulty.csv")) %>% 
   dplyr::select(target, slide_num, itemDifficulty = Item.Difficulty)
@@ -82,3 +87,9 @@ irt_function <- function(all_items){
 #3. fun the function. it just takes in this data frame with some responses.
 
 #irt_function(items)
+
+
+
+
+
+

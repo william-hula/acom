@@ -135,8 +135,6 @@ server <- function(input, output, session) {
       values$i = 1
       values$n = 130 # this selects the picture. 130 = pumpkin
       values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
-      values$response = NULL # this list element holds 1-row tibbles of each response for each slide. (bind_rows to combine)
-      #values$irt_out = NULL
       values$irt_out <- list(0, 0, 1)
       updateNavbarPage(session, "mainpage",
                        selected = tabtitle1)
@@ -222,24 +220,19 @@ server <- function(input, output, session) {
           # element[[3]] returns the sem after re-estimating the model
           values$irt_out = irt_function(values$item_difficulty)
           
-          # save everything to a dataframe for downloading later
-          # next step will be to remove this dataframe and just use values$item_difficulty
-          values$response[[values$i]] = tibble(
+          # save info to the item_difficulty data_frame
+          values$item_difficulty[values$item_difficulty$slide_num == values$n,][7:11] = tibble(
+          
                   # what trial was the item presented
-                  order = values$i,
+                   order = values$i,
                   # what picture did the item call
-                  slide_num = values$n,
+                  #slide_num = values$n,
                   # what was the key press
                   key = values$key_val,
                   # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
                   resp = ifelse(values$key_val == "1", "incorrect",
                                      ifelse(values$key_val == "2", "correct", "NR")
                                 ),
-                  # this is the response numeric that goes into the IRT algorithm because
-                  # the numbers need to be reversed from what is logical ¯\_(ツ)_/¯ 
-                  resp_num = ifelse(values$key_val == "1", "1",
-                                    ifelse(values$key_val == "2", "0", "NR")
-                                    ),
                   # NEW ability estimate after model restimation
                   ability = round(values$irt_out[[1]],3),
                   # NEW sem 
@@ -252,7 +245,7 @@ server <- function(input, output, session) {
           values$n = if(!is.na(values$irt_out[[2]][[1]])){
             values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
           } else {
-            NA
+            190 # end of test slide. wont be shown anyway but just in case. 
           }
           # iterate the order
           values$i = values$i + 1
@@ -260,7 +253,7 @@ server <- function(input, output, session) {
         } 
       
       # prints to the console
-      print(tail(results_data_long(), 10))
+      print(tail(values$item_difficulty %>% drop_na(response) %>% arrange(order), 10))
       
       # decides whether to cut to the results page or not!
       # returns TRUE or FALSE
@@ -296,15 +289,15 @@ server <- function(input, output, session) {
         paste0(input$numitems, " items")
       }
       
-      tmp = dplyr::bind_rows(values$response) %>%
-        full_join(item_key, by = "slide_num") %>%
+      tmp = dplyr::bind_rows(values$item_difficulty) %>%
         mutate(precision = precision,
                name = input$name,
                date = as.Date(input$date),
                notes = NA
         ) %>%
-        drop_na(resp_num) %>%
-        dplyr::select(-slide_num)
+        drop_na(response) %>%
+        dplyr::select(-slide_num) %>%
+        arrange(order)
       
       tmp$notes[[1]] = input$notes
       return(tmp)
@@ -312,9 +305,9 @@ server <- function(input, output, session) {
     
     # holds the mean accuracy
     results_data_summary <- reactive({
-      dplyr::bind_rows(values$response) %>%
+      dplyr::bind_rows(values$item_difficulty) %>%
         # have to switch 0s and 1s because IRT is dumb. 
-        mutate(response = as.numeric(ifelse(resp_num == 0, 1, 0))) %>%
+        mutate(response = as.numeric(ifelse(response == 0, 1, 0))) %>%
         summarize(accuracy = mean(response)) %>%
         pull(accuracy)
     })
