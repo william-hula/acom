@@ -24,6 +24,3 @@ shiny::runGitHub("rbcavanaugh/pnt")
 ```
 
 Or clone the repository and run locally.
-
-Note….you can just click on results after running a few of the test (not
-practice) items so you don’t have to run through all the items…
