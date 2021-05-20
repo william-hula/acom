@@ -6,17 +6,16 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-Barebones structure for implementing a naming test using shiny. To be
-adapted for CAT/IRT
+Barebones structure for implementing a CAT naming test using shiny.
 
 To run, make sure these packages are installed on your local machine:
 
 ``` r
 # not run
-install.packages(c("shiny", "tibble", "dplyr", "shinyWidgets", "keys", "DT"))
+install.packages(c("here", "shiny", "tibble", "dplyr", "tidyr", "shinyWidgets", "keys", "DT", "shinyjs", "catR"))
 ```
 
-The run the following:
+Then run the following:
 
 ``` r
 # not run
