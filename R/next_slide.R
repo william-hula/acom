@@ -51,11 +51,11 @@ irt_function <- function(all_items){
     x = all_items$response
     
      # ability estimate using bayes modal:
-     ability = thetaEst(bank, x, method = "BM")
+     ability = thetaEst(bank, x, method = "EAP", range = c(-5, 5))
      # generates the next item
      
       next_item = if(length(completed)<175){
-        nextItem(itemBank = bank, theta = ability, out = completed, range = c(-5, 5), method = "bOpt")
+        nextItem(itemBank = bank, theta = ability, out = completed)
      } else {
         NA
      }
