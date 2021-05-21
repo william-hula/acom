@@ -68,7 +68,7 @@ ui <- fluidPage(
                                inline = T
                                ),
                   # sets SEM precision. disabled if SEM not selected in numitems radio buttons
-                  sliderInput("sem", "Minimum acceptable SEM", min = 0.1, max = 0.5, step = 0.01, value = 0.3, )
+                  sliderInput("sem", "Minimum acceptable SEM", min = 0.1, max = 0.5, step = 0.01, value = 0.3)
                   ),
                   column(width = 1),
                   column(width = 6,

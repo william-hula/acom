@@ -55,7 +55,7 @@ irt_function <- function(all_items){
      # generates the next item
      
       next_item = if(length(completed)<175){
-        nextItem(itemBank = bank, theta = ability, out = completed)
+        nextItem(itemBank = bank, theta = ability, out = completed, range = c(-5, 5), method = "bOpt")
      } else {
         NA
      }
