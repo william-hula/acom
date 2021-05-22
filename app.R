@@ -403,16 +403,19 @@ server <- function(input, output, session) {
            # are their  own static area below the slides. 
            fluidRow(
              div(align = "center", style = "width: 50%;",
-                 # radioButtons("keys", "for testing inputs",
-                 #              choices = c(NA, "1", "2"), inline = T, selected = NULL),
-                 #  actionButton("enter_key", "enter"),br(),
                  if (input$numitems != "SEM"){
                    progressBar(id = "progress_bar",
                                value = values$i, display_pct = F,
                                size = "xs",
                                range_value = c(1,values$test_length+1))
                  },
-                 br()
+                 br(),
+                 # This is solely for testing: always hidden
+                 shinyjs::hidden(
+                 radioButtons("keys", "for testing inputs",
+                              choices = c(NA, "1", "2"), inline = T, selected = NULL),
+                 actionButton("enter_key", "enter")
+                 )
                  
              )
            )

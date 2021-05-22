@@ -3,6 +3,8 @@
 # This script runs each response from the observed 24 participants through the app
 # right now its not using key presses, but a radio button and action button
 # because I can't figure out how to input the key presses in the unit test. 
+# Basically, there are hidden inputs (will never be shown) that take the same
+# input "1" and "2"
 # the inputs are the same otherwise though. 
 # it returns a .csv file for each participant and saves it in the tests tests_output folder
 # there is another script called "process_test_data.R"
@@ -13,6 +15,7 @@
 
 library(here)
 library(tidyverse)
+#library(shinytest)
 
 # observed data
 observed <- read_csv(here("validation", "validation.csv")) %>%
