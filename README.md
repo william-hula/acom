@@ -31,6 +31,11 @@ Or clone the repository and run locally.
 
 -   Check if app is choosing the same items as catpuccino
 -   validate final results in app use (bonus if automated)
+    -   QUESTION: How does catpuccino handle ties? Testing is showing
+        occasional inconsistencies in which items are being chosen, but
+        its only in cases where difficulty is the same (e.g. kite:
+        -0.475 and bridge: -0.475). Shouldn’t affect final ability
+        estimate right?
 -   ensure no bias in slight differences between catR and catpuccino
 
 ### For short-term use

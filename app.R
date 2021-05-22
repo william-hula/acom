@@ -29,75 +29,76 @@ enter <- "enter"
 # Define UI for the application. 
 # Just the interface.
 ui <- fluidPage(
-  # css no clicky on tabs
-  tags$head(tags$style(HTML('.navbar-nav a {cursor: default}'))),
-  # imports javascript for hotkeys
-  useKeys(),
-  useShinyjs(),
-  #keysInput("keys", response_keys),
-  #keysInput("enter_key", enter),
-  # layout starts here
-  navbarPage(title = pagetitle, id = "mainpage",
-             # page 1 instructions
-             tabPanel(tabtitle0,
-                      column(width = 4,
-                             h2(welcome),
-                             intro1,
-                             intro2,
-                             br(), br(),
-                             textInput("name", nameinput),
-                             textAreaInput("notes", otherinput),
-                             # time not currently recorded. necessary?
-                             airDatepickerInput(
-                               inputId = "date",
-                               label = dateinput,
-                               multiple = FALSE,
-                               value = Sys.Date()
-                               #timepicker = TRUE,
-                               # timepickerOpts = timepickerOptions(
-                               #   dateTimeSeparator = " at ",
-                               #   minutesStep = 10,
-                               #   hoursStep = 1
-                               # )
-                             ),
-                             ### Use this to set how many items to run. 
-                             radioButtons(inputId = "numitems",
-                                          label = "Number of items to test (10 is for testing)",
-                                          choices = c("10", "30", "40", "50", "SEM"),
-                                          selected = "10",
-                                          inline = T
-                             ),
-                             # sets SEM precision. disabled if SEM not selected in numitems radio buttons
-                             sliderInput("sem", "Minimum acceptable SEM", min = 0.1, max = 0.5, step = 0.01, value = 0.3)
-                      ),
-                      column(width = 1),
-                      column(width = 6,
-                             h3("Instructions:"), br(),
-                             instruction1,
-                             br(),
-                             br(),
-                             instruction2,
-                             br(),
-                             br(),
-                             instruction3,
-                             br(), br(), br(),
-                             div(align = "center",
-                                 actionButton("start", inputstart)
-                             )
-                      )
-                      
-             ),
-             # Page 2 contains the picture stimuli
-             tabPanel(title = tabtitle1,
-                      uiOutput("slides_tab")
-             ),
-             # page 3 contains the results
-             tabPanel(title = tabtitle2, 
-                      
-                      uiOutput("results_tab")
-                      
-             )
-  )
+
+                # css no clicky on tabs
+                tags$head(tags$style(HTML('.navbar-nav a {cursor: default}'))),
+                # imports javascript for hotkeys
+                useKeys(),
+                useShinyjs(),
+                keysInput("keys", response_keys),
+                keysInput("enter_key", enter),
+        # layout starts here
+        navbarPage(title = pagetitle, id = "mainpage",
+        # page 1 instructions
+         tabPanel(tabtitle0,
+                  column(width = 4,
+                         h2(welcome),
+                  intro1,
+                  intro2,
+                  br(), br(),
+                  textInput("name", nameinput),
+                  textAreaInput("notes", otherinput),
+                  # time not currently recorded. necessary?
+                  airDatepickerInput(
+                      inputId = "date",
+                      label = dateinput,
+                      multiple = FALSE,
+                      value = Sys.time(),
+                      timepicker = F
+                      # timepickerOpts = timepickerOptions(
+                      #     dateTimeSeparator = " at ",
+                      #     minutesStep = 10,
+                      #     hoursStep = 1
+                      # )
+                  ),
+                  ### Use this to set how many items to run. 
+                  radioButtons(inputId = "numitems",
+                               label = "Number of items to test (10 is for testing)",
+                               choices = c("10", "30", "40", "50", "SEM"),
+                               selected = "10",
+                               inline = T
+                               ),
+                  # sets SEM precision. disabled if SEM not selected in numitems radio buttons
+                  sliderInput("sem", "Minimum acceptable SEM", min = 0.1, max = 0.5, step = 0.01, value = 0.3)
+                  ),
+                  column(width = 1),
+                  column(width = 6,
+                         h3("Instructions:"), br(),
+                         instruction1,
+                         br(),
+                         br(),
+                         instruction2,
+                         br(),
+                         br(),
+                         instruction3,
+                         br(), br(), br(),
+                         div(align = "center",
+                         actionButton("start", inputstart)
+                         )
+                  )
+
+         ),
+         # Page 2 contains the picture stimuli
+         tabPanel(title = tabtitle1,
+                  uiOutput("slides_tab")
+         ),
+        # page 3 contains the results
+         tabPanel(title = tabtitle2, 
+                  
+                  uiOutput("results_tab")
+            
+         )
+    )
 )
 
 # Define server logic required to draw a histogram
