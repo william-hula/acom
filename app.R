@@ -403,9 +403,9 @@ server <- function(input, output, session) {
            # are their  own static area below the slides. 
            fluidRow(
              div(align = "center", style = "width: 50%;",
-                 radioButtons("keys", "for testing inputs",
-                              choices = c(NA, "1", "2"), inline = T, selected = NULL),
-                  actionButton("enter_key", "enter"),br(),
+                 # radioButtons("keys", "for testing inputs",
+                 #              choices = c(NA, "1", "2"), inline = T, selected = NULL),
+                 #  actionButton("enter_key", "enter"),br(),
                  if (input$numitems != "SEM"){
                    progressBar(id = "progress_bar",
                                value = values$i, display_pct = F,
