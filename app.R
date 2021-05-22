@@ -52,13 +52,13 @@ ui <- fluidPage(
                                inputId = "date",
                                label = dateinput,
                                multiple = FALSE,
-                               value = Sys.time(),
-                               timepicker = TRUE,
-                               timepickerOpts = timepickerOptions(
-                                 dateTimeSeparator = " at ",
-                                 minutesStep = 10,
-                                 hoursStep = 1
-                               )
+                               value = Sys.Date()
+                               #timepicker = TRUE,
+                               # timepickerOpts = timepickerOptions(
+                               #   dateTimeSeparator = " at ",
+                               #   minutesStep = 10,
+                               #   hoursStep = 1
+                               # )
                              ),
                              ### Use this to set how many items to run. 
                              radioButtons(inputId = "numitems",

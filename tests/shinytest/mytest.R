@@ -3,7 +3,7 @@ app$snapshotInit("mytest")
 
 app$setInputs(name = "name")
 app$setInputs(notes = "notes")
-app$setInputs(date = 1620133200000)
+app$setInputs(date = 18769)
 app$setInputs(start = "click")
 
 # what responses do you want
