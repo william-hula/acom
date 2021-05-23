@@ -43,8 +43,6 @@ ui <- fluidPage(
          tabPanel(tabtitle0,
                   column(width = 4,
                          h2(welcome),
-                  intro1,
-                  intro2,
                   br(), br(),
                   textInput("name", nameinput),
                   textAreaInput("notes", otherinput),
@@ -69,7 +67,8 @@ ui <- fluidPage(
                                inline = T
                                ),
                   # sets SEM precision. disabled if SEM not selected in numitems radio buttons
-                  sliderInput("sem", "Minimum acceptable SEM", min = 0.1, max = 0.5, step = 0.01, value = 0.3)
+                  sliderInput("sem", "Minimum acceptable SEM", min = 0.1, max = 0.5, step = 0.01, value = 0.3),
+                  checkboxInput("progbar", "Show progress bar (fixed only)")
                   ),
                   column(width = 1),
                   column(width = 6,
@@ -83,11 +82,13 @@ ui <- fluidPage(
                          instruction3,
                          br(), br(), br(),
                          div(align = "center",
-                         actionButton("start", inputstart)
+                         actionButton("start_practice", "Start Practice")
                          )
                   )
 
          ),
+        tabPanel(title = tabtitle_practice,
+                 uiOutput("practice_tab")),
          # Page 2 contains the picture stimuli
          tabPanel(title = tabtitle1,
                   uiOutput("slides_tab")
@@ -108,8 +109,6 @@ server <- function(input, output, session) {
   shinyjs::disable(selector = '.navbar-nav a')
   
   # reactive list. 
-  # see observeEvent(input$start) for more values initialized when starting assessment
-  
   # reactiveValues is like a list where elements of the list can change based on user input
   values = reactiveValues()
   # default starting values
@@ -126,6 +125,15 @@ server <- function(input, output, session) {
   ################################## OBSERVERS ##############################################    
   # -----------------------------------------------------------------------------------------
   ###########################################################################################    
+  
+  observeEvent(input$start_practice,{
+    values$item_difficulty <- items # dataframe of items, difficulty, discrimination; NA column for responses to start. 
+    values$i = 1
+    values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
+    updateNavbarPage(session, "mainpage",
+                     selected = tabtitle_practice)
+    
+  })
   
   # start button. sets the i value to 1 corresponding to the first slide
   # switches to the assessment tab
@@ -192,6 +200,22 @@ server <- function(input, output, session) {
     # if the stopping choice is SEM, check if the current sem is less than the desired precision
     # if its just a static number of items, then check if this number has already been shown
     # returns TRUE or FALSE
+    if(input$mainpage==tabtitle_practice){
+      
+      if(is.null(values$key_val)){ 
+        showNotification("Enter a score", type = "error")
+        # as long as there's a response or it's an insturction slide...
+      } else {
+        values$i = ifelse(values$i<13, values$i + 1, values$i)
+        # updateNavbarPage(session, "mainpage",
+        #                  selected = tabtitle1)
+      }
+      values$key_val = NULL
+      
+    } else {
+      
+
+    
     another_item <- if(input$numitems == "SEM"){
       values$min_sem<values$irt_out[[3]]
     } else {
@@ -272,6 +296,7 @@ server <- function(input, output, session) {
     }
     
     values$key_val = NULL
+    }
     # don't run this on start up. 
   }, ignoreInit = T)
   ######################### END OF IRT OBSERVER ################################# 
@@ -368,13 +393,12 @@ server <- function(input, output, session) {
   
   #  outputs a summary sentence
   output$results_summary <- renderUI({
-    h5(results_data_summary())
-    # h5(
-    #   paste0("The total accuracy for this test was ", round(results_data_summary()*100, 1), "%.", 
-    #          " The final IRT ability estimate is ",
-    #          round(irt_final()$ability, 3), " and the standard error of the mean is ",
-    #          round(irt_final()$sem,3), ".")
-    # )
+    h5(
+      paste0("The total accuracy for this test was ", round(results_data_summary()*100, 1), "%.",
+             " The final IRT ability estimate is ",
+             round(irt_final()$ability, 3), " and the standard error of the mean is ",
+             round(irt_final()$sem,3), ".")
+    )
   })
   
   ################################## DOWNLOAD ##############################################    
@@ -395,30 +419,54 @@ server <- function(input, output, session) {
   #########################################################################################
   
   # this UI is on the server side so that it can be dynamic based on other conditions in the app. 
-  
+  output$practice_tab <-
+    renderUI({
+      column(width = 12, align = "center",
+             div(style = "float:right;",
+                 if (isTruthy(values$key_val == "1" | values$key_val == "2")){
+                   icon("dot-circle", style = "color: grey;")
+                 } else {
+                   icon("circle", style = "color: grey;")
+                 }),
+        fluidRow(
+          tags$img(src = paste0("PNT/slide", values$i, ".jpeg")),
+          if(values$i == 13){
+            div(style = "float:center;", br(),
+                actionButton("start", inputstart)
+            )
+          }
+          )
+        
+      )
+    })
   # UI for slides with pictures.
   output$slides_tab <- renderUI({
-    
     column(width = 12, align = "center",
+           div(style = "float:right;",
+             if (isTruthy(values$key_val == "1" | values$key_val == "2")){
+               icon("dot-circle", style = "color: grey;")
+             } else {
+               icon("circle", style = "color: grey;")
+             }),
            fluidRow(uiOutput("slide")),
            # note the progress bar and next/back buttons are not in the slide image. They
            # are their  own static area below the slides. 
            fluidRow(
              div(align = "center", style = "width: 50%;",
-                 if (input$numitems != "SEM"){
+                 if (input$progbar){
                    progressBar(id = "progress_bar",
                                value = values$i, display_pct = F,
                                size = "xs",
                                range_value = c(1,values$test_length+1))
                  },
-                 br(),
+                 br()
                  # This is solely for testing: always hidden
                  # shinyjs::hidden(
                  # radioButtons("keys", "for testing inputs",
                  #              choices = c(NA, "1", "2"), inline = T, selected = NULL),
                  # actionButton("enter_key", "enter")
                  # )
-                 
+
              )
            )
     )

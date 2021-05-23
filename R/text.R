@@ -23,6 +23,7 @@ instruction3 = "Also, if you open this locally, watch the R console as you enter
 inputstart = "Start Assessment"
 
 tabtitle0 = "Home"
+tabtitle_practice = "Practice"
 tabtitle1 = "Assessment"
 tabtitle2 = "Results"
 
