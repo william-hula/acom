@@ -1,18 +1,18 @@
 ### Langauge data
 
-pagetitle = "This is a title"
+pagetitle = "Computer-adaptive Philadelphia Naming Test"
 
-welcome = "This is a welcome message"
+welcome = "Welcome to the R-Shiny implementation of the computer adaptive philadelphia naming test"
 
-intro1 = "This is an introductory sentence."
+intro1 = "Enter information below."
 
-intro2 = "Lorem Ipsum and all that jazz"
+intro2 = "No data is stored in the app from session to session (right now)"
 
 nameinput = "Enter a Name"
 
-otherinput = "Enter any other notes"
+otherinput = "Enter any notes"
 
-dateinput = "Select date and time"
+dateinput = "Select date"
 
 instruction1 = "Click start assessment when ready."
 

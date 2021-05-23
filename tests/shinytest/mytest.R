@@ -56,6 +56,8 @@ responses <- observed$response[observed$examinee==i]
   }
 
 # grabs the values at the end of the test. 
+# this refers to a new chunk in the server side "exportTestValues" currently
+# around line 340
 exports <- app$getAllValues()[[3]]
 df <- tibble(
   discrimination = strsplit(exports$discrimination, "_", 1)[[1]],
@@ -70,7 +72,8 @@ df <- tibble(
   name = i
 )
 # save the .csv file
-write.csv(df, here("tests", "test_output", paste0(i, "_test_dat.csv")))
+
+write.csv(df, here("tests", "test_output", Sys.Date(), paste0(i, "_test_dat.csv")))
 }
 
 

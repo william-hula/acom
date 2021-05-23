@@ -20,7 +20,7 @@
 # read in test data
 library(fs)
 library(vroom)
-files <- fs::dir_ls(here("tests", "test_output"))
+files <- fs::dir_ls(here("tests", "test_output", "2021-05-22"))
 df = vroom::vroom(files)
 rm(files)
 
@@ -56,7 +56,7 @@ together <- observed %>%
 # with ties. 
 
 mean(together$target_test)
-# [1] 0.7597222
+# [1] 0.7611111
 
 # when targets don't match, whats the maximum difference between difficulties?
 # oh, its zero, they are the same difficulty

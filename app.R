@@ -305,8 +305,9 @@ server <- function(input, output, session) {
   
   # holds the mean accuracy
   results_data_summary <- reactive({
-    dplyr::bind_rows(values$item_difficulty) %>%
+    d = dplyr::bind_rows(values$item_difficulty) %>%
       # have to switch 0s and 1s because IRT is dumb. 
+      drop_na() %>%
       mutate(response = as.numeric(ifelse(response == 0, 1, 0))) %>%
       summarize(accuracy = mean(response)) %>%
       pull(accuracy)
@@ -367,12 +368,13 @@ server <- function(input, output, session) {
   
   #  outputs a summary sentence
   output$results_summary <- renderUI({
-    h5(
-      paste0("The total accuracy for this test was ", round(results_data_summary()*100, 1), "%.", 
-             " The final IRT ability estimate is ",
-             round(irt_final()$ability, 3), " and the standard error of the mean is ",
-             round(irt_final()$sem,3), ".")
-    )
+    h5(results_data_summary())
+    # h5(
+    #   paste0("The total accuracy for this test was ", round(results_data_summary()*100, 1), "%.", 
+    #          " The final IRT ability estimate is ",
+    #          round(irt_final()$ability, 3), " and the standard error of the mean is ",
+    #          round(irt_final()$sem,3), ".")
+    # )
   })
   
   ################################## DOWNLOAD ##############################################    
@@ -411,11 +413,11 @@ server <- function(input, output, session) {
                  },
                  br(),
                  # This is solely for testing: always hidden
-                 shinyjs::hidden(
-                 radioButtons("keys", "for testing inputs",
-                              choices = c(NA, "1", "2"), inline = T, selected = NULL),
-                 actionButton("enter_key", "enter")
-                 )
+                 # shinyjs::hidden(
+                 # radioButtons("keys", "for testing inputs",
+                 #              choices = c(NA, "1", "2"), inline = T, selected = NULL),
+                 # actionButton("enter_key", "enter")
+                 # )
                  
              )
            )
