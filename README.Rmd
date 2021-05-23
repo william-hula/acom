@@ -59,3 +59,4 @@ Or clone the repository and run locally.
 
 - randomly select one of 2-3 best next options
 - create ability to upload previous file to prevent reuse of previously tested words
+- Convert to an R package. I started this, but its tricky and things go wrong so I reverted back. right now, there's an r-package branch to be worked on...
