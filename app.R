@@ -67,7 +67,7 @@ ui <- fluidPage(
                             
                             ### Use this to set how many items to run. 
                             radioButtons(inputId = "numitems",
-                                         label = "Number of items to test (10 is for testing)",
+                                         label = "Number of items (10 is for testing)",
                                          choices = c("10", "30", "60", "175", "SEM"),
                                          selected = "10",
                                          inline = T
