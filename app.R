@@ -15,8 +15,11 @@ library(shinyjs)
 # source(here('R','next_slide.R'))
 
 # These indicate errors (1) and correct responses (2)
+incorrect_key_response = "1"
+correct_key_response = "2"
+
 response_keys <- c(
-  "1","2"
+  incorrect_key_response, correct_key_response
 )
 
 # The next button
@@ -62,7 +65,7 @@ ui <- fluidPage(
                   ### Use this to set how many items to run. 
                   radioButtons(inputId = "numitems",
                                label = "Number of items to test (10 is for testing)",
-                               choices = c("10", "30", "40", "50", "SEM"),
+                               choices = c("10", "30", "60", "SEM"),
                                selected = "10",
                                inline = T
                                ),
@@ -172,14 +175,14 @@ server <- function(input, output, session) {
     values$min_sem <- input$sem
   })
   
-  # no key presses on home or results page
-  # observe({
-  #   if(input$mainpage==tabtitle2 || input$mainpage==tabtitle0){
-  #     pauseKey()
-  #   } else {
-  #     unpauseKey()
-  #   }
-  # })
+  #no key presses on home or results page
+  observe({
+    if(input$mainpage==tabtitle2 || input$mainpage==tabtitle0){
+      pauseKey()
+    } else {
+      unpauseKey()
+    }
+  })
   
   # tracks the key inputs
   observeEvent(input$keys, {
@@ -234,8 +237,8 @@ server <- function(input, output, session) {
       # If a keyu press was detected, store it in our dataframe of items, difficulty, discrimination etc...
       # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
       values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <- ifelse(
-        values$key_val == "1", 1,
-        ifelse(values$key_val == "2", 0, "NR"))
+        values$key_val == incorrect_key_response, 1,
+        ifelse(values$key_val == correct_key_response, 0, "NR"))
       
       # see R/next_slide for this script.
       # it takes in the current data, values$item_difficulty
@@ -257,8 +260,8 @@ server <- function(input, output, session) {
         # what was the key press
         key = values$key_val,
         # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
-        resp = ifelse(values$key_val == "1", "incorrect",
-                      ifelse(values$key_val == "2", "correct", "NR")
+        resp = ifelse(values$key_val == incorrect_key_response, "incorrect",
+                      ifelse(values$key_val == correct_key_response, "correct", "NR")
         ),
         # NEW ability estimate after model restimation
         ability = round(values$irt_out[[1]],3),
@@ -426,7 +429,7 @@ server <- function(input, output, session) {
     renderUI({
       column(width = 12, align = "center",
              div(style = "float:right;",
-                 if (isTruthy(values$key_val == "1" | values$key_val == "2")){
+                 if (isTruthy(values$key_val == incorrect_key_response | values$key_val == correct_key_response)){
                    icon("dot-circle", style = "color: grey;")
                  } else {
                    icon("circle", style = "color: grey;")
@@ -446,7 +449,7 @@ server <- function(input, output, session) {
   output$slides_tab <- renderUI({
     column(width = 12, align = "center",
            div(style = "float:right;",
-             if (isTruthy(values$key_val == "1" | values$key_val == "2")){
+             if (isTruthy(values$key_val == incorrect_key_response | values$key_val == correct_key_response)){
                icon("dot-circle", style = "color: grey;")
              } else {
                icon("circle", style = "color: grey;")
@@ -466,7 +469,7 @@ server <- function(input, output, session) {
                  # This is solely for testing: always hidden
                  # shinyjs::hidden(
                  # radioButtons("keys", "for testing inputs",
-                 #              choices = c(NA, "1", "2"), inline = T, selected = NULL),
+                 #              choices = c(NA, incorrect_key_response, correct_key_response), inline = T, selected = NULL),
                  # actionButton("enter_key", "enter")
                  # )
 

@@ -43,6 +43,7 @@ Or clone the repository and run locally.
 -   ~~Add slides with practice trials~~
     -   NOTE: Responses not currently logged. ok?
 -   Add instructions, background info, and other important info
+-   ~~click sound~~
 -   Make it pretty
 -   produce a results plot, norms, and any other information
 -   make a “report” that is downloadable
