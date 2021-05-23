@@ -40,7 +40,8 @@ Or clone the repository and run locally.
 
 ### For short-term use
 
--   Add slides with practice trials
+-   ~~Add slides with practice trials~~
+    -   NOTE: Responses not currently logged. ok?
 -   Add instructions, background info, and other important info
 -   Make it pretty
 -   produce a results plot, norms, and any other information
