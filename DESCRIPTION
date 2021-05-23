@@ -1,5 +1,5 @@
 Package: pnt
-Title: What the Package Does (One Line, Title Case)
+Title: Computer adaptive Philadelphia Naming Test
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "First",
@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "first.last@example.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Description: R Shiny implementation of a computer adaptive Philadelphia Naming Test
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
