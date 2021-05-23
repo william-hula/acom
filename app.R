@@ -29,12 +29,12 @@ enter <- "enter"
 # Define UI for the application. 
 # Just the interface.
 ui <- fluidPage(
-
                 # css no clicky on tabs
                 tags$head(tags$style(HTML('.navbar-nav a {cursor: default}'))),
                 # imports javascript for hotkeys
                 useKeys(),
                 useShinyjs(),
+                extendShinyjs(script = "click.js", functions = "click_sound"),
                 keysInput("keys", response_keys),
                 keysInput("enter_key", enter),
         # layout starts here
@@ -127,6 +127,7 @@ server <- function(input, output, session) {
   ###########################################################################################    
   
   observeEvent(input$start_practice,{
+    js$click_sound()
     values$item_difficulty <- items # dataframe of items, difficulty, discrimination; NA column for responses to start. 
     values$i = 1
     values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
@@ -150,6 +151,7 @@ server <- function(input, output, session) {
     if(input$numitems != "SEM"){
       updateProgressBar(session = session, id = "progress_bar", value = 0)
     }
+    js$click_sound()
   })
   
   # enables or disables precision option if SEM is or isn't selected. 
@@ -206,6 +208,7 @@ server <- function(input, output, session) {
         showNotification("Enter a score", type = "error")
         # as long as there's a response or it's an insturction slide...
       } else {
+        js$click_sound()
         values$i = ifelse(values$i<13, values$i + 1, values$i)
         # updateNavbarPage(session, "mainpage",
         #                  selected = tabtitle1)
@@ -227,7 +230,7 @@ server <- function(input, output, session) {
       showNotification("Enter a score", type = "error")
       # as long as there's a response or it's an insturction slide...
     } else if (another_item) {
-      
+      js$click_sound()
       # If a keyu press was detected, store it in our dataframe of items, difficulty, discrimination etc...
       # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
       values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <- ifelse(
