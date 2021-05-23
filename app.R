@@ -68,7 +68,7 @@ ui <- fluidPage(
                             ### Use this to set how many items to run. 
                             radioButtons(inputId = "numitems",
                                          label = "Number of items to test (10 is for testing)",
-                                         choices = c("10", "30", "60", "SEM"),
+                                         choices = c("10", "30", "60", "175", "SEM"),
                                          selected = "10",
                                          inline = T
                                          ),
@@ -138,6 +138,7 @@ server <- function(input, output, session) {
     values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
     updateNavbarPage(session, "mainpage",
                      selected = tabtitle_practice)
+    values$IRT = ifelse(input$numitems == "175", FALSE, TRUE)
     
   })
   
@@ -149,7 +150,7 @@ server <- function(input, output, session) {
     # dataframe of items, difficulty, discrimination; NA column for responses to start.
     values$item_difficulty <- items  
     values$i = 1
-    values$n = 130 # this selects the picture. 130 = pumpkin
+    values$n = ifelse(values$IRT, 130, 14) # this selects the picture. 130 = pumpkin
     values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
     values$irt_out <- list(0, 0, 1)
     updateNavbarPage(session, "mainpage",
@@ -252,7 +253,7 @@ server <- function(input, output, session) {
                 # element[[2]] is a list of information returned by catR::nextSlide(), 
                 # including $name, the name of the next item
                 # element[[3]] returns the sem after re-estimating the model
-                values$irt_out = irt_function(values$item_difficulty)
+                values$irt_out = irt_function(values$item_difficulty, values$IRT)
                 
                 # save info to the item_difficulty data_frame
                 values$item_difficulty[values$item_difficulty$slide_num == values$n,][7:11] = tibble(
@@ -276,16 +277,25 @@ server <- function(input, output, session) {
                 
                 # pick the next slide using the output of the irt
                 # conditional fixes a bug for the last item if the test goes all the way to 175
-                values$n = if(!is.na(values$irt_out[[2]][[1]])){
-                  values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
-                } else {
-                  190 # end of test slide. wont be shown anyway but just in case. 
-                }
+                values$n = 
+                  if(values$IRT){
+                  
+                      if(!is.na(values$irt_out[[2]][[1]])){
+                      values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
+                    } else {
+                      190
+                    }
+                    
+                  } else {
+                
+                    values$irt_out[[2]][[2]]
+                    
+                } 
+                  
                 # iterate the order
                 values$i = values$i + 1
             
           } 
-          
           # prints to the console
           print(tail(values$item_difficulty %>% drop_na(response) %>% arrange(order), 10))
           

@@ -48,6 +48,7 @@ Or clone the repository and run locally.
 -   produce a results plot, norms, and any other information
 -   make a “report” that is downloadable
 -   ~~indicator that response has been logged~~
+-   ~~Add full PNT~~
 
 ### Longer-term
 
