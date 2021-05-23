@@ -12,7 +12,7 @@ library(here)
 # library(irtoys) 
 # library(ltm)
 
-items = read.csv(here("www", "item_difficulty.csv")) %>% 
+items = read.csv(here("data", "item_difficulty.csv")) %>% 
   dplyr::select(target, itemDifficulty = Item.Difficulty, discrimination = Discrimination, slide_num) %>%
   mutate(response = NA,
          item_number = row_number(),
@@ -22,7 +22,7 @@ items = read.csv(here("www", "item_difficulty.csv")) %>%
          ability = NA,
          sem = NA)
 
-item_key = read.csv(here("www", "item_difficulty.csv")) %>% 
+item_key = read.csv(here("data", "item_difficulty.csv")) %>% 
   dplyr::select(target, slide_num, itemDifficulty = Item.Difficulty)
 
 # the magic!
