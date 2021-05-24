@@ -1,12 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# pnt (beta)
+# PNT-CAT (beta)
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-Barebones structure for implementing a CAT naming test using shiny.
+Beta-version of computer adaptive philadelphia naming test
 
 To run, make sure these packages are installed on your local machine:
 

@@ -11,12 +11,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-# pnt (beta)
+# PNT-CAT (beta)
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-Barebones structure for implementing a CAT naming test using shiny.
+Beta-version of computer adaptive philadelphia naming test
 
 To run, make sure these packages are installed on your local machine:
 
