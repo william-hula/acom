@@ -54,11 +54,11 @@ ui <- fluidPage(
                    theme = bs_theme(bootswatch = "default",
                                     base_font = font_google("Open Sans"),
                                     heading_font = font_google("Open Sans"),
-                                    version = "4",
-                                    font_scale = 0.9,
+                                    version = "3",
                                     `enable-rounded` = FALSE,
-                                    spacer = ".9rem"
-                                    ),
+                                    `enable-transitions` = FALSE,
+                                    primary = "#1665AC"
+                   ),
         # page 1 instructions
         
         ############################ Instructions ######################### 
