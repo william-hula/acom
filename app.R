@@ -128,6 +128,7 @@ server <- function(input, output, session) {
   # reactive list. 
   # reactiveValues is like a list where elements of the list can change based on user input
   values = reactiveValues()
+  values$item_difficulty <- items 
   # default starting values
   values$i = 0 # this is the counter to track the slide number
   values$test_length <- NULL
@@ -142,7 +143,7 @@ server <- function(input, output, session) {
     # play click
     js$click_sound()
     # dataframe of items, difficulty, discrimination; NA column for responses to start. 
-    values$item_difficulty <- items 
+    #values$item_difficulty <- items 
     values$i = 1
     values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
     updateNavbarPage(session, "mainpage",
@@ -467,7 +468,7 @@ server <- function(input, output, session) {
                   tags$img(src = paste0("PNT/slide", values$i, ".jpeg")),
                   # start button, at the end of the practice slides
                   if(values$i == 13){
-                    div(#align = "center", br(),
+                    div(br(),
                         actionButton("start", inputstart)
                     )
                   }
