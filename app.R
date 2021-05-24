@@ -409,7 +409,7 @@ server <- function(input, output, session) {
   
   # this shows the slide for the i'th value
   output$slide <- renderUI({
-      tmp = paste0("PNT/slide", values$n, ".jpeg")
+      tmp = paste0("PNT/Slide", values$n, ".jpeg")
       #print(tmp)
       tags$img(src = tmp)
   })
@@ -465,7 +465,7 @@ server <- function(input, output, session) {
                ),
             fluidRow(
               column(width = 8, offset = 2,align = "center",
-                  tags$img(src = paste0("PNT/slide", values$i, ".jpeg")),
+                  tags$img(src = paste0("PNT/Slide", values$i, ".jpeg")),
                   # start button, at the end of the practice slides
                   if(values$i == 13){
                     div(br(),

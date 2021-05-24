@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# pnt
+# pnt (beta)
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -24,6 +24,9 @@ shiny::runGitHub("rbcavanaugh/pnt")
 ```
 
 Or clone the repository and run locally.
+
+Update 5-24: Now preliminary version is on shinyapps.io:
+<https://rb-cavanaugh.shinyapps.io/pnt-cat/>
 
 ## To do list
 
