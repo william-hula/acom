@@ -20,6 +20,8 @@
 # read in test data
 library(fs)
 library(vroom)
+library(tidyr)
+library(stringr)
 files <- fs::dir_ls(here("tests", "test_output", "2021-05-22"))
 df = vroom::vroom(files)
 rm(files)
@@ -70,7 +72,11 @@ hist(together$error_test, breaks = 20)
 
 # lets just look at the final estimate too:
 final <- together %>%
-  filter(order == 30)
+  filter(order == 30) %>%
+  mutate(examinee_deid = paste0("participant_", row_number())) %>%
+  select(examinee_deid, ability, error, obs_ability, obs_error)
+
+#write.csv(final, here("tests", "2021-05-22_shiny_vs_observed.csv"))
 
 # these suggest no problems as well
 cor(final$ability, final$obs_ability)
