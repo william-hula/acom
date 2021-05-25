@@ -32,7 +32,7 @@ Update 5-24: Now preliminary version is on shinyapps.io:
 
 ### Validation
 
--   Check if app is choosing the same items as catpuccino
+-   ~~Check if app is choosing the same items as catpuccino~~
 -   ~~validate final results in app use (bonus if automated)~~
     -   QUESTION: How does catpuccino handle ties? Testing is showing
         occasional inconsistencies in which items are being chosen, but
@@ -44,12 +44,13 @@ Update 5-24: Now preliminary version is on shinyapps.io:
 ### For short-term use
 
 -   ~~Add slides with practice trials~~
-    -   NOTE: Responses not currently logged. ok?
+    -   ~~NOTE: Responses not currently logged. ok?~~
 -   Add instructions, background info, and other important info
+    -   just refer to MRRI vs. including info…?
+-   produce a results plot, norms, and any other information to
+    interpret the results
 -   ~~click sound~~
--   Make it pretty
--   produce a results plot, norms, and any other information
--   make a “report” that is downloadable
+-   ~~Make it pretty~~
 -   ~~indicator that response has been logged~~
 -   ~~Add full PNT~~
 
@@ -61,3 +62,4 @@ Update 5-24: Now preliminary version is on shinyapps.io:
 -   Convert to an R package. I started this, but its tricky and things
     go wrong so I reverted back. right now, there’s an r-package branch
     to be worked on…
+-   make a “report” that is downloadable

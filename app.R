@@ -69,7 +69,7 @@ ui <- fluidPage(
                          tags$ol(
                            tags$li(instruction1),
                            tags$li(instruction2),
-                           tags$li(instruction3)
+                           tags$li("Refer to", tags$a(href = "https://mrri.org/philadelphia-naming-test/", "MRRI.org/philadelphia-naming-test/", target = "_blank"), instruction3)
                          ), br(),
                         div(align = "center",
                             textInput("name", nameinput),
