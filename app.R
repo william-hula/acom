@@ -59,9 +59,9 @@ ui <- tagList(
                    theme = bs_theme(bootswatch = "default",
                                     base_font = font_google("Open Sans"),
                                     heading_font = font_google("Open Sans"),
-                                    version = "3",
+                                    version = "4",
                                     `enable-rounded` = FALSE,
-                                    `enable-transitions` = FALSE,
+                                    `enable-transitions` = F,
                                     primary = "#1665AC"
                    ),
         # page 1 instructions
@@ -95,10 +95,11 @@ ui <- tagList(
                                         step = 0.01,
                                         value = 0.3),
                             checkboxInput("progbar", "Show progress bar (fixed only)", value = F),
-                            checkboxInput("random", "Random Order (175 only)", value = F), br(),
+                            checkboxInput("random", "Random Order (175 only)", value = F),
                             actionButton("start_practice", "Start Practice")
                             )
-                  )
+                  ),
+                  column(width = 2)
          ),
         
         ############################ Practice #########################
@@ -437,13 +438,6 @@ server <- function(input, output, session) {
   # ---------------------------------------------------------------------------------------
   #########################################################################################
   
-  # this shows the slide for the i'th value
-  output$slide <- renderUI({
-      tmp = paste0("PNT/Slide", values$n, ".jpeg")
-      #print(tmp)
-      tags$img(src = tmp)
-  })
-  
   # outputs a table of the item level responses
   output$results_long <- renderDT({
       results_data_long() %>%
@@ -551,13 +545,13 @@ server <- function(input, output, session) {
       column(width = 12,
                fluidRow(
                  if (isTruthy(values$key_val == incorrect_key_response | values$key_val == correct_key_response)){
-                   icon("dot-circle", style = "color: grey; position: absolute; right: 10px;")
+                   icon("dot-circle", style = "color: grey; position: absolute; right: 5px;")
                  } else {
-                   icon("circle", style = "color: grey; position: absolute; right: 10px;")
+                   icon("circle", style = "color: grey; position: absolute; right: 5px;")
                  }
                ),
             fluidRow(
-              column(width = 8, offset = 2,align = "center",
+              column(width = 8, offset = 2, align = "center",
                   tags$img(src = paste0("PNT/Slide", values$i, ".jpeg")),
                   # start button, at the end of the practice slides
                   if(values$i == 13){
@@ -565,49 +559,53 @@ server <- function(input, output, session) {
                         actionButton("start", inputstart)
                     )
                   }
-              )
+              ),
+              column(width = 2)
             )
       )
     })
   
   # UI for assessment slides
-  output$slides_tab <- renderUI({
-    column(width = 12,
-        fluidRow(
-                     if (isTruthy(values$key_val == incorrect_key_response | values$key_val == correct_key_response)){
-                       icon("dot-circle", style = "color: grey; position: absolute; right: 10px;")
-                     } else {
-                       icon("circle", style = "color: grey; position: absolute; right: 10px;")
-                     }
-        ),
-        fluidRow(
-            column(width = 8, offset = 2,
-                   fluidRow(uiOutput("slide")),
-                   
-                   # note the progress bar and next/back buttons are not in the slide image. They
-                   # are their  own static area below the slides. 
-                   fluidRow(
-                     div(align = "center", style = "width: 50%;",
-                         
-                         if (input$progbar){
-                             progressBar(id = "progress_bar",
-                                         value = values$i, display_pct = F,
-                                         size = "xs",
-                                         range_value = c(1,values$test_length+1))
-                         },br()
-                         
-                         # This is solely for testing: always hidden
-                         # shinyjs::hidden(
-                         # radioButtons("keys", "for testing inputs",
-                         #              choices = c(NA, incorrect_key_response, correct_key_response),
-                         #              inline = T, selected = NULL),
-                         # actionButton("enter_key", "enter")
-                         # )
+  output$slides_tab <- 
+    renderUI({
+      column(width = 12,
+          fluidRow(
+                       if (isTruthy(values$key_val == incorrect_key_response | values$key_val == correct_key_response)){
+                         icon("dot-circle", style = "color: grey; position: absolute; right: 10px;")
+                       } else {
+                         icon("circle", style = "color: grey; position: absolute; right: 10px;")
+                       }
+          ),
+          fluidRow(
+              column(width = 8, offset = 2, align = "center",
+                     fluidRow(
+                              tags$img(src = paste0("PNT/Slide", values$n, ".jpeg"))
+                     ),
+                     # note the progress bar and next/back buttons are not in the slide image. They
+                     # are their  own static area below the slides. 
+                     fluidRow(
+                       div(align = "center", style = "width: 50%;",
+                           
+                           if (input$progbar){
+                               progressBar(id = "progress_bar",
+                                           value = values$i, display_pct = F,
+                                           size = "xs",
+                                           range_value = c(1,values$test_length+1))
+                           },br()
+                           
+                           # This is solely for testing: always hidden
+                           # shinyjs::hidden(
+                           # radioButtons("keys", "for testing inputs",
+                           #              choices = c(NA, incorrect_key_response, correct_key_response),
+                           #              inline = T, selected = NULL),
+                           # actionButton("enter_key", "enter")
+                           # )
+                       )
                      )
-                   )
-            )
-        )
-    )
+              ),
+              column(width = 2)
+          )
+      )
   })
   
   # UI for results page
@@ -630,7 +628,8 @@ server <- function(input, output, session) {
                                actionButton("start_over",
                                             "Start Over")
                       )
-                  )
+                  ),
+                 column(width = 2)
               )
   })
   outputOptions(output, "results_long", suspendWhenHidden = FALSE)
