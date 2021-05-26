@@ -2,7 +2,6 @@ PNT-CAT (beta)
 ================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<!-- # PNT-CAT (beta) -->
 <!-- badges: start -->
 <!-- badges: end -->
 

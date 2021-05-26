@@ -1,8 +1,10 @@
 ---
 title: PNT-CAT (beta)
-#output: github_document
-output: html_document
+output:
+  github_document:
+    keep_html: true
 ---
+
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -13,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-<!-- # PNT-CAT (beta) -->
+
 
 <!-- badges: start -->
 <!-- badges: end -->
