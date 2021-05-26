@@ -4,6 +4,41 @@ img {
   height: auto
 }
 
-@media only screen and (min-width: 780px) {
+
+
+/*@media only screen and (min-width: 780px) {
 .navbar .navbar-nav {float: right}
+}*/
+
+.navbar .navbar-nav {
+  display:none;
+}
+
+.navbar-default {
+    background-color: #f2f5f7;
+    border-color: #e8e8e8;
+    
+}
+
+.navbar-default .navbar-brand {
+  color: #323333;
+}
+
+.footer{
+  position:fixed;
+  bottom:0;
+  right:0;
+  left:0;
+  background:#f2f5f7;
+  padding-bottom:0px;
+  box-sizing:border-box;
+
+}
+
+a {
+  color:black;
+}
+
+.fa, .fab {
+  margin-right: 5px;
 }

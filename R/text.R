@@ -14,6 +14,9 @@ instruction2 =  "Press '1' for an incorrect response and '2' for a correct respo
 
 instruction3 = " for more details on administration."
 
+instruction4 = "Any other instructions can go on this page, or in the more information modal in the footer."
+
+
 inputstart = "Start Assessment"
 
 tabtitle0 = "Home"

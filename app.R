@@ -36,7 +36,7 @@ enter <- "enter"
 # -----------------------------------------------------------------------------------------
 ###########################################################################################  
 
-ui <- fluidPage(
+ui <- tagList(
   
       ############################ SETUP ######################################
       
@@ -49,10 +49,32 @@ ui <- fluidPage(
                 keysInput("keys", response_keys),
                 keysInput("enter_key", enter),
                 includeCSS("www/style.css"),
-      
       ############################ layout starts here ######################### 
       
         navbarPage(title = pagetitle, id = "mainpage",
+                   footer = tags$div(
+                    class = "footer",
+                     p(
+                       column(10, offset = 1, align = "center",
+                              p(
+                                  actionButton(
+                                    inputId='source',
+                                    label="Source Code",
+                                    icon = icon("github"),
+                                    onclick ="window.open('https://github.com/rbcavanaugh/pnt', '_blank')",
+                                    style = "background:transparent; border:none;"
+                                    
+                                  ),
+                                  actionButton(
+                                    inputId = "info",
+                                    label = "More Information",
+                                    icon = icon("info-circle", lib = "font-awesome"),
+                                    style = "background:transparent; border:none;"
+                                  )
+                                )
+                        )
+                     )
+                   ),
                    theme = bs_theme(bootswatch = "default",
                                     base_font = font_google("Open Sans"),
                                     heading_font = font_google("Open Sans"),
@@ -71,7 +93,8 @@ ui <- fluidPage(
                          tags$ol(
                            tags$li(instruction1),
                            tags$li(instruction2),
-                           tags$li("Refer to", tags$a(href = "https://mrri.org/philadelphia-naming-test/", "MRRI.org/philadelphia-naming-test/", target = "_blank"), instruction3)
+                           tags$li("Refer to", tags$a(href = "https://mrri.org/philadelphia-naming-test/", "MRRI.org/philadelphia-naming-test/", target = "_blank"), instruction3),
+                           tags$li(instruction4)
                          ), br(),
                         div(align = "center",
                             textInput("name", nameinput),
@@ -450,19 +473,28 @@ server <- function(input, output, session) {
       }
   )
   
+  ################################## FOOTER MODAL ##########################################
+  # ---------------------------------------------------------------------------------------
+  #########################################################################################
+  
+  observeEvent(input$info, {
+    showModal(modalDialog(
+      title = "This modal will contain important information about the app",
+      "This is important",
+      br(), br(), br(),br(), br(), br(),br(), br(), br(),br(), br(), 
+      "Link to papers, contact info, more detailed scoring info etc...",
+      br(), br(), br(),br(), br(), br(),br(), br(), br(),br(), br(), 
+      "Dismiss it by clicking anywhere outside of it.",
+      easyClose = TRUE,
+      footer = NULL,
+      size = "m"
+    ))
+  })
   
   ################################## PLOT #################################################    
   # ---------------------------------------------------------------------------------------
   #########################################################################################
-  
-  dt <- data.frame(x=c(1:200),y=rnorm(200))
-  dens <- density(dt$y)
-  df <- data.frame(x=dens$x, y=dens$y)
-  probs <- c(0.1, 0.25, 0.5, 0.75, 0.9)
-  quantiles <- quantile(dt$y, prob=probs)
-  df$quant <- factor(findInterval(df$x,quantiles))
-  ggplot(df, aes(x,y)) + geom_line() + geom_ribbon(aes(ymin=0, ymax=y, fill=quant)) + scale_x_continuous(breaks=quantiles) + scale_fill_brewer(guide="none")
-  
+
   
   output$plot <- renderPlot({# Fergadiotis, 2019
    
@@ -478,8 +510,8 @@ server <- function(input, output, session) {
 
   df %>%
      ggplot(aes(x = x, y = y)) +
-      geom_line(size = 2) +
       geom_ribbon(aes(ymin = 0, ymax = y-0.001, fill = fill)) +
+      geom_line(size = 2) +
       geom_vline(aes(xintercept = irt_final()$ability), color = "darkred", size = 1.5) +
       scale_x_continuous(breaks=seq(-5,5,1), limits = c(-5,5)) +
       scale_fill_brewer(guide="none") +
