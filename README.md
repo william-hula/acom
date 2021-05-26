@@ -48,12 +48,16 @@ Update 5-24: Now preliminary version is on shinyapps.io:
     -   ~~NOTE: Responses not currently logged. ok?~~
 -   Add instructions, background info, and other important info
     -   just refer to MRRI vs. including info…?
--   produce a results plot, norms, and any other information to
-    interpret the results
+-   ~~produce a results plot, norms, and any other information to
+    interpret the results~~
+    -   QUESTION: plot distribution sd = 1.48? Also, harder to get &gt;3
+        or &lt;3 in ability…
 -   ~~click sound~~
 -   ~~Make it pretty~~
 -   ~~indicator that response has been logged~~
 -   ~~Add full PNT~~
+    -   QUESTION: Add option to randomize full PNT?
+-   ~~Add source code~~
 
 ### Longer-term
 

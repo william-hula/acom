@@ -53,6 +53,7 @@ ui <- tagList(
       
         navbarPage(title = pagetitle, id = "mainpage",
                    footer = tags$div(
+                    id = "footer_id",
                     class = "footer",
                      p(
                        column(10, offset = 1, align = "center",
@@ -68,7 +69,13 @@ ui <- tagList(
                                   actionButton(
                                     inputId = "info",
                                     label = "More Information",
-                                    icon = icon("info-circle", lib = "font-awesome"),
+                                    icon = icon("info-circle"),
+                                    style = "background:transparent; border:none;"
+                                  ),
+                                  actionButton(
+                                    inputId = "dev",
+                                    label = "Development Status",
+                                    icon = icon("code-branch"),
                                     style = "background:transparent; border:none;"
                                   )
                                 )
@@ -218,8 +225,11 @@ server <- function(input, output, session) {
   observe({
     if(input$mainpage==tabtitle2 || input$mainpage==tabtitle0){
       pauseKey()
+      shinyjs::show("footer_id")
     } else {
       unpauseKey()
+      shinyjs::hide("footer_id")
+      
     }
   })
   
@@ -491,6 +501,14 @@ server <- function(input, output, session) {
     ))
   })
   
+  observeEvent(input$dev, {
+    showModal(modalDialog(
+      includeMarkdown("README.md"),
+      size = "m",
+      easyClose = TRUE
+    ))
+  })
+  
   ################################## PLOT #################################################    
   # ---------------------------------------------------------------------------------------
   #########################################################################################
@@ -516,8 +534,9 @@ server <- function(input, output, session) {
       scale_x_continuous(breaks=seq(-5,5,1), limits = c(-5,5)) +
       scale_fill_brewer(guide="none") +
       theme_minimal(base_size = 18) +
-      xlab("Ability Estimate") + 
+      xlab("PNT Ability Estimate") + 
       ylab("Density") +
+      labs(caption = "sd = 1.48. Correct? Also, harder to get >3 or <3 in ability...") +
       theme(axis.title.x = element_text(vjust=-1),
             plot.margin = unit(c(15, 5.5, 15, 5.5), "pt"))
     
