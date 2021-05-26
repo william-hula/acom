@@ -32,10 +32,7 @@ item_key = read.csv(here("data", "item_difficulty.csv")) %>%
 
 irt_function <- function(all_items, IRT = T){
     
-  if(IRT){
-    
-    tmp_list = list()
-      
+    #tmp_list = list()
       
       # this is for the out argument. 
       # creates a vector of the items that have already been completed
@@ -60,19 +57,27 @@ irt_function <- function(all_items, IRT = T){
        # ability estimate using bayes modal:
        ability = thetaEst(bank, x, method = "EAP", range = c(-5, 5))
        # generates the next item
-       
-        next_item = if(length(completed)<175){
-          nextItem(itemBank = bank, theta = ability, out = completed)
-       } else {
-          NA
-       }
        # standard error of the mean
        sem = semTheta(ability, bank, x)
-       
+    
+       if(IRT){
+         
+         next_item = if(length(completed)<175){
+           nextItem(itemBank = bank, theta = ability, out = completed)
+         } else {
+           NA
+         }
+         
        # save to a list to return to the app
-       tmp_list[[1]] = ability
-       tmp_list[[2]] = next_item
-       tmp_list[[3]] = sem
+       # tmp_list[[1]] = ability
+       # tmp_list[[2]] = next_item
+       # tmp_list[[3]] = sem
+       
+         tmp_list = list(
+         ability,
+         next_item,
+         sem
+       )
         
        return(tmp_list)
        
@@ -83,14 +88,16 @@ irt_function <- function(all_items, IRT = T){
         mutate(next_item = ifelse(!is.na(response), pnt_order+1, NA)) %>%
         filter(pnt_order == max(next_item, na.rm = T)) 
       
-      list(
-        0,
+      tmp_list = list(
+        ability,
         list(
           NA,
           slide_num_out = ifelse(nrow(next_slide_num) < 1, 190, next_slide_num$slide_num)
           ),
-        0
+        sem
       )
+      
+      return(tmp_list)
       
     }
 }

@@ -167,17 +167,7 @@ server <- function(input, output, session) {
     # dataframe of items, difficulty, discrimination; NA column for responses to start.
     values$item_difficulty <- items  
     values$i = 1
-    values$n = 
-      if(isTruthy(values$IRT)){
-       130 # this selects the picture. 130 = pumpkin
-    } else if (isTruthy(input$random)) {
-       sample(1:175, 1) # if random, random first item      
-    } else {
-      14 #otherwise candle
-      }
     
-    values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
-    values$irt_out <- list(0, 0, 1)
     # randomly orders stuff if the random order box is checked. only affects 175 selection
     if(isTruthy(input$random)){
       values$item_difficulty <-
@@ -185,6 +175,20 @@ server <- function(input, output, session) {
         mutate(pnt_order = sample(pnt_order)) %>%
         arrange(pnt_order)
     }
+    
+    values$n = if(isTruthy(values$IRT)){
+      130 # this selects the picture. 130 = pumpkin
+    } else if (isTruthy(input$random)) {
+      # if random, grab first row in values$item_difficulty, which is already randomized in code above
+      values$item_difficulty[values$item_difficulty$pnt_order == 1,]$slide_num 
+    } else {
+      14 #otherwise candle
+    }
+      
+    
+    values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
+    values$irt_out <- list(0, 0, 1)
+    
     # got to slides
     updateNavbarPage(session, "mainpage",
                      selected = tabtitle1)
