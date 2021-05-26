@@ -627,7 +627,9 @@ server <- function(input, output, session) {
                                downloadButton("downloadData",
                                               "Download results"),
                                actionButton("start_over",
-                                            "Start Over")
+                                            "Start Over",
+                                            icon = icon("undo-alt")
+                                            )
                       )
                   ),
                  column(width = 2)
