@@ -74,17 +74,16 @@ ui <- tagList(
                          tags$ol(
                            tags$li(instruction1),
                            tags$li(instruction2),
-                           tags$li("Refer to", tags$a(href = "https://mrri.org/philadelphia-naming-test/", "MRRI.org/philadelphia-naming-test/", target = "_blank"), instruction3),
-                           tags$li(instruction4)
+                           tags$li("Refer to", tags$a(href = "https://mrri.org/philadelphia-naming-test/", "MRRI.org/philadelphia-naming-test/", target = "_blank"), instruction3)
                          ), br(),
                         div(align = "center",
                             textInput("name", nameinput),
-                            textAreaInput("notes", otherinput),
+                            textInput("notes", otherinput),
                             
                             ### Use this to set how many items to run. 
                             radioButtons(inputId = "numitems",
                                          label = "Number of items (10 is for testing)",
-                                         choices = c("10", "30", "60", "175", "SEM"),
+                                         choices = c("10", "30", "60", "100", "175", "SEM"),
                                          selected = "10",
                                          inline = T
                                          ),
@@ -179,13 +178,14 @@ server <- function(input, output, session) {
     
     values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
     values$irt_out <- list(0, 0, 1)
-    # randomly orders stuff
+    # randomly orders stuff if the random order box is checked. only affects 175 selection
     if(isTruthy(input$random)){
       values$item_difficulty <-
         values$item_difficulty %>%
         mutate(pnt_order = sample(pnt_order)) %>%
         arrange(pnt_order)
     }
+    # got to slides
     updateNavbarPage(session, "mainpage",
                      selected = tabtitle1)
     if(input$numitems != "SEM"){
@@ -478,14 +478,16 @@ server <- function(input, output, session) {
   # ---------------------------------------------------------------------------------------
   #########################################################################################
   
+  # More information modal
   observeEvent(input$info, {
     showModal(modalDialog(
-      title = "This modal will contain important information about the app",
-      "This is important",
-      br(), br(), br(),br(), br(), br(),br(), br(), br(),br(), br(), 
-      "Link to papers, contact info, more detailed scoring info etc...",
-      br(), br(), br(),br(), br(), br(),br(), br(), br(),br(), br(), 
-      "Dismiss it by clicking anywhere outside of it.",
+      # This is the content
+              title = "This modal will contain important information about the app",
+              "This is important",
+              br(), br(), br(),br(), br(), br(),br(), br(), br(),br(), br(), 
+              "Link to papers, contact info, more detailed scoring info etc...",
+              br(), br(), br(),br(), br(), br(),br(), br(), br(),br(), br(), 
+              "Dismiss it by clicking anywhere outside of it.",
       easyClose = TRUE,
       footer = NULL,
       size = "m"
