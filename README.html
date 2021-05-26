@@ -35,15 +35,14 @@ body {
 <p>Beta-version of computer adaptive philadelphia naming test</p>
 <p>To run, make sure these packages are installed on your local machine:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># not run</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&quot;here&quot;</span>, <span class="st">&quot;shiny&quot;</span>, <span class="st">&quot;tibble&quot;</span>, <span class="st">&quot;dplyr&quot;</span>, <span class="st">&quot;tidyr&quot;</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&quot;here&quot;</span>, <span class="st">&quot;shiny&quot;</span>, <span class="st">&quot;tibble&quot;</span>, <span class="st">&quot;dplyr&quot;</span>, <span class="st">&quot;tidyr&quot;</span>, <span class="st">&quot;ggplot2&quot;</span>,</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;shinyWidgets&quot;</span>, <span class="st">&quot;htmltools&quot;</span>, <span class="st">&quot;keys&quot;</span>, <span class="st">&quot;DT&quot;</span>, <span class="st">&quot;shinyjs&quot;</span>, <span class="st">&quot;catR&quot;</span>,</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;bslib&quot;</span>, <span class="st">&quot;bayestestR&quot;</span>))</span></code></pre></div>
 <p>Then run the following:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># not run</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>shiny<span class="sc">::</span><span class="fu">runGitHub</span>(<span class="st">&quot;rbcavanaugh/pnt&quot;</span>)</span></code></pre></div>
 <p>Or clone the repository and run locally.</p>
-<p>Update 5-24: Now preliminary version is on shinyapps.io, but having issues with ggplot currently, so no plot on results page. Use the above runGithub() method for now…</p>
-<p><a href="https://rb-cavanaugh.shinyapps.io/pnt-cat/">https://rb-cavanaugh.shinyapps.io/pnt-cat/</a></p>
+<p>Update 5-24: Now preliminary version is on shinyapps.io: <a href="https://rb-cavanaugh.shinyapps.io/pnt-cat/">https://rb-cavanaugh.shinyapps.io/pnt-cat/</a></p>
 <h2 id="to-do-list">To do list</h2>
 <h3 id="validation">Validation</h3>
 <ul>
@@ -53,6 +52,7 @@ body {
 <li>QUESTION: How does catpuccino handle ties? Testing is showing occasional inconsistencies in which items are being chosen, but its only in cases where difficulty is the same (e.g. kite: -0.475 and bridge: -0.475). Shouldn’t affect final ability estimate right?</li>
 </ul></li>
 <li><del>ensure no bias in slight differences between catR and catpuccino</del></li>
+<li>Redo validation script to adjust for practice slides</li>
 </ul>
 <h3 id="for-short-term-use">For short-term use</h3>
 <ul>
@@ -73,7 +73,7 @@ body {
 <li><del>indicator that response has been logged</del></li>
 <li><del>Add full PNT</del>
 <ul>
-<li>QUESTION: Add option to randomize full PNT?</li>
+<li><del>QUESTION: Add option to randomize full PNT? Done</del></li>
 </ul></li>
 <li><del>Add source code</del></li>
 </ul>

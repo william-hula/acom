@@ -22,7 +22,8 @@ items = read.csv(here("data", "item_difficulty.csv")) %>%
          resp = NA,
          ability = NA,
          sem = NA,
-         pnt_order = row_number()) 
+         pnt_order = row_number()
+  )
 
 item_key = read.csv(here("data", "item_difficulty.csv")) %>% 
   dplyr::select(target, slide_num, itemDifficulty = Item.Difficulty)
@@ -76,7 +77,8 @@ irt_function <- function(all_items, IRT = T){
        return(tmp_list)
        
     } else {
-      
+      # randomize? if true, then use random order column
+
       next_slide_num <- all_items %>%
         mutate(next_item = ifelse(!is.na(response), pnt_order+1, NA)) %>%
         filter(pnt_order == max(next_item, na.rm = T)) 

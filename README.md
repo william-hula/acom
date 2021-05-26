@@ -11,7 +11,7 @@ To run, make sure these packages are installed on your local machine:
 
 ``` r
 # not run
-install.packages(c("here", "shiny", "tibble", "dplyr", "tidyr",
+install.packages(c("here", "shiny", "tibble", "dplyr", "tidyr", "ggplot2",
                    "shinyWidgets", "htmltools", "keys", "DT", "shinyjs", "catR",
                    "bslib", "bayestestR"))
 ```
@@ -25,10 +25,7 @@ shiny::runGitHub("rbcavanaugh/pnt")
 
 Or clone the repository and run locally.
 
-Update 5-24: Now preliminary version is on shinyapps.io, but having
-issues with ggplot currently, so no plot on results page. Use the above
-runGithub() method for now…
-
+Update 5-24: Now preliminary version is on shinyapps.io:
 <https://rb-cavanaugh.shinyapps.io/pnt-cat/>
 
 ## To do list
@@ -43,6 +40,7 @@ runGithub() method for now…
         -0.475 and bridge: -0.475). Shouldn’t affect final ability
         estimate right?
 -   ~~ensure no bias in slight differences between catR and catpuccino~~
+-   Redo validation script to adjust for practice slides
 
 ### For short-term use
 
@@ -58,7 +56,7 @@ runGithub() method for now…
 -   ~~Make it pretty~~
 -   ~~indicator that response has been logged~~
 -   ~~Add full PNT~~
-    -   QUESTION: Add option to randomize full PNT?
+    -   ~~QUESTION: Add option to randomize full PNT? Done~~
 -   ~~Add source code~~
 
 ### Longer-term

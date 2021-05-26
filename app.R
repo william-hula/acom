@@ -4,33 +4,7 @@
 ################################# CAT PNT SHINY APP #######################################
 ###########################################################################################
 ###########################################################################################
-library(ggplot2)
 library(shiny)
-library(dplyr)
-library(tidyr)
-library(tibble)
-library(keys)
-library(DT)
-library(shinyjs)
-library(htmltools)
-library(shinyWidgets)
-library(bslib)
-library(bayestestR)
-
-# These indicate errors (1) and correct responses (2)
-incorrect_key_response = "1"
-correct_key_response = "2"
-
-response_keys <- c(
-  incorrect_key_response, correct_key_response
-)
-
-# The next button
-enter <- "enter"
-
-# number of items to run:
-#p = 10
-
 
 ################################## UI #####################################################
 # -----------------------------------------------------------------------------------------
@@ -121,7 +95,8 @@ ui <- tagList(
                                         max = 0.5,
                                         step = 0.01,
                                         value = 0.3),
-                            checkboxInput("progbar", "Show progress bar (fixed only)"), br(),
+                            checkboxInput("progbar", "Show progress bar (fixed only)", value = F),
+                            checkboxInput("random", "Random Order (175 only)", value = F), br(),
                             actionButton("start_practice", "Start Practice")
                             )
                   )
@@ -182,7 +157,7 @@ server <- function(input, output, session) {
     updateNavbarPage(session, "mainpage",
                      selected = tabtitle_practice)
     values$IRT = ifelse(input$numitems == "175", FALSE, TRUE)
-    
+
   })
   
   # start button. sets the i value to 1 corresponding to the first slide
@@ -193,15 +168,31 @@ server <- function(input, output, session) {
     # dataframe of items, difficulty, discrimination; NA column for responses to start.
     values$item_difficulty <- items  
     values$i = 1
-    values$n = ifelse(values$IRT, 130, 14) # this selects the picture. 130 = pumpkin
+    values$n = 
+      if(isTruthy(values$IRT)){
+       130 # this selects the picture. 130 = pumpkin
+    } else if (isTruthy(input$random)) {
+       sample(1:175, 1) # if random, random first item      
+    } else {
+      14 #otherwise candle
+      }
+    
     values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
     values$irt_out <- list(0, 0, 1)
+    # randomly orders stuff
+    if(isTruthy(input$random)){
+      values$item_difficulty <-
+        values$item_difficulty %>%
+        mutate(pnt_order = sample(pnt_order)) %>%
+        arrange(pnt_order)
+    }
     updateNavbarPage(session, "mainpage",
                      selected = tabtitle1)
     if(input$numitems != "SEM"){
       updateProgressBar(session = session, id = "progress_bar", value = 0)
     }
     js$click_sound()
+    
   })
   
   # enables or disables precision option if SEM is or isn't selected. 
@@ -299,8 +290,7 @@ server <- function(input, output, session) {
                 # element[[2]] is a list of information returned by catR::nextSlide(), 
                 # including $name, the name of the next item
                 # element[[3]] returns the sem after re-estimating the model
-                values$irt_out = irt_function(values$item_difficulty, values$IRT)
-                
+                values$irt_out = irt_function(values$item_difficulty, IRT = values$IRT)
                 # save info to the item_difficulty data_frame
                 values$item_difficulty[values$item_difficulty$slide_num == values$n,][7:11] = tibble(
                   
@@ -459,7 +449,7 @@ server <- function(input, output, session) {
   
   #  outputs a summary sentence
   output$results_summary <- renderUI({
-      h4(
+      h5(
         paste0("The total accuracy for this test was ",
                round(results_data_summary()*100, 1),
                "%.",
@@ -534,7 +524,7 @@ server <- function(input, output, session) {
       geom_vline(aes(xintercept = irt_final()$ability), color = "darkred", size = 1.5) +
       scale_x_continuous(breaks=seq(-5,5,1), limits = c(-5,5)) +
       scale_fill_brewer(guide="none") +
-      theme_minimal(base_size = 18) +
+      theme_minimal(base_size = 15) +
       xlab("PNT Ability Estimate") +
       ylab("Density") +
       labs(caption = "sd = 1.48. Correct? Also, harder to get >3 or <3 in ability.") +
@@ -622,13 +612,13 @@ server <- function(input, output, session) {
                  column(width = 8,offset = 2,
                         tabsetPanel(
                           tabPanel("Summary",br(),
-                                   uiOutput("results_summary"), br(),
+                                   uiOutput("results_summary"), 
                                    plotOutput("plot")
                           ),
                           tabPanel("Data", br(),
                                    DTOutput("results_long"),
                         )
-                      ), br(),
+                      ), 
                       tags$div(align = "center",
                                downloadButton("downloadData",
                                               "Download results"),

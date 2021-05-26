@@ -28,4 +28,7 @@ Imports:
     tibble,
     tidyr,
     vroom,
-    fs
+    fs,
+    ggplot2,
+    bayestestR,
+    htmltools
