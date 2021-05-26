@@ -1,8 +1,8 @@
+PNT-CAT (beta)
+================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# PNT-CAT (beta)
-
+<!-- # PNT-CAT (beta) -->
 <!-- badges: start -->
 <!-- badges: end -->
 
@@ -13,7 +13,7 @@ To run, make sure these packages are installed on your local machine:
 ``` r
 # not run
 install.packages(c("here", "shiny", "tibble", "dplyr", "tidyr",
-                   "shinyWidgets", "keys", "DT", "shinyjs", "catR",
+                   "shinyWidgets", "htmltools", "keys", "DT", "shinyjs", "catR",
                    "bslib", "bayestestR"))
 ```
 
@@ -26,7 +26,10 @@ shiny::runGitHub("rbcavanaugh/pnt")
 
 Or clone the repository and run locally.
 
-Update 5-24: Now preliminary version is on shinyapps.io:
+Update 5-24: Now preliminary version is on shinyapps.io, but having
+issues with ggplot currently, so no plot on results page. Use the above
+runGithub() method for now…
+
 <https://rb-cavanaugh.shinyapps.io/pnt-cat/>
 
 ## To do list

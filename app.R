@@ -4,15 +4,15 @@
 ################################# CAT PNT SHINY APP #######################################
 ###########################################################################################
 ###########################################################################################
-
-library(shiny)
-library(tibble)
-library(tidyr)
-library(dplyr)
 library(ggplot2)
+library(shiny)
+library(dplyr)
+library(tidyr)
+library(tibble)
 library(keys)
 library(DT)
 library(shinyjs)
+library(htmltools)
 library(shinyWidgets)
 library(bslib)
 library(bayestestR)
@@ -144,7 +144,8 @@ ui <- tagList(
          tabPanel(title = tabtitle2, 
                   uiOutput("results_tab")
                  )
-    )
+    ),
+    br(), br(), br(), br(), br() # adjusting for footer. 
 )
 
 # Define server logic required to draw a histogram
@@ -503,8 +504,8 @@ server <- function(input, output, session) {
   
   observeEvent(input$dev, {
     showModal(modalDialog(
-      includeMarkdown("README.md"),
-      size = "m",
+      htmltools::includeHTML("README.html"),
+      size = "l",
       easyClose = TRUE
     ))
   })
@@ -515,7 +516,7 @@ server <- function(input, output, session) {
 
   
   output$plot <- renderPlot({# Fergadiotis, 2019
-   
+
    dens = density(bayestestR::distribution_normal(100, 0, 1.48))
    df <- tibble(
       x = dens$x,
@@ -527,21 +528,21 @@ server <- function(input, output, session) {
      mutate(fill = factor(ifelse(between(x, lower, upper), "out", "in")))
 
   df %>%
-     ggplot(aes(x = x, y = y)) +
+     ggplot2::ggplot(aes(x = x, y = y)) +
       geom_ribbon(aes(ymin = 0, ymax = y-0.001, fill = fill)) +
       geom_line(size = 2) +
       geom_vline(aes(xintercept = irt_final()$ability), color = "darkred", size = 1.5) +
       scale_x_continuous(breaks=seq(-5,5,1), limits = c(-5,5)) +
       scale_fill_brewer(guide="none") +
       theme_minimal(base_size = 18) +
-      xlab("PNT Ability Estimate") + 
+      xlab("PNT Ability Estimate") +
       ylab("Density") +
-      labs(caption = "sd = 1.48. Correct? Also, harder to get >3 or <3 in ability...") +
+      labs(caption = "sd = 1.48. Correct? Also, harder to get >3 or <3 in ability.") +
       theme(axis.title.x = element_text(vjust=-1),
             plot.margin = unit(c(15, 5.5, 15, 5.5), "pt"))
-    
+
   })
-  
+
   
   ################################## TAB UI ##############################################    
   # ---------------------------------------------------------------------------------------
