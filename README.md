@@ -62,10 +62,12 @@ Update 5-24: Now preliminary version is on shinyapps.io:
 -   Incorporate PNT stop rule? (transform SEM to information?) ALEX
 -   Plot: what is the bell curve? ALEX
 
-### Small stuff:
+### Small stuff & Bugs:
 
 -   More informative error messages on non-assessment slides ROB
 -   Spacing throughout app. make sure ipad friendly.
+-   Sound not working on shinyapps.io
+-   ~~UI resizing after opening modal.~~
 
 ### Longer-term
 

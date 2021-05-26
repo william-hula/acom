@@ -494,9 +494,10 @@ server <- function(input, output, session) {
   
   observeEvent(input$dev, {
     showModal(modalDialog(
-      htmltools::includeHTML("README.html"),
+      tags$iframe(src="README.html", width = "100%", height = "650px", frameBorder = "0"),
       size = "l",
-      easyClose = TRUE
+      easyClose = TRUE,
+      footer = NULL
     ))
   })
   
