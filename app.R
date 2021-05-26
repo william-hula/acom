@@ -9,11 +9,13 @@ library(shiny)
 library(tibble)
 library(tidyr)
 library(dplyr)
+library(ggplot2)
 library(keys)
 library(DT)
 library(shinyjs)
 library(shinyWidgets)
 library(bslib)
+library(bayestestR)
 
 # These indicate errors (1) and correct responses (2)
 incorrect_key_response = "1"
@@ -423,15 +425,15 @@ server <- function(input, output, session) {
   
   #  outputs a summary sentence
   output$results_summary <- renderUI({
-      h5(
+      h4(
         paste0("The total accuracy for this test was ",
                round(results_data_summary()*100, 1),
                "%.",
                " The final IRT ability estimate is ",
                round(irt_final()$ability, 3),
-               " and the standard error of the mean is ",
+               " (red line) and the standard error of the mean is ",
                round(irt_final()$sem,3),
-               ".")
+               " (darker blue).")
       )
   })
   
@@ -448,11 +450,55 @@ server <- function(input, output, session) {
       }
   )
   
+  
+  ################################## PLOT #################################################    
+  # ---------------------------------------------------------------------------------------
+  #########################################################################################
+  
+  dt <- data.frame(x=c(1:200),y=rnorm(200))
+  dens <- density(dt$y)
+  df <- data.frame(x=dens$x, y=dens$y)
+  probs <- c(0.1, 0.25, 0.5, 0.75, 0.9)
+  quantiles <- quantile(dt$y, prob=probs)
+  df$quant <- factor(findInterval(df$x,quantiles))
+  ggplot(df, aes(x,y)) + geom_line() + geom_ribbon(aes(ymin=0, ymax=y, fill=quant)) + scale_x_continuous(breaks=quantiles) + scale_fill_brewer(guide="none")
+  
+  
+  output$plot <- renderPlot({# Fergadiotis, 2019
+   
+   dens = density(bayestestR::distribution_normal(100, 0, 1.48))
+   df <- tibble(
+      x = dens$x,
+      y = dens$y,
+      lower = irt_final()$ability - irt_final()$sem,
+      upper = irt_final()$ability + irt_final()$sem,
+    ) %>%
+     rowwise() %>%
+     mutate(fill = factor(ifelse(between(x, lower, upper), "out", "in")))
+
+  df %>%
+     ggplot(aes(x = x, y = y)) +
+      geom_line(size = 2) +
+      geom_ribbon(aes(ymin = 0, ymax = y-0.001, fill = fill)) +
+      geom_vline(aes(xintercept = irt_final()$ability), color = "darkred", size = 1.5) +
+      scale_x_continuous(breaks=seq(-5,5,1), limits = c(-5,5)) +
+      scale_fill_brewer(guide="none") +
+      theme_minimal(base_size = 18) +
+      xlab("Ability Estimate") + 
+      ylab("Density") +
+      theme(axis.title.x = element_text(vjust=-1),
+            plot.margin = unit(c(15, 5.5, 15, 5.5), "pt"))
+    
+  })
+  
+  
   ################################## TAB UI ##############################################    
   # ---------------------------------------------------------------------------------------
   #########################################################################################
   
   # this UI is on the server side so that it can be dynamic based on other conditions in the app. 
+  
+  # this shows the practice slides
   output$practice_tab <-
     renderUI({
       column(width = 12,
@@ -477,7 +523,7 @@ server <- function(input, output, session) {
       )
     })
   
-  # UI for slides with pictures.
+  # UI for assessment slides
   output$slides_tab <- renderUI({
     column(width = 12,
         fluidRow(
@@ -519,18 +565,26 @@ server <- function(input, output, session) {
   
   # UI for results page
   output$results_tab <- renderUI({
-    fluidRow(
-      column(width = 8,offset = 2,
-        uiOutput("results_summary"), br(),
-        DTOutput("results_long"),
-        tags$div(align = "center",
-                 downloadButton("downloadData",
-                                "Download results"),
-                 actionButton("start_over",
-                              "Start Over")
-        )
-      )
-    )
+    
+               fluidRow(
+                 column(width = 8,offset = 2,
+                        tabsetPanel(
+                          tabPanel("Summary",br(),
+                                   uiOutput("results_summary"), br(),
+                                   plotOutput("plot")
+                          ),
+                          tabPanel("Data", br(),
+                                   DTOutput("results_long"),
+                        )
+                      ), br(),
+                      tags$div(align = "center",
+                               downloadButton("downloadData",
+                                              "Download results"),
+                               actionButton("start_over",
+                                            "Start Over")
+                      )
+                  )
+              )
   })
   outputOptions(output, "results_long", suspendWhenHidden = FALSE)
   #bs_themer()

@@ -13,7 +13,8 @@ To run, make sure these packages are installed on your local machine:
 ``` r
 # not run
 install.packages(c("here", "shiny", "tibble", "dplyr", "tidyr",
-                   "shinyWidgets", "keys", "DT", "shinyjs", "catR"))
+                   "shinyWidgets", "keys", "DT", "shinyjs", "catR",
+                   "bslib", "bayestestR"))
 ```
 
 Then run the following:
