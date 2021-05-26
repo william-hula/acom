@@ -61,20 +61,25 @@ Update 5-24: Now preliminary version is on shinyapps.io: https://rb-cavanaugh.sh
 - Add instructions, background info, and other important info ALEX
   - just refer to MRRI vs. including info...?
 - ~~produce a results plot, norms, and any other information to interpret the results~~
-  - QUESTION: plot distribution sd = 1.48? Also, harder to get >3 or <3 in ability...
+  - ~~QUESTION: plot distribution sd = 1.48? Also, harder to get >3 or <3 in ability... OK~~
 - ~~click sound~~
 - ~~Make it pretty~~
 - ~~indicator that response has been logged~~
 - ~~Add full PNT~~
   - ~~QUESTION: Add option to randomize full PNT? Done~~
 - ~~Add source code~~
-- Add ability estimate to full 175 PNT (random and not-random)
-- Incorporate PNT stop rule? ROB
+- ~~Add ability estimate to full 175 PNT (random and not-random)~~
+- Incorporate PNT stop rule? (transform SEM to information?) ALEX
 - Plot: what is the bell curve? ALEX
+
+### Small stuff:
+- More informative error messages on non-assessment slides ROB
+- Spacing throughout app. make sure ipad friendly. 
 
 ### Longer-term
 
 - randomly select one of 2-3 best next options
+- PNT 60 item with harder items after n = 30
 - create ability to upload previous file to prevent reuse of previously tested words. 
   - AND, compare performacne between administrations
 - Convert to an R package. I started this, but its tricky and things go wrong so I reverted back. right now, there's an r-package branch to be worked on...

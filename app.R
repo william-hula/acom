@@ -75,7 +75,7 @@ ui <- tagList(
                            tags$li(instruction1),
                            tags$li(instruction2),
                            tags$li("Refer to", tags$a(href = "https://mrri.org/philadelphia-naming-test/", "MRRI.org/philadelphia-naming-test/", target = "_blank"), instruction3)
-                         ), br(),
+                         ), 
                         div(align = "center",
                             textInput("name", nameinput),
                             textInput("notes", otherinput),
@@ -533,7 +533,6 @@ server <- function(input, output, session) {
       theme_minimal(base_size = 15) +
       xlab("PNT Ability Estimate") +
       ylab("Density") +
-      labs(caption = "sd = 1.48. Correct? Also, harder to get >3 or <3 in ability.") +
       theme(axis.title.x = element_text(vjust=-1),
             plot.margin = unit(c(15, 5.5, 15, 5.5), "pt"))
 
