@@ -1,6 +1,7 @@
 # This script calls the testing script. 
 # must clear the current folder before using. 
 library(shinytest)
+library(here)
 # creates a folder for today if it doesnt exist.
 # if it does exist, IT WILL DELETE THE FILES IN IT, WHICH IS NECESSARY TO RUN ANOTHER TEST.
 if(dir.exists(here("tests", "test_output", Sys.Date()))){

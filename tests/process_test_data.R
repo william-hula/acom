@@ -22,7 +22,7 @@ library(fs)
 library(vroom)
 library(tidyr)
 library(stringr)
-files <- fs::dir_ls(here("tests", "test_output", "2021-05-22"))
+files <- fs::dir_ls(here("tests", "test_output", Sys.Date()))
 df = vroom::vroom(files)
 rm(files)
 

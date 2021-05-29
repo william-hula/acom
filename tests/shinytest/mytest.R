@@ -12,6 +12,10 @@
 
 ## !!!! Call this script using shinytest.R 
 
+# things to change to enable test to run:
+# app title in text.R
+# reset("keys)
+
 
 library(here)
 library(tidyverse)
@@ -43,18 +47,28 @@ app$setInputs(numitems = "30")
 #app$setInputs(date = 18769)
 
 # click to get started
+app$setInputs(start_practice = "click")
+
+pr_resp = rep(c("1", "2"), 6)
+for(n in pr_resp){
+  app$setInputs(keys = n)
+  app$setInputs(enter_key = "click")
+}
+
 app$setInputs(start = "click")
 
 # what responses do you want
 # subsets the observed responses in order
-responses <- observed$response[observed$examinee==i]
 
+responses <- observed$response[observed$examinee==i]
+print(length(responses))
   # key presses (fed to a radio button and action button for now)
   for(p in 1:length(responses)){
-    app$setInputs(keys = responses[p])
+    app$setInputs(keys = responses[p], wait_=FALSE, values_=FALSE)
     app$setInputs(enter_key = "click")
   }
 
+app$snapshot()
 # grabs the values at the end of the test. 
 # this refers to a new chunk in the server side "exportTestValues" currently
 # around line 340

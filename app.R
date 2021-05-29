@@ -51,7 +51,7 @@ ui <- tagList(
                                     label = "Development Status",
                                     icon = icon("code-branch"),
                                     style = "background:transparent; border:none;"
-                                  )
+                                  )                                  # This is solely for testing: always hidden
                                 )
                         )
                      )
@@ -185,8 +185,9 @@ server <- function(input, output, session) {
     } else {
       14 #otherwise candle
     }
-      
     
+    # for testing:
+    reset("keys")
     values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
     values$irt_out <- list(0, 0, 1)
     
@@ -358,6 +359,8 @@ server <- function(input, output, session) {
               }
           
           values$key_val = NULL
+          #for testing::
+          reset("keys")
     }
     # don't run this on start up. 
   }, ignoreInit = T)
@@ -594,13 +597,6 @@ server <- function(input, output, session) {
                                            range_value = c(1,values$test_length+1))
                            },br()
                            
-                           # This is solely for testing: always hidden
-                           # shinyjs::hidden(
-                           # radioButtons("keys", "for testing inputs",
-                           #              choices = c(NA, incorrect_key_response, correct_key_response),
-                           #              inline = T, selected = NULL),
-                           # actionButton("enter_key", "enter")
-                           # )
                        )
                      )
               ),

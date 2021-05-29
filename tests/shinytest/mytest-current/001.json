@@ -1,68 +1,108 @@
 {
   "input": {
-    "date": "2021-05-21",
-    "date_button": 0,
-    "enter_key": 0,
+    "dev": 0,
+    "enter_key": 42,
+    "info": 0,
     "keys": "",
     "mainpage": "Results",
-    "name": "name",
+    "name": "PSU-10",
     "notes": "notes",
-    "numitems": "10",
-    "results_long_cell_clicked": {
-
-    },
-    "results_long_cells_selected": [
-
-    ],
-    "results_long_columns_selected": null,
-    "results_long_rows_all": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10
-    ],
-    "results_long_rows_current": [
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10
-    ],
-    "results_long_rows_selected": null,
-    "results_long_search": "",
-    "results_long_state": null,
+    "numitems": "30",
+    "progbar": false,
+    "random": false,
     "sem": 0.3,
+    "shinyjs-resettable-keys": {
+      "keys": {
+        "type": "RadioButtons",
+        "value": ""
+      }
+    },
+    "source": 0,
     "start": 1,
-    "start_over": 0
+    "start_over": 0,
+    "start_practice": 1
   },
   "output": {
+    "plot": {
+      "src": "[image data sha1: 16c505df5b508288f1c902515db3f7249f56dbd9]",
+      "width": 631,
+      "height": 400,
+      "alt": "Plot object",
+      "coordmap": {
+        "panels": [
+          {
+            "panel": 1,
+            "row": 1,
+            "col": 1,
+            "panel_vars": {
+
+            },
+            "log": {
+              "x": null,
+              "y": null
+            },
+            "domain": {
+              "left": -5.5,
+              "right": 5.5,
+              "bottom": -0.013828602035041,
+              "top": 0.270493050151363
+            },
+            "mapping": {
+              "ymin": "0",
+              "ymax": "y - 0.001",
+              "fill": "fill",
+              "x": "x",
+              "y": "y"
+            },
+            "range": {
+              "left": 46.5159077531522,
+              "right": 625.520547945205,
+              "bottom": 349.585990402203,
+              "top": 14.9439601494396
+            }
+          }
+        ],
+        "dims": {
+          "width": 631,
+          "height": 400
+        }
+      }
+    },
+    "practice_tab": {
+      "html": "<div class=\"col-sm-12\">\n  <div class=\"row\">\n    <i class=\"fa fa-circle\" role=\"presentation\" aria-label=\"circle icon\" style=\"color: grey; position: absolute; right: 5px;\"><\/i>\n  <\/div>\n  <div class=\"row\">\n    <div class=\"col-sm-8 offset-md-2 col-sm-offset-2\" align=\"center\">\n      <img src=\"PNT/Slide1.jpeg\"/>\n    <\/div>\n    <div class=\"col-sm-2\"><\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+        {
+          "name": "font-awesome",
+          "version": "5.13.0",
+          "src": {
+            "href": "font-awesome-5.13.0"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": [
+            "css/all.min.css",
+            "css/v4-shims.min.css"
+          ],
+          "head": null,
+          "attachment": null,
+          "all_files": true
+        }
+      ]
+    },
     "results_long": {
       "x": {
+        "style": "bootstrap4",
         "filter": "none",
-        "container": "<table class=\"display\">\n  <thead>\n    <tr>\n      <th>target<\/th>\n      <th>itemDifficulty<\/th>\n      <th>discrimination<\/th>\n      <th>response<\/th>\n      <th>item_number<\/th>\n      <th>order<\/th>\n      <th>key<\/th>\n      <th>resp<\/th>\n      <th>ability<\/th>\n      <th>sem<\/th>\n      <th>precision<\/th>\n      <th>name<\/th>\n      <th>date<\/th>\n      <th>notes<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>",
+        "container": "<table class=\"table table-striped table-hover row-border order-column display\">\n  <thead>\n    <tr>\n      <th>order<\/th>\n      <th>target<\/th>\n      <th>resp<\/th>\n      <th>key<\/th>\n      <th>itemDifficulty<\/th>\n      <th>ability<\/th>\n      <th>sem<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>",
         "options": {
           "columnDefs": [
             {
               "className": "dt-right",
               "targets": [
-                1,
-                2,
-                3,
+                0,
                 4,
                 5,
-                8,
-                9
+                6
               ]
             }
           ],
@@ -93,16 +133,19 @@
       ],
       "deps": [
         {
-          "name": "dt-core",
+          "name": "dt-core-bootstrap4",
           "version": "1.10.20",
           "src": {
-            "href": "dt-core-1.10.20"
+            "href": "dt-core-bootstrap4-1.10.20"
           },
           "meta": null,
-          "script": "js/jquery.dataTables.min.js",
+          "script": [
+            "js/jquery.dataTables.min.js",
+            "js/dataTables.bootstrap4.min.js"
+          ],
           "stylesheet": [
-            "css/jquery.dataTables.min.css",
-            "css/jquery.dataTables.extra.css"
+            "css/dataTables.bootstrap4.min.css",
+            "css/dataTables.bootstrap4.extra.css"
           ],
           "head": null,
           "attachment": null,
@@ -111,12 +154,58 @@
         },
         {
           "name": "jquery",
-          "version": "3.5.1",
+          "version": "3.6.0",
           "src": {
-            "href": "jquery-3.5.1"
+            "href": "jquery-3.6.0"
           },
           "meta": null,
-          "script": "jquery.min.js",
+          "script": "jquery-3.6.0.min.js",
+          "stylesheet": null,
+          "head": null,
+          "attachment": null,
+          "all_files": true
+        },
+        {
+          "name": "bootstrap",
+          "version": "4.6.0",
+          "src": {
+            "href": "bootstrap-4.6.0"
+          },
+          "meta": {
+            "viewport": "width=device-width, initial-scale=1, shrink-to-fit=no"
+          },
+          "script": "bootstrap.bundle.min.js",
+          "stylesheet": "bootstrap.min.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "_Open Sans",
+          "version": "0.3.1.9003",
+          "src": {
+            "href": "_Open Sans-0.3.1.9003"
+          },
+          "meta": null,
+          "script": null,
+          "stylesheet": "font.css",
+          "head": null,
+          "attachment": null,
+          "package": null,
+          "all_files": true
+        },
+        {
+          "name": "bs3compat",
+          "version": "0.2.4.9003",
+          "src": {
+            "href": "bs3compat-0.2.4.9003"
+          },
+          "meta": null,
+          "script": [
+            "tabs.js",
+            "bs3compat.js"
+          ],
           "stylesheet": null,
           "head": null,
           "attachment": null,
@@ -138,13 +227,13 @@
       ]
     },
     "results_summary": {
-      "html": "<h5>The total accuracy for this test was NA%. The final IRT ability estimate is -0.193 and the standard error of the mean is 0.451.<\/h5>",
+      "html": "<h5>The total accuracy for this test was 86.7%. The final IRT ability estimate is 1.968 (red line) and the standard error of the mean is 0.363 (darker blue).<\/h5>",
       "deps": [
 
       ]
     },
     "results_tab": {
-      "html": "<div>\n  <h3>Example of data that is collected during testing<\/h3>\n  <div id=\"results_summary\" class=\"shiny-html-output\"><\/div>\n  <br/>\n  <div id=\"results_long\" style=\"width:100%; height:auto; \" class=\"datatables html-widget html-widget-output\"><\/div>\n  <div align=\"center\">\n    <a id=\"downloadData\" class=\"btn btn-default shiny-download-link \" href=\"\" target=\"_blank\" download>\n      <i class=\"fa fa-download\" role=\"presentation\" aria-label=\"download icon\"><\/i>\n      Download results\n    <\/a>\n    <button id=\"start_over\" type=\"button\" class=\"btn btn-default action-button\">Start Over<\/button>\n  <\/div>\n<\/div>",
+      "html": "<div class=\"row\">\n  <div class=\"col-sm-8 offset-md-2 col-sm-offset-2\">\n    <div class=\"tabbable\">\n      <ul class=\"nav nav-tabs\" data-tabsetid=\"3366\">\n        <li class=\"active\">\n          <a href=\"#tab-3366-1\" data-toggle=\"tab\" data-value=\"Summary\">Summary<\/a>\n        <\/li>\n        <li>\n          <a href=\"#tab-3366-2\" data-toggle=\"tab\" data-value=\"Data\">Data<\/a>\n        <\/li>\n      <\/ul>\n      <div class=\"tab-content\" data-tabsetid=\"3366\">\n        <div class=\"tab-pane active\" data-value=\"Summary\" id=\"tab-3366-1\">\n          <br/>\n          <div id=\"results_summary\" class=\"shiny-html-output\"><\/div>\n          <div id=\"plot\" class=\"shiny-plot-output\" style=\"width:100%;height:400px;\"><\/div>\n        <\/div>\n        <div class=\"tab-pane\" data-value=\"Data\" id=\"tab-3366-2\">\n          <br/>\n          <div id=\"results_long\" style=\"width:100%; height:auto; \" class=\"datatables html-widget html-widget-output\"><\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n    <div align=\"center\">\n      <a id=\"downloadData\" class=\"btn btn-default shiny-download-link \" href=\"\" target=\"_blank\" download>\n        <i class=\"fa fa-download\" role=\"presentation\" aria-label=\"download icon\"><\/i>\n        Download results\n      <\/a>\n      <button id=\"start_over\" type=\"button\" class=\"btn btn-default action-button\">\n        <i class=\"fa fa-undo-alt\" role=\"presentation\" aria-label=\"undo-alt icon\"><\/i>\n        Start Over\n      <\/button>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-2\"><\/div>\n<\/div>",
       "deps": [
         {
           "name": "htmlwidgets",
@@ -232,40 +321,37 @@
         }
       ]
     },
-    "slide": {
-      "html": "<img src=\"PNT/slide163.jpeg\"/>",
-      "deps": [
-
-      ]
-    },
     "slides_tab": {
-      "html": "<div class=\"col-sm-12\" align=\"center\">\n  <div class=\"row\">\n    <div id=\"slide\" class=\"shiny-html-output\"><\/div>\n  <\/div>\n  <div class=\"row\">\n    <div align=\"center\" style=\"width: 50%;\">\n      <div id=\"keys\" class=\"form-group shiny-input-radiogroup shiny-input-container shiny-input-container-inline\" role=\"radiogroup\" aria-labelledby=\"keys-label\">\n        <label class=\"control-label\" id=\"keys-label\" for=\"keys\">for testing inputs<\/label>\n        <div class=\"shiny-options-group\">\n          <label class=\"radio-inline\">\n            <input type=\"radio\" name=\"keys\" value checked=\"checked\"/>\n            <span>NA<\/span>\n          <\/label>\n          <label class=\"radio-inline\">\n            <input type=\"radio\" name=\"keys\" value=\"1\"/>\n            <span>1<\/span>\n          <\/label>\n          <label class=\"radio-inline\">\n            <input type=\"radio\" name=\"keys\" value=\"2\"/>\n            <span>2<\/span>\n          <\/label>\n        <\/div>\n      <\/div>\n      <button id=\"enter_key\" type=\"button\" class=\"btn btn-default action-button\">enter<\/button>\n      <br/>\n      <!--SHINY.SINGLETON[758206d91e54a5751517535560452ac3a0d0a274]-->\n      <head>\n        <style>.progress-number {position: absolute; right: 20px;}<\/style>\n      <\/head>\n      <!--/SHINY.SINGLETON[758206d91e54a5751517535560452ac3a0d0a274]-->\n      <div class=\"progress-group\">\n        <div class=\"progress progress-xs\">\n          <div id=\"progress_bar\" style=\"width:100%;\" class=\"progress-bar\" role=\"progressbar\"><\/div>\n        <\/div>\n      <\/div>\n      <br/>\n    <\/div>\n  <\/div>\n<\/div>",
+      "html": "<div class=\"col-sm-12\">\n  <div class=\"row\">\n    <i class=\"fa fa-circle\" role=\"presentation\" aria-label=\"circle icon\" style=\"color: grey; position: absolute; right: 10px;\"><\/i>\n  <\/div>\n  <div class=\"row\">\n    <div class=\"col-sm-8 offset-md-2 col-sm-offset-2\" align=\"center\">\n      <div class=\"row\">\n        <img src=\"PNT/Slide128.jpeg\"/>\n      <\/div>\n      <div class=\"row\">\n        <div align=\"center\" style=\"width: 50%;\">\n          <br/>\n        <\/div>\n      <\/div>\n    <\/div>\n    <div class=\"col-sm-2\"><\/div>\n  <\/div>\n<\/div>",
       "deps": [
         {
-          "name": "shinyWidgets",
-          "version": "0.5.7",
+          "name": "font-awesome",
+          "version": "5.13.0",
           "src": {
-            "href": "shinyWidgets"
+            "href": "font-awesome-5.13.0"
           },
           "meta": null,
-          "script": "shinyWidgets-bindings.min.js",
-          "stylesheet": "shinyWidgets.min.css",
+          "script": null,
+          "stylesheet": [
+            "css/all.min.css",
+            "css/v4-shims.min.css"
+          ],
           "head": null,
           "attachment": null,
-          "all_files": false
+          "all_files": true
         }
       ]
     }
   },
   "export": {
-    "abil": "-0.475_-0.089_-0.404_-0.136_-0.368_-0.164_-0.345_-0.181_-0.33_-0.193",
-    "discrimination": "1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258",
-    "item_number": "123_94_168_76_29_30_147_75_52_18",
-    "itemDifficulty": "0.02_-0.475_-0.08_-0.41_-0.14_-0.367_-0.16_-0.346_-0.18_-0.325",
-    "key_press": "1_2_1_2_1_2_1_2_1_2",
-    "order": "1_2_3_4_5_6_7_8_9_10",
-    "responses": "1_0_1_0_1_0_1_0_1_0",
-    "sem": "0.858_0.752_0.683_0.626_0.584_0.547_0.518_0.492_0.471_0.451",
-    "words": "pumpkin_kite_wagon_glass_camel_camera_squirrel_ghost_desk_boot"
+    "abil": "0.484_0.87_1.18_0.878_1.102_1.31_1.476_1.692_1.535_1.642_1.719_1.508_1.576_1.635_1.689_1.739_1.783_1.824_1.862_1.897_1.93_1.96_1.797_1.827_1.854_1.88_1.904_1.926_1.948_1.968",
+    "discrimination": "1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258",
+    "item_number": "116_87_54_164_52_95_131_61_158_3_166_106_142_9_123_22_49_63_47_23_138_64_170_132_110_101_41_141_88_126",
+    "itemDifficulty": "0.02_0.483_0.772_1.07_0.772_1.049_1.029_1.772_1.88_0.989_0.772_0.714_0.695_0.637_0.637_0.636_0.598_0.579_0.579_0.541_0.54_0.522_0.522_0.521_0.445_0.426_0.407_0.388_0.368_0.33",
+    "key_press": "2_2_2_1_2_2_2_2_1_2_2_1_2_2_2_2_2_2_2_2_2_2_1_2_2_2_2_2_2_2",
+    "order": "1_2_3_4_5_6_7_8_9_10_11_12_13_14_15_16_17_18_19_20_21_22_23_24_25_26_27_28_29_30",
+    "responses": "0_0_0_1_0_0_0_0_1_0_0_1_0_0_0_0_0_0_0_0_0_0_1_0_0_0_0_0_0_0",
+    "sem": "0.856_0.773_0.718_0.638_0.603_0.577_0.557_0.545_0.505_0.491_0.48_0.45_0.441_0.434_0.428_0.423_0.418_0.414_0.41_0.407_0.404_0.401_0.377_0.374_0.372_0.37_0.368_0.366_0.365_0.363",
+    "words": "pumpkin_ruler_ambulance_volcano_cheerleaders_pyramid_binoculars_microscope_stethoscope_dinosaur_octopus_crutches_necklace_thermometer_slippers_plant_eskimo_van_skull_garage_zebra_helicopter_harp_celery_dragon_chimney_fireplace_wig_tractor_mustache"
   }
 }
