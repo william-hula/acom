@@ -187,7 +187,9 @@ server <- function(input, output, session) {
     }
     
     # for testing:
+    if (isTRUE(getOption("shiny.testmode"))) {
     reset("keys")
+    }
     values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
     values$irt_out <- list(0, 0, 1)
     
@@ -360,7 +362,9 @@ server <- function(input, output, session) {
           
           values$key_val = NULL
           #for testing::
-          reset("keys")
+          if (isTRUE(getOption("shiny.testmode"))) {
+            reset("keys")
+          }
     }
     # don't run this on start up. 
   }, ignoreInit = T)
