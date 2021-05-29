@@ -468,7 +468,8 @@ server <- function(input, output, session) {
       results_data_long() %>%
         drop_na(response) %>%
       select(order, target, resp, key, itemDifficulty, ability, sem)
-  }, rownames = F)
+  }, rownames = F,
+     options = list(dom = "tp"))
   
   #  outputs a summary sentence
   output$results_summary <- renderUI({
@@ -635,12 +636,12 @@ server <- function(input, output, session) {
     
                fluidRow(
                  column(width = 8,offset = 2,
-                        tabsetPanel(
+                        tabsetPanel(type = "pills",
                           tabPanel("Summary",br(),
                                    uiOutput("results_summary"), 
                                    plotOutput("plot")
                           ),
-                          tabPanel("Data", br(),
+                          tabPanel("Data", 
                                    DTOutput("results_long"),
                         )
                       ), 
