@@ -11,5 +11,10 @@ if(dir.exists(here("tests", "test_output", Sys.Date()))){
 dir.create(here("tests", "test_output", Sys.Date()))
 }
 
-shinytest::testApp(here::here(), compareImages = FALSE, )
+# best to pick one or the other
+# pnt-175 need to get data for. also takes a while...
+#test = c("pnt-175", "pnt-30")
+test = "pnt-30"
+
+shinytest::testApp(here::here(),testnames = test, compareImages = FALSE)
 
