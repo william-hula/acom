@@ -415,8 +415,8 @@ server <- function(input, output, session) {
     )
   })
   
-  # this is for making data available for export during testing. 
-  observeEvent(input$enter_key,{
+  # this is for making data available for export during testing.
+  observeEvent(input$mainpage==tabtitle2,{
   values$out_words <- paste(results_data_long() %>% drop_na(response) %>%pull(target), collapse = "_")
   values$out_nums <- paste(results_data_long() %>% drop_na(response) %>%pull(response), collapse = "_")
   values$out_ability <- paste(results_data_long() %>% drop_na(response) %>%pull(ability), collapse = "_")
@@ -428,7 +428,7 @@ server <- function(input, output, session) {
   values$item_number <- paste(results_data_long() %>% drop_na(response) %>%pull(item_number), collapse = "_")
     })
 
-  # This makes the above data available after running unit test. 
+  # This makes the above data available after running unit test.
   exportTestValues(abil = values$out_ability,
                    sem = values$out_sem,
                    words = values$out_words,

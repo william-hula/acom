@@ -11,5 +11,5 @@ if(dir.exists(here("tests", "test_output", Sys.Date()))){
 dir.create(here("tests", "test_output", Sys.Date()))
 }
 
-shinytest::testApp(here::here())
+shinytest::testApp(here::here(), compareImages = FALSE, )
 

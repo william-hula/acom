@@ -233,7 +233,7 @@
       ]
     },
     "results_tab": {
-      "html": "<div class=\"row\">\n  <div class=\"col-sm-8 offset-md-2 col-sm-offset-2\">\n    <div class=\"tabbable\">\n      <ul class=\"nav nav-tabs\" data-tabsetid=\"3366\">\n        <li class=\"active\">\n          <a href=\"#tab-3366-1\" data-toggle=\"tab\" data-value=\"Summary\">Summary<\/a>\n        <\/li>\n        <li>\n          <a href=\"#tab-3366-2\" data-toggle=\"tab\" data-value=\"Data\">Data<\/a>\n        <\/li>\n      <\/ul>\n      <div class=\"tab-content\" data-tabsetid=\"3366\">\n        <div class=\"tab-pane active\" data-value=\"Summary\" id=\"tab-3366-1\">\n          <br/>\n          <div id=\"results_summary\" class=\"shiny-html-output\"><\/div>\n          <div id=\"plot\" class=\"shiny-plot-output\" style=\"width:100%;height:400px;\"><\/div>\n        <\/div>\n        <div class=\"tab-pane\" data-value=\"Data\" id=\"tab-3366-2\">\n          <br/>\n          <div id=\"results_long\" style=\"width:100%; height:auto; \" class=\"datatables html-widget html-widget-output\"><\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n    <div align=\"center\">\n      <a id=\"downloadData\" class=\"btn btn-default shiny-download-link \" href=\"\" target=\"_blank\" download>\n        <i class=\"fa fa-download\" role=\"presentation\" aria-label=\"download icon\"><\/i>\n        Download results\n      <\/a>\n      <button id=\"start_over\" type=\"button\" class=\"btn btn-default action-button\">\n        <i class=\"fa fa-undo-alt\" role=\"presentation\" aria-label=\"undo-alt icon\"><\/i>\n        Start Over\n      <\/button>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-2\"><\/div>\n<\/div>",
+      "html": "<div class=\"row\">\n  <div class=\"col-sm-8 offset-md-2 col-sm-offset-2\">\n    <div class=\"tabbable\">\n      <ul class=\"nav nav-tabs\" data-tabsetid=\"6891\">\n        <li class=\"active\">\n          <a href=\"#tab-6891-1\" data-toggle=\"tab\" data-value=\"Summary\">Summary<\/a>\n        <\/li>\n        <li>\n          <a href=\"#tab-6891-2\" data-toggle=\"tab\" data-value=\"Data\">Data<\/a>\n        <\/li>\n      <\/ul>\n      <div class=\"tab-content\" data-tabsetid=\"6891\">\n        <div class=\"tab-pane active\" data-value=\"Summary\" id=\"tab-6891-1\">\n          <br/>\n          <div id=\"results_summary\" class=\"shiny-html-output\"><\/div>\n          <div id=\"plot\" class=\"shiny-plot-output\" style=\"width:100%;height:400px;\"><\/div>\n        <\/div>\n        <div class=\"tab-pane\" data-value=\"Data\" id=\"tab-6891-2\">\n          <br/>\n          <div id=\"results_long\" style=\"width:100%; height:auto; \" class=\"datatables html-widget html-widget-output\"><\/div>\n        <\/div>\n      <\/div>\n    <\/div>\n    <div align=\"center\">\n      <a id=\"downloadData\" class=\"btn btn-default shiny-download-link \" href=\"\" target=\"_blank\" download>\n        <i class=\"fa fa-download\" role=\"presentation\" aria-label=\"download icon\"><\/i>\n        Download results\n      <\/a>\n      <button id=\"start_over\" type=\"button\" class=\"btn btn-default action-button\">\n        <i class=\"fa fa-undo-alt\" role=\"presentation\" aria-label=\"undo-alt icon\"><\/i>\n        Start Over\n      <\/button>\n    <\/div>\n  <\/div>\n  <div class=\"col-sm-2\"><\/div>\n<\/div>",
       "deps": [
         {
           "name": "htmlwidgets",
@@ -322,7 +322,7 @@
       ]
     },
     "slides_tab": {
-      "html": "<div class=\"col-sm-12\">\n  <div class=\"row\">\n    <i class=\"fa fa-circle\" role=\"presentation\" aria-label=\"circle icon\" style=\"color: grey; position: absolute; right: 10px;\"><\/i>\n  <\/div>\n  <div class=\"row\">\n    <div class=\"col-sm-8 offset-md-2 col-sm-offset-2\" align=\"center\">\n      <div class=\"row\">\n        <img src=\"PNT/Slide128.jpeg\"/>\n      <\/div>\n      <div class=\"row\">\n        <div align=\"center\" style=\"width: 50%;\">\n          <br/>\n        <\/div>\n      <\/div>\n    <\/div>\n    <div class=\"col-sm-2\"><\/div>\n  <\/div>\n<\/div>",
+      "html": "<div class=\"col-sm-12\">\n  <div class=\"row\">\n    <i class=\"fa fa-circle\" role=\"presentation\" aria-label=\"circle icon\" style=\"color: grey; position: absolute; right: 10px;\"><\/i>\n  <\/div>\n  <div class=\"row\">\n    <div class=\"col-sm-8 offset-md-2 col-sm-offset-2\" align=\"center\">\n      <div class=\"row\">\n        <img src=\"PNT/Slide125.jpeg\"/>\n      <\/div>\n      <div class=\"row\">\n        <div align=\"center\" style=\"width: 50%;\">\n          <br/>\n        <\/div>\n      <\/div>\n    <\/div>\n    <div class=\"col-sm-2\"><\/div>\n  <\/div>\n<\/div>",
       "deps": [
         {
           "name": "font-awesome",
@@ -346,12 +346,12 @@
   "export": {
     "abil": "0.484_0.87_1.18_0.878_1.102_1.31_1.476_1.692_1.535_1.642_1.719_1.508_1.576_1.635_1.689_1.739_1.783_1.824_1.862_1.897_1.93_1.96_1.797_1.827_1.854_1.88_1.904_1.926_1.948_1.968",
     "discrimination": "1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258_1.258",
-    "item_number": "116_87_54_164_52_95_131_61_158_3_166_106_142_9_123_22_49_63_47_23_138_64_170_132_110_101_41_141_88_126",
+    "item_number": "116_87_166_164_54_95_131_61_158_3_52_106_142_9_123_22_49_47_63_23_138_170_64_132_110_101_41_141_88_126",
     "itemDifficulty": "0.02_0.483_0.772_1.07_0.772_1.049_1.029_1.772_1.88_0.989_0.772_0.714_0.695_0.637_0.637_0.636_0.598_0.579_0.579_0.541_0.54_0.522_0.522_0.521_0.445_0.426_0.407_0.388_0.368_0.33",
     "key_press": "2_2_2_1_2_2_2_2_1_2_2_1_2_2_2_2_2_2_2_2_2_2_1_2_2_2_2_2_2_2",
     "order": "1_2_3_4_5_6_7_8_9_10_11_12_13_14_15_16_17_18_19_20_21_22_23_24_25_26_27_28_29_30",
     "responses": "0_0_0_1_0_0_0_0_1_0_0_1_0_0_0_0_0_0_0_0_0_0_1_0_0_0_0_0_0_0",
     "sem": "0.856_0.773_0.718_0.638_0.603_0.577_0.557_0.545_0.505_0.491_0.48_0.45_0.441_0.434_0.428_0.423_0.418_0.414_0.41_0.407_0.404_0.401_0.377_0.374_0.372_0.37_0.368_0.366_0.365_0.363",
-    "words": "pumpkin_ruler_ambulance_volcano_cheerleaders_pyramid_binoculars_microscope_stethoscope_dinosaur_octopus_crutches_necklace_thermometer_slippers_plant_eskimo_van_skull_garage_zebra_helicopter_harp_celery_dragon_chimney_fireplace_wig_tractor_mustache"
+    "words": "pumpkin_ruler_octopus_volcano_ambulance_pyramid_binoculars_microscope_stethoscope_dinosaur_cheerleaders_crutches_necklace_thermometer_slippers_plant_eskimo_skull_van_garage_zebra_harp_helicopter_celery_dragon_chimney_fireplace_wig_tractor_mustache"
   }
 }
