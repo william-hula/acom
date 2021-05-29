@@ -259,16 +259,29 @@ server <- function(input, output, session) {
     # returns TRUE or FALSE
     if(input$mainpage==tabtitle_practice){
       
-          if(is.null(values$key_val)){ 
-            showNotification("Enter a score", type = "error")
-            # as long as there's a response or it's an insturction slide...
-          } else {
-            runjs("document.getElementById('audio').play();")
-            #js$click_sound()
-            values$i = ifelse(values$i<13, values$i + 1, values$i)
-            # updateNavbarPage(session, "mainpage",
-            #                  selected = tabtitle1)
-          }
+      # if slide 13, don't iterate, just show a message that says hit start...
+      if(values$i == 13){
+        showNotification("Press start to start testing", type = "message")
+      }
+      # essentially, if we're on the first two instruction slides, don't require a 1 or 2..
+      else if(values$i %in% c(1, 2)){
+        
+        runjs("document.getElementById('audio').play();")
+        #js$click_sound()
+        values$i = ifelse(values$i<13, values$i + 1, values$i)
+        
+      # otherwise, (i.e. not a practice slide)
+      } else if(is.null(values$key_val)){ 
+              # require a key press
+              showNotification("Enter a score", type = "error")
+              # as long as there's a response or it's an insturction slide...
+            } else {
+              runjs("document.getElementById('audio').play();")
+              #js$click_sound()
+              values$i = ifelse(values$i<13, values$i + 1, values$i)
+              # updateNavbarPage(session, "mainpage",
+              #                  selected = tabtitle1)
+            }
       
       values$key_val = NULL
       
@@ -557,10 +570,12 @@ server <- function(input, output, session) {
     renderUI({
       column(width = 12,
                fluidRow(
-                 if (isTruthy(values$key_val == incorrect_key_response | values$key_val == correct_key_response)){
-                   icon("dot-circle", style = "color: grey; position: absolute; right: 5px;")
-                 } else {
-                   icon("circle", style = "color: grey; position: absolute; right: 5px;")
+                 if(values$i %in% c(3:12)){
+                   if (isTruthy(values$key_val == incorrect_key_response | values$key_val == correct_key_response)){
+                     icon("dot-circle", style = "color: grey; position: absolute; right: 5px;")
+                   } else {
+                     icon("circle", style = "color: grey; position: absolute; right: 5px;")
+                   }
                  }
                ),
             fluidRow(
@@ -583,6 +598,7 @@ server <- function(input, output, session) {
     renderUI({
       column(width = 12,
           fluidRow(
+            
                        if (isTruthy(values$key_val == incorrect_key_response | values$key_val == correct_key_response)){
                          icon("dot-circle", style = "color: grey; position: absolute; right: 10px;")
                        } else {
