@@ -7,11 +7,6 @@ library(dplyr)
 library(catR)
 library(here)
 
-# we don't need these right?
-# library(catIrt)
-# library(irtoys) 
-# library(ltm)
-
 items = read.csv(here("data", "item_difficulty.csv")) %>% 
   dplyr::select(target, itemDifficulty = Item.Difficulty, discrimination = Discrimination, slide_num) %>%
   arrange(slide_num)%>%
@@ -28,18 +23,27 @@ items = read.csv(here("data", "item_difficulty.csv")) %>%
 item_key = read.csv(here("data", "item_difficulty.csv")) %>% 
   dplyr::select(target, slide_num, itemDifficulty = Item.Difficulty)
 
+starting_items <- c(130, 25, 39, 154) # are 0.02 or -0.02. closest to 0.
+
 # the magic!
 
-irt_function <- function(all_items, IRT = T){
-    
-    #tmp_list = list()
-      
+irt_function <- function(all_items, IRT = T, previous = NULL){
+
       # this is for the out argument. 
       # creates a vector of the items that have already been completed
       # to be fed to IRT so they don't get chosen again
       completed = all_items %>% 
         drop_na(response) %>%
         pull(item_number)
+      
+      # don't re-use previous items
+      if(!is.null(previous)){
+        previously_completed = previous %>%
+          drop_na(response) %>%
+          pull(item_number)
+          
+        completed = c(completed, previously_completed)
+      }
       
       # dataframe of inputs
       pars = data.frame(a = all_items$discrimination,
@@ -102,23 +106,33 @@ irt_function <- function(all_items, IRT = T){
     }
 }
 
+`%!in%` <- Negate(`%in%`)
 
-###### Want to test this function? 
+get_first_item <- function(previous_dat = NULL){
+  
+  choices = c(130, 25, 39, 154)
+  
+  if(is.null(previous_dat)){
+    
+    # if we want to sample the four anyway
+      # first_item = sample(choices, 1)
+      # return(first_item)
+    return(130)
+    
+  } else {
 
-#1. Read in items above. 
+    first_item <- 
+      tibble(choices = choices) %>%
+      filter(choices %!in% previous_dat$slide_num) %>%
+      slice_sample(n = 1) %>%
+      pull(choices)
+    
+    print(first_item)
+    return(first_item)
+}
 
-#2. Create some random responses:
 
-# e.g.:
-# items[3,5] = 0
-# items[4,5] = 0
-# items[5,5] = 0
-# items[50,5] = 1
-# items[60,5] = 0
-
-#3. fun the function. it just takes in this data frame with some responses.
-
-#irt_function(items)
+}
 
 
 

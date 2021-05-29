@@ -74,7 +74,9 @@ ui <- tagList(
                          tags$ol(
                            tags$li(instruction1),
                            tags$li(instruction2),
-                           tags$li("Refer to", tags$a(href = "https://mrri.org/philadelphia-naming-test/", "MRRI.org/philadelphia-naming-test/", target = "_blank"), instruction3)
+                           tags$li("Refer to",
+                                   tags$a(href = "https://mrri.org/philadelphia-naming-test/", "MRRI.org/philadelphia-naming-test/",target = "_blank"),
+                                   instruction3)
                          ), 
                         div(align = "center",
                             textInput("name", nameinput),
@@ -94,10 +96,24 @@ ui <- tagList(
                                         max = 0.5,
                                         step = 0.01,
                                         value = 0.3),
-                            checkboxInput("progbar", "Show progress bar (fixed only)", value = F),
-                            checkboxInput("random", "Random Order (175 only)", value = F),
-                            actionButton("start_practice", "Start Practice"),
-                            tags$audio(id = "audio", src = "click.wav", type = "audio/wav", style = "display:none;")
+                            # show the progress bar?
+                            checkboxInput("progbar",
+                                          "Show progress bar (fixed only)",
+                                          value = F),
+                            # randomize PNT order if doing the full 175 item test?
+                            checkboxInput("random",
+                                          "Random Order (175 only)",
+                                          value = F),
+                            fileInput("file1", "Upload previous results", accept = ".csv"),
+                            
+                            # start!
+                            actionButton("start_practice",
+                                         "Start Practice"),
+                            # this is so that the app plays a click. probably could be moved elsewhere. 
+                            tags$audio(id = "audio",
+                                       src = "click.wav",
+                                       type = "audio/wav",
+                                       style = "display:none;")
                             )
                   ),
                   column(width = 2)
@@ -144,6 +160,23 @@ server <- function(input, output, session) {
   values$test_length <- NULL
   values$irt_out <- list(0, 0, 1)
   values$min_sem <- NULL
+  values$previous <- NULL
+  
+################################## PREVIOUS DATA ###########################################
+# -----------------------------------------------------------------------------------------
+###########################################################################################   
+  
+  observeEvent(input$file1,{
+    file <- input$file1
+    ext <- tools::file_ext(file$datapath)
+    
+    req(file)
+    validate(need(ext == "csv", "Please upload a csv file"))
+    
+    values$previous <- read.csv(file$datapath) %>%
+      drop_na(response)
+    print(values$previous)
+  })
   
 ################################## OBSERVERS ##############################################    
 # -----------------------------------------------------------------------------------------
@@ -181,7 +214,11 @@ server <- function(input, output, session) {
     }
     
     values$n = if(isTruthy(values$IRT)){
-      130 # this selects the picture. 130 = pumpkin
+
+      # samples one of four first possible items, unless used previously...
+        get_first_item(values$previous)
+        
+      
     } else if (isTruthy(input$random)) {
       # if random, grab first row in values$item_difficulty, which is already randomized in code above
       values$item_difficulty[values$item_difficulty$pnt_order == 1,]$slide_num 
@@ -316,7 +353,7 @@ server <- function(input, output, session) {
                 # element[[2]] is a list of information returned by catR::nextSlide(), 
                 # including $name, the name of the next item
                 # element[[3]] returns the sem after re-estimating the model
-                values$irt_out = irt_function(values$item_difficulty, IRT = values$IRT)
+                values$irt_out = irt_function(values$item_difficulty, IRT = values$IRT, previous = values$previous)
                 # save info to the item_difficulty data_frame
                 values$item_difficulty[values$item_difficulty$slide_num == values$n,][7:11] = tibble(
                   
@@ -408,7 +445,7 @@ server <- function(input, output, session) {
              notes = NA
       ) %>%
       #drop_na(response) %>%
-      dplyr::select(-slide_num) %>%
+      #dplyr::select(-slide_num) %>%
       arrange(order)
     
     tmp$notes[[1]] = input$notes
