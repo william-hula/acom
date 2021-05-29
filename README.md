@@ -40,7 +40,7 @@ Update 5-24: Now preliminary version is on shinyapps.io:
         -0.475 and bridge: -0.475). Shouldn’t affect final ability
         estimate right?
 -   ~~ensure no bias in slight differences between catR and catpuccino~~
--   Redo validation script to adjust for practice slides
+-   ~~Redo validation script to adjust for practice slides~~ Looks good!
 
 ### For short-term use
 
@@ -64,9 +64,10 @@ Update 5-24: Now preliminary version is on shinyapps.io:
 
 ### Small stuff & Bugs:
 
+-   Clearer instructions for progressing through slides
 -   More informative error messages on non-assessment slides ROB
 -   Spacing throughout app. make sure ipad friendly.
--   Sound not working on shinyapps.io
+-   ~~Sound not working on shinyapps.io~~
 -   ~~UI resizing after opening modal.~~
 
 ### Longer-term

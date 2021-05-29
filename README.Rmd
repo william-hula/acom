@@ -52,7 +52,7 @@ Update 5-24: Now preliminary version is on shinyapps.io: https://rb-cavanaugh.sh
 - ~~validate final results in app use (bonus if automated)~~
   - QUESTION: How does catpuccino handle ties? Testing is showing occasional inconsistencies in which items are being chosen, but its only in cases where difficulty is the same (e.g. kite: -0.475 and bridge: -0.475). Shouldn't affect final ability estimate right? 
 - ~~ensure no bias in slight differences between catR and catpuccino~~
-- Redo validation script to adjust for practice slides
+- ~~Redo validation script to adjust for practice slides~~ Looks good!
 
 ### For short-term use
 
@@ -73,9 +73,10 @@ Update 5-24: Now preliminary version is on shinyapps.io: https://rb-cavanaugh.sh
 - Plot: what is the bell curve? ALEX
 
 ### Small stuff & Bugs:
+- Clearer instructions for progressing through slides
 - More informative error messages on non-assessment slides ROB
 - Spacing throughout app. make sure ipad friendly. 
-- Sound not working on shinyapps.io
+- ~~Sound not working on shinyapps.io~~
 - ~~UI resizing after opening modal.~~
 
 ### Longer-term

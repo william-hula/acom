@@ -19,7 +19,7 @@ ui <- tagList(
                 # imports javascript for hotkeys
                 useKeys(),
                 useShinyjs(),
-                extendShinyjs(script = "click.js", functions = "click_sound"),
+                #extendShinyjs(script = "click2.js", functions = "click_sound"),
                 keysInput("keys", response_keys),
                 keysInput("enter_key", enter),
                 includeCSS("www/style.css"),
@@ -51,7 +51,7 @@ ui <- tagList(
                                     label = "Development Status",
                                     icon = icon("code-branch"),
                                     style = "background:transparent; border:none;"
-                                  )                                  # This is solely for testing: always hidden
+                                  )                            # This is solely for testing: always hidden
                                 )
                         )
                      )
@@ -96,7 +96,8 @@ ui <- tagList(
                                         value = 0.3),
                             checkboxInput("progbar", "Show progress bar (fixed only)", value = F),
                             checkboxInput("random", "Random Order (175 only)", value = F),
-                            actionButton("start_practice", "Start Practice")
+                            actionButton("start_practice", "Start Practice"),
+                            tags$audio(id = "audio", src = "click.wav", type = "audio/wav", style = "display:none;")
                             )
                   ),
                   column(width = 2)
@@ -120,7 +121,8 @@ ui <- tagList(
                   uiOutput("results_tab")
                  )
     ),
-    br(), br(), br(), br(), br() # adjusting for footer. 
+    br(), br(), br(), br(), br(), # adjusting for footer. 
+    
 )
 
 # Define server logic required to draw a histogram
@@ -149,7 +151,8 @@ server <- function(input, output, session) {
   
   observeEvent(input$start_practice,{
     # play click
-    js$click_sound()
+    #js$click_sound()
+    runjs("document.getElementById('audio').play();")
     # dataframe of items, difficulty, discrimination; NA column for responses to start. 
     #values$item_difficulty <- items 
     values$i = 1
@@ -199,8 +202,8 @@ server <- function(input, output, session) {
     if(input$numitems != "SEM"){
       updateProgressBar(session = session, id = "progress_bar", value = 0)
     }
-    js$click_sound()
-    
+    #js$click_sound()
+    runjs("document.getElementById('audio').play();")
   })
   
   # enables or disables precision option if SEM is or isn't selected. 
@@ -260,7 +263,8 @@ server <- function(input, output, session) {
             showNotification("Enter a score", type = "error")
             # as long as there's a response or it's an insturction slide...
           } else {
-            js$click_sound()
+            runjs("document.getElementById('audio').play();")
+            #js$click_sound()
             values$i = ifelse(values$i<13, values$i + 1, values$i)
             # updateNavbarPage(session, "mainpage",
             #                  selected = tabtitle1)
@@ -283,7 +287,8 @@ server <- function(input, output, session) {
             # as long as there's a response or it's an insturction slide...
           } else if (another_item) {
             
-                js$click_sound()
+            runjs("document.getElementById('audio').play();")
+                #js$click_sound()
                 # If a keyu press was detected, store it in our dataframe of items, difficulty, discrimination etc...
                 # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
                 values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <- ifelse(
