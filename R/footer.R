@@ -20,7 +20,7 @@ footer_div <- p(
              label = "Development Status",
              icon = icon("code-branch"),
              style = "background:transparent; border:none;"
-           )                            # This is solely for testing: always hidden
+           )                            
          )
   )
 )

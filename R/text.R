@@ -1,6 +1,4 @@
 ### Langauge data
-
-
 # If testing, insert ability for test to simulate key presses...
 pagetitle = if (isTRUE(getOption("shiny.testmode"))) {
   pagetitle = div(#shinyjs::hidden(
@@ -10,7 +8,7 @@ pagetitle = if (isTRUE(getOption("shiny.testmode"))) {
     actionButton("enter_key", "enter")
   )#)
 } else {
-  "Computer-adaptive Philadelphia Naming Test"
+  "CAT-PNT"
 }
 
 
@@ -20,7 +18,5 @@ tabtitle1 = "Assessment"
 tabtitle2 = "Results"
 
 backbutton = "Back"
-
 nextbutton = "Next"
-
 resultstext = "This page has the results"

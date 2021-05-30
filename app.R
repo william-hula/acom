@@ -41,19 +41,7 @@ ui <- tagList(
                              src = "click.wav",
                              type = "audio/wav",
                              style = "display:none;"),
-                  fluidRow(
-                    column(align = "center", width = 12,
-                           div(
-                             style = "width:50%;",
-                             instruction_div
-                           )
-                        )
-                    ),br(),
-                  fluidRow(
-                      column(width = 12,# offset = 4,
-                            getting_started,
-                      )
-                    )
+                  uiOutput("intro_tab")
          ),
         
         ############################ Practice #########################
@@ -624,6 +612,27 @@ server <- function(input, output, session) {
   
   # this UI is on the server side so that it can be dynamic based on other conditions in the app. 
   
+  # intro tab. see glide.R
+  output$intro_tab <-
+    renderUI({
+      column(width = 12,
+        fluidRow(
+          column(align = "center", width = 12,
+                 div(
+                   style = "width:50%;",
+                   instruction_div
+                 )
+          )
+        ),br(),
+        fluidRow(
+          column(width = 12,# offset = 4,
+                 getting_started,
+          )
+        )
+      )
+    })
+  outputOptions(output, "intro_tab", suspendWhenHidden = FALSE)
+  
   # this shows the practice slides
   output$practice_tab <-
     renderUI({
@@ -715,7 +724,7 @@ server <- function(input, output, session) {
                  column(width = 2)
               )
   })
-  outputOptions(output, "results_table", suspendWhenHidden = FALSE)
+  #outputOptions(output, "results_table", suspendWhenHidden = FALSE)
   #bs_themer()
   
   

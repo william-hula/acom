@@ -15,7 +15,6 @@ library(htmltools)
 library(shinyWidgets)
 library(bslib)
 library(bayestestR)
-library(shinyglide)
 
 ######## DEFINE GLOBAL VARIABLES ########
 
