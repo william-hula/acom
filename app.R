@@ -5,7 +5,6 @@
 ###########################################################################################
 ###########################################################################################
 library(shiny)
-
 ################################## UI #####################################################
 # -----------------------------------------------------------------------------------------
 ###########################################################################################  
@@ -19,6 +18,7 @@ ui <- tagList(
                 # imports javascript for hotkeys
                 useKeys(),
                 useShinyjs(),
+                use_waiter(),
                 #extendShinyjs(script = "click2.js", functions = "click_sound"),
                 keysInput("keys", response_keys),
                 keysInput("enter_key", enter),
@@ -72,7 +72,9 @@ server <- function(input, output, session) {
 ################################## Initialize reactive values #############################
 # -----------------------------------------------------------------------------------------
 ###########################################################################################  
-
+  w <- Waiter$new(id = "plot",
+                  html = spin_loader(), 
+                  color = "white")
   # reactive list. 
   # reactiveValues is like a list where elements of the list can change based on user input
   values = reactiveValues()
@@ -375,6 +377,7 @@ server <- function(input, output, session) {
   
   # holds the item-level responses. 
   results_data_long <- reactive({
+    req(input$numitems)
     precision = if(input$numitems == "SEM"){
       paste0("SEM: ", input$sem)
     } else {
@@ -471,7 +474,7 @@ server <- function(input, output, session) {
                  "."
                )
       
-      if(values$num_previous >= 1){
+      if(!is.null(values$num_previous)){
         summary = 
             paste0(
                     summary,
@@ -550,7 +553,7 @@ server <- function(input, output, session) {
 
   
   output$plot <- renderPlot({# Fergadiotis, 2019
-
+    w$show()
     req(irt_final())
     
    dens = density(bayestestR::distribution_normal(1000, 0, 1.48))
@@ -594,7 +597,7 @@ server <- function(input, output, session) {
           axis.text.y = element_blank(),
           axis.ticks.y = element_blank()) 
   
-  if (values$num_previous >= 1){
+  if (!is.null(values$num_previous)){
     p = p + 
       geom_area(data = df %>% filter(fill2 == "last"),
                 aes(y = y),position = "identity", fill = "#FF0000", alpha = .25, color = NA) +
@@ -724,7 +727,7 @@ server <- function(input, output, session) {
                  column(width = 2)
               )
   })
-  #outputOptions(output, "results_table", suspendWhenHidden = FALSE)
+  outputOptions(output, "results_table", suspendWhenHidden = FALSE)
   #bs_themer()
   
   

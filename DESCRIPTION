@@ -31,4 +31,5 @@ Imports:
     fs,
     ggplot2,
     bayestestR,
-    htmltools
+    htmltools,
+    waiter
