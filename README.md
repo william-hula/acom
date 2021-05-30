@@ -67,7 +67,7 @@ Update 5-24: Now preliminary version is on shinyapps.io:
 -   Clearer instructions for progressing through slides
 -   ~~More informative error messages on non-assessment slides~~
 -   ~~Spacing throughout app. make sure ipad friendly.~~ Tentatively,
-    this looks ok…
+    this looks better…
 -   ~~Sound not working on shinyapps.io~~
 -   ~~UI resizing after opening modal.~~
 

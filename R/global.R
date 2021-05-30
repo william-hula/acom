@@ -15,6 +15,7 @@ library(htmltools)
 library(shinyWidgets)
 library(bslib)
 library(bayestestR)
+library(shinyglide)
 
 ######## DEFINE GLOBAL VARIABLES ########
 
@@ -29,5 +30,3 @@ response_keys <- c(
 # The next button
 enter <- "enter"
 
-# number of items to run:
-#p = 10

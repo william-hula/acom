@@ -15,7 +15,7 @@ ui <- tagList(
       ############################ SETUP ######################################
       
                 # css no clicky on tabs
-                tags$head(tags$style(HTML('.navbar-nav a {cursor: default}'))),
+                #tags$head(tags$style(HTML('.navbar-nav a {cursor: default}'))),
                 # imports javascript for hotkeys
                 useKeys(),
                 useShinyjs(),
@@ -29,101 +29,31 @@ ui <- tagList(
                    footer = tags$div(
                     id = "footer_id",
                     class = "footer",
-                     p(
-                       column(10, offset = 1, align = "center",
-                              p(
-                                  actionButton(
-                                    inputId='source',
-                                    label="Source Code",
-                                    icon = icon("github"),
-                                    onclick ="window.open('https://github.com/rbcavanaugh/pnt', '_blank')",
-                                    style = "background:transparent; border:none;"
-                                    
-                                  ),
-                                  actionButton(
-                                    inputId = "info",
-                                    label = "More Information",
-                                    icon = icon("info-circle"),
-                                    style = "background:transparent; border:none;"
-                                  ),
-                                  actionButton(
-                                    inputId = "dev",
-                                    label = "Development Status",
-                                    icon = icon("code-branch"),
-                                    style = "background:transparent; border:none;"
-                                  )                            # This is solely for testing: always hidden
-                                )
-                        )
-                     )
+                    footer_div
                    ),
-                   theme = bs_theme(bootswatch = "default",
-                                    base_font = font_google("Open Sans"),
-                                    heading_font = font_google("Open Sans"),
-                                    version = "4",
-                                    `enable-rounded` = FALSE,
-                                    `enable-transitions` = F,
-                                    primary = "#1665AC"
-                   ),
+                   theme= minimal_theme,
         # page 1 instructions
         
         ############################ Instructions ######################### 
         
          tabPanel(tabtitle0,
-                  column(width = 10,offset = 1, 
-                         h4("Instructions:"),
-                         tags$ol(
-                           tags$li(instruction1),
-                           tags$li(instruction2),
-                           tags$li("Refer to",
-                                   tags$a(href = "https://mrri.org/philadelphia-naming-test/", "MRRI.org/philadelphia-naming-test/",target = "_blank"),
-                                   instruction3)
-                         ), br(),
-                        fluidRow(
-                          column(width = 6,
-                            h5("Input participant information"), br(),
-                            textInput("name", nameinput),
-                            textInput("notes", otherinput),
-                            fileInput("file1", "Upload previous results", accept = ".csv")
-                          ),
-                          column(width = 6,
-                            h5("Choose test options"), br(),
-                            ### Use this to set how many items to run. 
-                            radioButtons(inputId = "numitems",
-                                         label = "Number of items (10 is for testing)",
-                                         choices = c("10", "30", "60", "100", "175", "SEM"),
-                                         selected = "10",
-                                         inline = T
-                                         ),
-                            
-                            # sets SEM precision. disabled if SEM not selected in numitems radio buttons
-                            sliderInput("sem", "Minimum acceptable SEM",
-                                        min = 0.1,
-                                        max = 0.5,
-                                        step = 0.01,
-                                        value = 0.3),
-                            # show the progress bar?
-                            checkboxInput("progbar",
-                                          "Show progress bar (fixed only)",
-                                          value = F),
-                            # randomize PNT order if doing the full 175 item test?
-                            checkboxInput("random",
-                                          "Random Order (175 only)",
-                                          value = F),
-                          )
-                        ),br(),
-                        div(align = "center",
-                            
-                            # start!
-                            actionButton("start_practice",
-                                         "Start Practice"),
-                            # this is so that the app plays a click. probably could be moved elsewhere. 
-                            tags$audio(id = "audio",
-                                       src = "click.wav",
-                                       type = "audio/wav",
-                                       style = "display:none;")
-                            )
-                  ),
-                  column(width = 2)
+                  tags$audio(id = "audio",
+                             src = "click.wav",
+                             type = "audio/wav",
+                             style = "display:none;"),
+                  fluidRow(
+                    column(align = "center", width = 12,
+                           div(
+                             style = "width:50%;",
+                             instruction_div
+                           )
+                        )
+                    ),br(),
+                  fluidRow(
+                      column(width = 12,# offset = 4,
+                            getting_started,
+                      )
+                    )
          ),
         
         ############################ Practice #########################
@@ -154,10 +84,7 @@ server <- function(input, output, session) {
 ################################## Initialize reactive values #############################
 # -----------------------------------------------------------------------------------------
 ###########################################################################################  
-  
-  # disable navigating by clicking on tabs
-  shinyjs::disable(selector = '.navbar-nav a')
-  
+
   # reactive list. 
   # reactiveValues is like a list where elements of the list can change based on user input
   values = reactiveValues()
@@ -168,6 +95,7 @@ server <- function(input, output, session) {
   values$irt_out <- list(0, 0, 1)
   values$min_sem <- NULL
   values$previous <- NULL
+  values$num_previous <- NULL
   values$datetime <- Sys.time()
   
 ################################## PREVIOUS DATA ###########################################
@@ -183,12 +111,31 @@ server <- function(input, output, session) {
     
     values$previous <- read.csv(file$datapath) %>%
       drop_na(response)
-    print(values$previous)
+    
+    values$num_previous <- length(unique(values$previous$date))
+      
   })
   
 ################################## OBSERVERS ##############################################    
 # -----------------------------------------------------------------------------------------
 ###########################################################################################    
+  
+  observeEvent(input$glide_next1,{
+    updateTabsetPanel(session, "glide", "glide2")
+  })
+  
+  observeEvent(input$glide_back1,{
+    updateTabsetPanel(session, "glide", "glide1")
+  })
+  
+  observeEvent(input$glide_next2,{
+    updateTabsetPanel(session, "glide", "glide3")
+  })
+  
+  observeEvent(input$glide_back2,{
+    updateTabsetPanel(session, "glide", "glide2")
+  })
+  
   
   observeEvent(input$start_practice,{
     # play click
@@ -452,8 +399,6 @@ server <- function(input, output, session) {
              date = values$datetime,
              notes = NA
       ) %>%
-      #drop_na(response) %>%
-      #dplyr::select(-slide_num) %>%
       arrange(order)
     
     tmp$notes[[1]] = input$notes
@@ -483,54 +428,41 @@ server <- function(input, output, session) {
     )
   })
   
-  # this is for making data available for export during testing.
   observeEvent(input$mainpage==tabtitle2,{
-  values$out_words <- paste(results_data_long() %>% drop_na(response) %>%pull(target), collapse = "_")
-  values$out_nums <- paste(results_data_long() %>% drop_na(response) %>%pull(response), collapse = "_")
-  values$out_ability <- paste(results_data_long() %>% drop_na(response) %>%pull(ability), collapse = "_")
-  values$out_sem <- paste(results_data_long() %>% drop_na(response) %>%pull(sem), collapse = "_")
-  values$item_dif <- paste(results_data_long() %>% drop_na(response) %>%pull(itemDifficulty), collapse = "_")
-  values$disc <- paste(results_data_long() %>% drop_na(response) %>%pull(discrimination), collapse = "_")
-  values$key <- paste(results_data_long() %>% drop_na(response) %>%pull(key), collapse = "_")
-  values$order <- paste(results_data_long() %>% drop_na(response) %>%pull(order), collapse = "_")
-  values$item_number <- paste(results_data_long() %>% drop_na(response) %>%pull(item_number), collapse = "_")
   
-    })
-
-  # This makes the above data available after running unit test.
-  exportTestValues(abil = values$out_ability,
-                   sem = values$out_sem,
-                   words = values$out_words,
-                   responses = values$out_nums,
-                   itemDifficulty = values$item_dif,
-                   discrimination = values$disc,
-                   key_press = values$key,
-                   order = values$order,
-                   item_number = values$item_number
-                   )
-  
-  # creates a data for downloading. added to accomodate previous data
-  download_data <- reactive({
-    
-    if(!is.na(irt_final()$last_ability)){
-      d1 = results_data_long() %>% mutate_all(as.character)
-      d2 = values$previous %>% mutate_all(as.character)
-      d3 = bind_rows(d1, d2)
-    } else {
-      d3 = results_data_long()
+    # this is for making data available for export during testing.
+    if (isTRUE(getOption("shiny.testmode"))) {  
+        values$out_words <- paste(results_data_long() %>% drop_na(response) %>%pull(target), collapse = "_")
+        values$out_nums <- paste(results_data_long() %>% drop_na(response) %>%pull(response), collapse = "_")
+        values$out_ability <- paste(results_data_long() %>% drop_na(response) %>%pull(ability), collapse = "_")
+        values$out_sem <- paste(results_data_long() %>% drop_na(response) %>%pull(sem), collapse = "_")
+        values$item_dif <- paste(results_data_long() %>% drop_na(response) %>%pull(itemDifficulty), collapse = "_")
+        values$disc <- paste(results_data_long() %>% drop_na(response) %>%pull(discrimination), collapse = "_")
+        values$key <- paste(results_data_long() %>% drop_na(response) %>%pull(key), collapse = "_")
+        values$order <- paste(results_data_long() %>% drop_na(response) %>%pull(order), collapse = "_")
+        values$item_number <- paste(results_data_long() %>% drop_na(response) %>%pull(item_number), collapse = "_")
     }
-    
-    return(d3)
-   
-  })
-  
-  
-  ################################## OUTPUTS ##############################################    
-  # ---------------------------------------------------------------------------------------
-  #########################################################################################
+          
+    })
+      
+    # This makes the above data available after running unit test.
+    exportTestValues(abil = values$out_ability,
+                     sem = values$out_sem,
+                     words = values$out_words,
+                     responses = values$out_nums,
+                     itemDifficulty = values$item_dif,
+                     discrimination = values$disc,
+                     key_press = values$key,
+                     order = values$order,
+                     item_number = values$item_number
+                     )
+
+################################## OUTPUTS ##############################################    
+# ---------------------------------------------------------------------------------------
+#########################################################################################
   
   # outputs a table of the item level responses
-  output$results_long <- renderDT({
+  output$results_table <- renderDT({
       results_data_long() %>%
         drop_na(response) %>%
       select(order, target, resp, key, itemDifficulty, ability, sem)
@@ -551,7 +483,7 @@ server <- function(input, output, session) {
                  "."
                )
       
-      if(!is.na(irt_final()$last_ability)){
+      if(values$num_previous >= 1){
         summary = 
             paste0(
                     summary,
@@ -570,6 +502,22 @@ server <- function(input, output, session) {
   # ---------------------------------------------------------------------------------------
   #########################################################################################
   
+  # creates a data for downloading. added to accomodate previous data
+  download_data <- eventReactive(input$mainpage=="tabtitle2",{
+    
+    if(!is.na(irt_final()$last_ability)){
+      d1 = results_data_long() %>% mutate_all(as.character)
+      d2 = values$previous %>% mutate_all(as.character)
+      d3 = bind_rows(d1, d2)
+    } else {
+      d3 = results_data_long()
+    }
+    
+    return(d3)
+    
+  })
+  
+  # downloading output
   output$downloadData <- downloadHandler(
       filename = function() {
         paste(gsub(" ", "-", input$name), as.character(Sys.Date()), "pnt.csv", sep = "_")
@@ -658,7 +606,7 @@ server <- function(input, output, session) {
           axis.text.y = element_blank(),
           axis.ticks.y = element_blank()) 
   
-  if (!is.na(irt_final()$last_ability)){
+  if (values$num_previous >= 1){
     p = p + 
       geom_area(data = df %>% filter(fill2 == "last"),
                 aes(y = y),position = "identity", fill = "#FF0000", alpha = .25, color = NA) +
@@ -752,7 +700,7 @@ server <- function(input, output, session) {
                                    plotOutput("plot")
                           ),
                           tabPanel("Data", 
-                                   DTOutput("results_long"),
+                                   DTOutput("results_table"),
                           )
                       ), 
                       tags$div(align = "center",
@@ -767,7 +715,7 @@ server <- function(input, output, session) {
                  column(width = 2)
               )
   })
-  outputOptions(output, "results_long", suspendWhenHidden = FALSE)
+  outputOptions(output, "results_table", suspendWhenHidden = FALSE)
   #bs_themer()
   
   
@@ -782,6 +730,49 @@ shinyApp(ui = ui, server = server)
 
 
 
-
+# fluidRow(
+#   column(width = 6,
+#     h5("Input participant information"), br(),
+#     textInput("name", nameinput),
+#     textInput("notes", otherinput),
+#     fileInput("file1", "Upload previous results", accept = ".csv")
+#   ),
+#   column(width = 6,
+#     h5("Choose test options"), br(),
+#     ### Use this to set how many items to run. 
+#     radioButtons(inputId = "numitems",
+#                  label = "Number of items (10 is for testing)",
+#                  choices = c("10", "30", "60", "100", "175", "SEM"),
+#                  selected = "10",
+#                  inline = T
+#                  ),
+#     
+#     # sets SEM precision. disabled if SEM not selected in numitems radio buttons
+#     sliderInput("sem", "Minimum acceptable SEM",
+#                 min = 0.1,
+#                 max = 0.5,
+#                 step = 0.01,
+#                 value = 0.3),
+#     # show the progress bar?
+#     checkboxInput("progbar",
+#                   "Show progress bar (fixed only)",
+#                   value = F),
+#     # randomize PNT order if doing the full 175 item test?
+#     checkboxInput("random",
+#                   "Random Order (175 only)",
+#                   value = F),
+#   )
+# ),br(),
+# div(align = "center",
+#     
+#     # start!
+#     actionButton("start_practice",
+#                  "Start Practice"),
+#     # this is so that the app plays a click. probably could be moved elsewhere. 
+#     tags$audio(id = "audio",
+#                src = "click.wav",
+#                type = "audio/wav",
+#                style = "display:none;")
+#     )
 
 
