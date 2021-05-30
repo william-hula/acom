@@ -4,16 +4,9 @@ html {
 
 img {
   max-width: 100%;
-  width: 100%;
+  width: auto;
   height: auto;
-  max-height: 80vh;
 }
-
-
-
-/*@media only screen and (min-width: 780px) {
-.navbar .navbar-nav {float: right}
-}*/
 
 .navbar {
   margin-bottom: 5px;
@@ -50,4 +43,5 @@ a {
 
 .fa, .fab {
   margin-right: 5px;
+  z-index: 1000;
 }
