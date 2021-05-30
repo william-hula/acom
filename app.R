@@ -343,7 +343,7 @@ server <- function(input, output, session) {
             
           } 
           # prints to the console
-          print(tail(values$item_difficulty %>% drop_na(response) %>% arrange(order), 10))
+          #print(tail(values$item_difficulty %>% drop_na(response) %>% arrange(order), 10))
           
           
           # decides whether to cut to the results page or not!
@@ -410,15 +410,30 @@ server <- function(input, output, session) {
   
   # tracks final irt data.
   irt_final <- eventReactive(input$mainpage=="tabtitle2",{
-    tibble(
+    df = tibble(
       ability = values$irt_out[[1]],
       sem = values$irt_out[[3]],
-      last_ability = ifelse(is.null(values$previous),
-                            NA,
-                            values$previous[values$previous$sem==min(values$previous$sem),]$ability
-      ),
-      last_sem = ifelse(is.null(values$previous), NA, min(values$previous$sem))
-    )
+      last_ability = NA,
+      last_sem = NA,
+      first_ability = NA,
+      first_sem = NA
+      )
+    
+    if(!is.null(values$previous)){
+      if(values$num_previous==1){
+        df$last_ability = values$previous[values$previous$sem==min(values$previous$sem),]$ability
+        df$last_sem = min(values$previous$sem)
+      } else if (values$num_previous == 2){
+        prev_dat = values$previous %>% filter(date == max(date))
+        df$last_ability = prev_dat[prev_dat$sem==min(prev_dat$sem),]$ability
+        df$last_sem = min(prev_dat$sem)
+        first_dat = values$previous %>% filter(date == min(date))
+        df$first_ability = first_dat[first_dat$sem==min(first_dat$sem),]$ability
+        df$first_sem = min(first_dat$sem)
+      }
+    }
+    print(df)
+    return(df)
   })
   
   observeEvent(input$mainpage==tabtitle2,{
@@ -465,30 +480,46 @@ server <- function(input, output, session) {
   #  outputs a summary sentence
   output$results_summary <- renderUI({
       summary = 
-        paste0(
-                "The total accuracy for this test was ",
+        paste(
+                "The total accuracy for this test was",
                  round(results_data_summary()*100, 1),
                  "%.",
-                 " The final IRT ability estimate is ",
+                 "The final IRT ability estimate is",
                  round(irt_final()$ability, 2),
-                 " (blue) and the standard error of the mean is ",
+                 "and the standard error of the mean is",
                  round(irt_final()$sem,2),
-                 "."
-               )
+                 "(blue).", "This naming ability estimate is in the ",
+                round(pnorm(irt_final()$ability, 0, 1.48)*100,1), "percentile of naming ability."
+               ,sep = " ")
       
       if(!is.null(values$num_previous)){
         summary = 
-            paste0(
+            paste(
                     summary,
-                    " Last assessment, the final IRT ability estimate was ",
+                    "Last assessment, the final IRT ability estimate was ",
                     round(irt_final()$last_ability,2),
-                    " (red) and the standard error of the mean was ",
+                    "and the standard error of the mean was",
                     round(irt_final()$last_sem,2),
-                    "."
-                )
+                    "(red).", "The previous naming ability estimate was in the",
+                    round(pnorm(irt_final()$last_ability, 0, 1.48)*100,1), " percentile."
+                ,sep = " ")
+        
+        if(values$num_previous == 2){
+          summary = 
+            paste(
+              summary,
+              " In the first assessment, the final IRT ability estimate was ",
+              round(irt_final()$first_ability,2),
+              "and the standard error of the mean was",
+              round(irt_final()$first_sem,2),
+              "(green).", "The first naming ability estimate was in the",
+              round(pnorm(irt_final()$first_ability, 0, 1.48)*100,1), "percentile."
+            ,sep = " ")
+          
+        }
       }
       
-      return(h5(summary))
+      return(p(summary))
   })
   
   ################################## DOWNLOAD ##############################################    
@@ -569,24 +600,35 @@ server <- function(input, output, session) {
                           irt_final()$last_ability - irt_final()$last_sem),
       last_upper = ifelse(is.na(irt_final()$last_ability), 
                           1001,
-                          irt_final()$last_ability + irt_final()$last_sem)) %>%
+                          irt_final()$last_ability + irt_final()$last_sem),
+      first_lower = ifelse(is.na(irt_final()$first_ability), 
+                          1000,
+                          irt_final()$first_ability - irt_final()$first_sem),
+      first_upper = ifelse(is.na(irt_final()$first_ability), 
+                          1001,
+                          irt_final()$first_ability + irt_final()$first_sem)
+      ) %>%
      rowwise() %>%
-     mutate(fill1 = factor(ifelse(between(x, lower, upper), "current", NA)),
-            fill2 = factor(ifelse(between(x, last_lower, last_upper), "last", NA)),
-            fill3 = factor(ifelse(!between(x, lower, upper) & !between(x, last_lower, last_upper),
-                                  "neither", NA))
+     mutate(fill1 = factor(ifelse(between(x, lower, upper),
+                                  "current", NA)),
+            fill2 = factor(ifelse(between(x, last_lower, last_upper),
+                                  "last", NA)),
+            fill3 = factor(ifelse(!between(x, lower, upper) & !between(x, last_lower, last_upper) & !between(x, first_lower, first_upper),
+                                  "neither", NA)),
+            fill4 = factor(ifelse(between(x, first_lower, first_upper),
+                                  "first", NA))
      )
-   
+
   p = df %>%
      ggplot2::ggplot(aes(x = x, y = y)) +
     geom_area(data = df %>% filter(fill3 == "neither"),
               aes(y = y),position = "identity", fill = "#F1F1F1", color = NA) +
     geom_area(data = df %>% filter(fill1 == "current"),
-              aes(y = y),position = "identity", fill = "#0047ab", alpha = .25, color = NA) +
+              aes(y = y),position = "identity", fill = "#619CFF", alpha = .4, color = NA) +
       
     geom_line(size = 2) +
-    geom_vline(aes(xintercept = irt_final()$ability), color = "navy", alpha = .8, size = 1) +
-    scale_x_continuous(breaks=seq(-5,5,1), limits = c(-5,5)) +
+    geom_vline(aes(xintercept = irt_final()$ability), color = "#619CFF", alpha = .8, size = 1) +
+    scale_x_continuous(breaks=seq(-5,5,.5), limits = c(-5,5)) +
     scale_fill_manual(guide = "none", values = colors) +
     theme_minimal(base_size = 15) +
     xlab("PNT Ability Estimate") +
@@ -602,9 +644,19 @@ server <- function(input, output, session) {
   if (!is.null(values$num_previous)){
     p = p + 
       geom_area(data = df %>% filter(fill2 == "last"),
-                aes(y = y),position = "identity", fill = "#FF0000", alpha = .25, color = NA) +
-      geom_vline(aes(xintercept = irt_final()$last_ability), color = "darkred", alpha = .8, size = 1)
+                aes(y = y),position = "identity", fill = "#F8766D", alpha = .4, color = NA) +
+      geom_vline(aes(xintercept = irt_final()$last_ability), color = "#F8766D", alpha = .8, size = 1)
+    
+    if(values$num_previous == 2){
+      p = p + 
+        geom_area(data = df %>% filter(fill4 == "first"),
+                  aes(y = y),position = "identity", fill = "#00BA38", alpha = .4, color = NA) +
+        geom_vline(aes(xintercept = irt_final()$first_ability), color = "#00BA38", alpha = .8, size = 1)
+    }
+    
   } 
+  
+  
   
   return(p)
 
