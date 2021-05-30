@@ -76,11 +76,11 @@ Update 5-24: Now preliminary version is on shinyapps.io:
 -   create ability to upload previous file to prevent reuse of
     previously tested words.
     -   ~~able to upload and don’t repeat~~
-    -   compare performacne between administrations (hidden results tab
-        only visible if fileupload exists?)
+    -   ~~compare performacne between administrations (hidden results
+        tab only visible if fileupload exists?)~~
     -   use prior from previous adminstration?
-    -   download data with all previous administrations for n = 2+i’th
-        upload.
+    -   ~~download data with all previous administrations for n = 2+i’th
+        upload.~~
 
 ### Longer-term:
 
