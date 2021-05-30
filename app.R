@@ -69,7 +69,7 @@ ui <- tagList(
         ############################ Instructions ######################### 
         
          tabPanel(tabtitle0,
-                  column(width = 8,offset = 2, 
+                  column(width = 10,offset = 1, 
                          h4("Instructions:"),
                          tags$ol(
                            tags$li(instruction1),
@@ -77,11 +77,16 @@ ui <- tagList(
                            tags$li("Refer to",
                                    tags$a(href = "https://mrri.org/philadelphia-naming-test/", "MRRI.org/philadelphia-naming-test/",target = "_blank"),
                                    instruction3)
-                         ), 
-                        div(align = "center",
+                         ), br(),
+                        fluidRow(
+                          column(width = 6,
+                            h5("Input participant information"), br(),
                             textInput("name", nameinput),
                             textInput("notes", otherinput),
-                            
+                            fileInput("file1", "Upload previous results", accept = ".csv")
+                          ),
+                          column(width = 6,
+                            h5("Choose test options"), br(),
                             ### Use this to set how many items to run. 
                             radioButtons(inputId = "numitems",
                                          label = "Number of items (10 is for testing)",
@@ -104,7 +109,9 @@ ui <- tagList(
                             checkboxInput("random",
                                           "Random Order (175 only)",
                                           value = F),
-                            fileInput("file1", "Upload previous results", accept = ".csv"),
+                          )
+                        ),br(),
+                        div(align = "center",
                             
                             # start!
                             actionButton("start_practice",
@@ -161,6 +168,7 @@ server <- function(input, output, session) {
   values$irt_out <- list(0, 0, 1)
   values$min_sem <- NULL
   values$previous <- NULL
+  values$datetime <- Sys.time()
   
 ################################## PREVIOUS DATA ###########################################
 # -----------------------------------------------------------------------------------------
@@ -441,7 +449,7 @@ server <- function(input, output, session) {
     tmp = dplyr::bind_rows(values$item_difficulty) %>%
       mutate(precision = precision,
              name = input$name,
-             date = Sys.Date(),
+             date = values$datetime,
              notes = NA
       ) %>%
       #drop_na(response) %>%
@@ -463,10 +471,15 @@ server <- function(input, output, session) {
   })
   
   # tracks final irt data.
-  irt_final <- reactive({
+  irt_final <- eventReactive(input$mainpage=="tabtitle2",{
     tibble(
       ability = values$irt_out[[1]],
-      sem = values$irt_out[[3]]
+      sem = values$irt_out[[3]],
+      last_ability = ifelse(is.null(values$previous),
+                            NA,
+                            values$previous[values$previous$sem==min(values$previous$sem),]$ability
+      ),
+      last_sem = ifelse(is.null(values$previous), NA, min(values$previous$sem))
     )
   })
   
@@ -481,6 +494,7 @@ server <- function(input, output, session) {
   values$key <- paste(results_data_long() %>% drop_na(response) %>%pull(key), collapse = "_")
   values$order <- paste(results_data_long() %>% drop_na(response) %>%pull(order), collapse = "_")
   values$item_number <- paste(results_data_long() %>% drop_na(response) %>%pull(item_number), collapse = "_")
+  
     })
 
   # This makes the above data available after running unit test.
@@ -494,6 +508,21 @@ server <- function(input, output, session) {
                    order = values$order,
                    item_number = values$item_number
                    )
+  
+  # creates a data for downloading. added to accomodate previous data
+  download_data <- reactive({
+    
+    if(!is.na(irt_final()$last_ability)){
+      d1 = results_data_long() %>% mutate_all(as.character)
+      d2 = values$previous %>% mutate_all(as.character)
+      d3 = bind_rows(d1, d2)
+    } else {
+      d3 = results_data_long()
+    }
+    
+    return(d3)
+   
+  })
   
   
   ################################## OUTPUTS ##############################################    
@@ -510,16 +539,31 @@ server <- function(input, output, session) {
   
   #  outputs a summary sentence
   output$results_summary <- renderUI({
-      h5(
-        paste0("The total accuracy for this test was ",
-               round(results_data_summary()*100, 1),
-               "%.",
-               " The final IRT ability estimate is ",
-               round(irt_final()$ability, 3),
-               " (red line) and the standard error of the mean is ",
-               round(irt_final()$sem,3),
-               " (darker blue).")
-      )
+      summary = 
+        paste0(
+                "The total accuracy for this test was ",
+                 round(results_data_summary()*100, 1),
+                 "%.",
+                 " The final IRT ability estimate is ",
+                 round(irt_final()$ability, 2),
+                 " (blue) and the standard error of the mean is ",
+                 round(irt_final()$sem,2),
+                 "."
+               )
+      
+      if(!is.na(irt_final()$last_ability)){
+        summary = 
+            paste0(
+                    summary,
+                    " Last assessment, the final IRT ability estimate was ",
+                    round(irt_final()$last_ability,2),
+                    " (red) and the standard error of the mean was ",
+                    round(irt_final()$last_sem,2),
+                    "."
+                )
+      }
+      
+      return(h5(summary))
   })
   
   ################################## DOWNLOAD ##############################################    
@@ -531,7 +575,7 @@ server <- function(input, output, session) {
         paste(gsub(" ", "-", input$name), as.character(Sys.Date()), "pnt.csv", sep = "_")
       },
       content = function(file) {
-        write.csv(results_data_long(), file, row.names = FALSE)
+        write.csv(download_data(), file, row.names = FALSE)
       }
   )
   
@@ -571,28 +615,57 @@ server <- function(input, output, session) {
   
   output$plot <- renderPlot({# Fergadiotis, 2019
 
-   dens = density(bayestestR::distribution_normal(100, 0, 1.48))
+    req(irt_final())
+    
+   dens = density(bayestestR::distribution_normal(1000, 0, 1.48))
    df <- tibble(
       x = dens$x,
       y = dens$y,
       lower = irt_final()$ability - irt_final()$sem,
       upper = irt_final()$ability + irt_final()$sem,
-    ) %>%
+      last_lower = ifelse(is.na(irt_final()$last_ability), 
+                          1000,
+                          irt_final()$last_ability - irt_final()$last_sem),
+      last_upper = ifelse(is.na(irt_final()$last_ability), 
+                          1001,
+                          irt_final()$last_ability + irt_final()$last_sem)) %>%
      rowwise() %>%
-     mutate(fill = factor(ifelse(between(x, lower, upper), "out", "in")))
-
-  df %>%
+     mutate(fill1 = factor(ifelse(between(x, lower, upper), "current", NA)),
+            fill2 = factor(ifelse(between(x, last_lower, last_upper), "last", NA)),
+            fill3 = factor(ifelse(!between(x, lower, upper) & !between(x, last_lower, last_upper),
+                                  "neither", NA))
+     )
+   
+  p = df %>%
      ggplot2::ggplot(aes(x = x, y = y)) +
-      geom_ribbon(aes(ymin = 0, ymax = y-0.001, fill = fill)) +
-      geom_line(size = 2) +
-      geom_vline(aes(xintercept = irt_final()$ability), color = "darkred", size = 1.5) +
-      scale_x_continuous(breaks=seq(-5,5,1), limits = c(-5,5)) +
-      scale_fill_brewer(guide="none") +
-      theme_minimal(base_size = 15) +
-      xlab("PNT Ability Estimate") +
-      ylab("Density") +
-      theme(axis.title.x = element_text(vjust=-1),
-            plot.margin = unit(c(15, 5.5, 15, 5.5), "pt"))
+    geom_area(data = df %>% filter(fill3 == "neither"),
+              aes(y = y),position = "identity", fill = "#F1F1F1", color = NA) +
+    geom_area(data = df %>% filter(fill1 == "current"),
+              aes(y = y),position = "identity", fill = "#0047ab", alpha = .25, color = NA) +
+      
+    geom_line(size = 2) +
+    geom_vline(aes(xintercept = irt_final()$ability), color = "navy", alpha = .8, size = 1) +
+    scale_x_continuous(breaks=seq(-5,5,1), limits = c(-5,5)) +
+    scale_fill_manual(guide = "none", values = colors) +
+    theme_minimal(base_size = 15) +
+    xlab("PNT Ability Estimate") +
+    ylab(NULL) +
+    theme(axis.title.x = element_text(vjust=-1),
+          plot.margin = unit(c(15, 5.5, 15, 5.5), "pt"),
+          legend.position = "none",
+          panel.grid = element_blank(),
+          axis.title.y = element_blank(),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank()) 
+  
+  if (!is.na(irt_final()$last_ability)){
+    p = p + 
+      geom_area(data = df %>% filter(fill2 == "last"),
+                aes(y = y),position = "identity", fill = "#FF0000", alpha = .25, color = NA) +
+      geom_vline(aes(xintercept = irt_final()$last_ability), color = "darkred", alpha = .8, size = 1)
+  } 
+  
+  return(p)
 
   })
 
@@ -680,7 +753,7 @@ server <- function(input, output, session) {
                           ),
                           tabPanel("Data", 
                                    DTOutput("results_long"),
-                        )
+                          )
                       ), 
                       tags$div(align = "center",
                                downloadButton("downloadData",
@@ -696,7 +769,13 @@ server <- function(input, output, session) {
   })
   outputOptions(output, "results_long", suspendWhenHidden = FALSE)
   #bs_themer()
+  
+  
+  
 }
+
+
+
 
 # Run the application 
 shinyApp(ui = ui, server = server)
