@@ -678,9 +678,7 @@ server <- function(input, output, session) {
           ),
           fluidRow(
               column(width = 8, offset = 2, align = "center",
-                     fluidRow(
-                              tags$img(src = paste0("PNT/Slide", values$n, ".jpeg"))
-                     ),
+                              tags$img(src = paste0("PNT/Slide", values$n, ".jpeg")),
                      # note the progress bar and next/back buttons are not in the slide image. They
                      # are their  own static area below the slides. 
                      fluidRow(
@@ -695,8 +693,8 @@ server <- function(input, output, session) {
                            
                        )
                      )
-              ),
-              column(width = 2)
+              )#,
+              #column(width = 2)
           )
       )
   })
@@ -723,8 +721,8 @@ server <- function(input, output, session) {
                                             icon = icon("undo-alt")
                                             )
                       )
-                  ),
-                 column(width = 2)
+                  )#,
+                 #column(width = 2)
               )
   })
   outputOptions(output, "results_table", suspendWhenHidden = FALSE)
