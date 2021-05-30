@@ -226,6 +226,8 @@ server <- function(input, output, session) {
   # if start over is hit, go to home page
   # start assessment button then resets everything
   observeEvent(input$start_over,{
+    shinyjs::reset("intro_tab")
+    updateTabsetPanel(session, "glide", "glide1")
     updateNavbarPage(session, "mainpage",
                      selected = tabtitle0)
   })
