@@ -106,8 +106,6 @@ irt_function <- function(all_items, IRT = T, previous = NULL){
     }
 }
 
-`%!in%` <- Negate(`%in%`)
-
 get_first_item <- function(previous_dat = NULL){
   
   choices = c(130, 25, 39, 154)

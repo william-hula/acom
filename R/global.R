@@ -30,3 +30,5 @@ response_keys <- c(
 # The next button
 enter <- "enter"
 
+`%!in%` <- Negate(`%in%`)
+

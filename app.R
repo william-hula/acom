@@ -1,17 +1,19 @@
 
-###########################################################################################
-###########################################################################################
-################################# CAT PNT SHINY APP #######################################
-###########################################################################################
-###########################################################################################
+################################################################################
+################################################################################
+################################# CAT PNT SHINY APP ############################
+################################################################################
+################################################################################
+
 library(shiny)
-################################## UI #####################################################
-# -----------------------------------------------------------------------------------------
-###########################################################################################  
+
+################################## UI ##########################################
+# ------------------------------------------------------------------------------
+################################################################################
 
 ui <- tagList(
   
-      ############################ SETUP ######################################
+    ############################### SETUP ######################################
       
                 # css no clicky on tabs
                 #tags$head(tags$style(HTML('.navbar-nav a {cursor: default}'))),
@@ -23,7 +25,8 @@ ui <- tagList(
                 keysInput("keys", response_keys),
                 keysInput("enter_key", enter),
                 includeCSS("www/style.css"),
-      ############################ layout starts here ######################### 
+      
+    ############################### layout starts here ######################### 
       
         navbarPage(title = pagetitle, id = "mainpage",
                    footer = tags$div(
@@ -31,10 +34,9 @@ ui <- tagList(
                     class = "footer",
                     footer_div
                    ),
-                   theme= minimal_theme,
-        # page 1 instructions
-        
-        ############################ Instructions ######################### 
+                   theme = minimal_theme,
+
+        ############################ Instructions ############################## 
         
          tabPanel(tabtitle0,
                   tags$audio(id = "audio",
@@ -44,54 +46,61 @@ ui <- tagList(
                   uiOutput("intro_tab")
          ),
         
-        ############################ Practice #########################
+        ############################ Practice ##################################
         
         tabPanel(title = tabtitle_practice,
                  uiOutput("practice_tab")
                  ),
          
-        ############################ Assessment #########################
+        ############################ Assessment ################################
         
          tabPanel(title = tabtitle1,
                   uiOutput("slides_tab")
                   ),
         
-        ############################ Results #########################
+        ############################ Results ###################################
         
          tabPanel(title = tabtitle2, 
                   uiOutput("results_tab")
                  )
+        
+        ########################################################################
+        
+    # close navbar page
     ),
-    br(), br(), br(), br(), br(), # adjusting for footer. 
-    
+     
+    # adjusting for footer. 
+    br(), br(), br(), br(), br(), 
+#end of UI   
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
   
-################################## Initialize reactive values #############################
-# -----------------------------------------------------------------------------------------
-###########################################################################################  
+########################## Initialize reactive values ##########################
+# ------------------------------------------------------------------------------
+################################################################################
+  #establishes plot loading 
   w <- Waiter$new(id = "plot",
                   html = spin_loader(), 
                   color = "white")
-  # reactive list. 
-  # reactiveValues is like a list where elements of the list can change based on user input
+  
+  # reactiveValues is a list where elements of the list can change
   values = reactiveValues()
-  values$item_difficulty <- items 
-  # default starting values
+  values$item_difficulty <- items #dataframe of potential values
   values$i = 0 # this is the counter to track the slide number
-  values$test_length <- NULL
-  values$irt_out <- list(0, 0, 1)
-  values$min_sem <- NULL
-  values$previous <- NULL
-  values$num_previous <- NULL
-  values$datetime <- Sys.time()
+  values$test_length <- NULL # number of items to test
+  values$irt_out <- list(0, 0, 1) # will be overwritten if IRT 
+  values$min_sem <- NULL # sem precision
+  values$previous <- NULL # previous data if uploaded
+  values$num_previous <- NULL # number of previous tests
+  values$datetime <- Sys.time() # establishes datetime when app opens for saving
   
-################################## PREVIOUS DATA ###########################################
-# -----------------------------------------------------------------------------------------
-###########################################################################################   
+################################## PREVIOUS DATA ###############################
+# ------------------------------------------------------------------------------
+################################################################################ 
   
+  # observer for uploading data
   observeEvent(input$file1,{
     file <- input$file1
     ext <- tools::file_ext(file$datapath)
@@ -110,36 +119,38 @@ server <- function(input, output, session) {
 # -----------------------------------------------------------------------------------------
 ###########################################################################################    
   
-  observeEvent(input$glide_next1,{
-    updateTabsetPanel(session, "glide", "glide2")
-  })
+  ###########################Intro tab next and back############################
   
-  observeEvent(input$glide_back1,{
-    updateTabsetPanel(session, "glide", "glide1")
-  })
+    observeEvent(input$glide_next1,{
+      updateTabsetPanel(session, "glide", "glide2")
+    })
+    
+    observeEvent(input$glide_back1,{
+      updateTabsetPanel(session, "glide", "glide1")
+    })
+    
+    observeEvent(input$glide_next2,{
+      updateTabsetPanel(session, "glide", "glide3")
+    })
+    
+    observeEvent(input$glide_back2,{
+      updateTabsetPanel(session, "glide", "glide2")
+    })
   
-  observeEvent(input$glide_next2,{
-    updateTabsetPanel(session, "glide", "glide3")
-  })
+  ################################ START PRACTICE ##############################
   
-  observeEvent(input$glide_back2,{
-    updateTabsetPanel(session, "glide", "glide2")
-  })
+    observeEvent(input$start_practice,{
+      runjs("document.getElementById('audio').play();") # play click
+      values$i = 1 # reset values$i
+      values$keyval = NULL # keeps track of button press 1 (error), 2 (correct)
+      # go to practice slides
+      updateNavbarPage(session, "mainpage",
+                       selected = tabtitle_practice)
+      # only use IRT function if NOT 175 items
+      values$IRT = ifelse(input$numitems == "175", FALSE, TRUE)
+    })
   
-  
-  observeEvent(input$start_practice,{
-    # play click
-    #js$click_sound()
-    runjs("document.getElementById('audio').play();")
-    # dataframe of items, difficulty, discrimination; NA column for responses to start. 
-    #values$item_difficulty <- items 
-    values$i = 1
-    values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
-    updateNavbarPage(session, "mainpage",
-                     selected = tabtitle_practice)
-    values$IRT = ifelse(input$numitems == "175", FALSE, TRUE)
-
-  })
+  ################################ START ASSESSMENT ############################
   
   # start button. sets the i value to 1 corresponding to the first slide
   # switches to the assessment tab
@@ -175,63 +186,68 @@ server <- function(input, output, session) {
     if (isTRUE(getOption("shiny.testmode"))) {
     reset("keys")
     }
+    
     values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
     values$irt_out <- list(0, 0, 1)
     
+    #js$click_sound()
+    runjs("document.getElementById('audio').play();")
+    
     # got to slides
-    updateNavbarPage(session, "mainpage",
-                     selected = tabtitle1)
+    updateNavbarPage(session, "mainpage", selected = tabtitle1)
     if(input$numitems != "SEM"){
       updateProgressBar(session = session, id = "progress_bar", value = 0)
     }
-    #js$click_sound()
-    runjs("document.getElementById('audio').play();")
+    
   })
   
-  # enables or disables precision option if SEM is or isn't selected. 
-  # also converts the numeric option to a number
-  # saves either to values$test_length
-  observeEvent(input$numitems,{
-    if(input$numitems == "SEM"){
-      values$test_length <- "SEM"
-      shinyjs::enable("sem")
-    } else {
-      values$test_length <- as.numeric(input$numitems)
-      shinyjs::disable("sem")
-    }
-  })
+  ##########################NUM ITEMS AND PRECISION#############################
   
-  # records the sem input
-  observeEvent(input$sem,{
-    values$min_sem <- input$sem
-  })
+    # enables or disables precision option if SEM is or isn't selected. 
+    # also converts the numeric option to a number
+    # saves either to values$test_length
+        observeEvent(input$numitems,{
+          if(input$numitems == "SEM"){
+            values$test_length <- "SEM"
+            shinyjs::enable("sem")
+          } else {
+            values$test_length <- as.numeric(input$numitems)
+            shinyjs::disable("sem")
+          }
+        })
+        
+        # records the sem input
+        observeEvent(input$sem,{
+          values$min_sem <- input$sem
+        })
   
-  #no key presses on home or results page
-  observe({
-    if(input$mainpage==tabtitle2 || input$mainpage==tabtitle0){
-      pauseKey()
-      shinyjs::show("footer_id")
-    } else {
-      unpauseKey()
-      shinyjs::hide("footer_id")
-      
-    }
-  })
+  ###########################KEY PRESS##########################################
+    # tracks the key inputs
+    observeEvent(input$keys, {
+      values$key_val = input$keys
+    })
   
-  # tracks the key inputs
-  observeEvent(input$keys, {
-    values$key_val = input$keys
-  })
+    #no key presses on home or results page
+    observe({
+      if(input$mainpage==tabtitle2 || input$mainpage==tabtitle0){
+        pauseKey()
+        shinyjs::show("footer_id")
+      } else {
+        unpauseKey()
+        shinyjs::hide("footer_id")
+        
+      }
+    })
   
-  # if start over is hit, go to home page
-  # start assessment button then resets everything
-  observeEvent(input$start_over,{
-    shinyjs::reset("intro_tab")
-    updateTabsetPanel(session, "glide", "glide1")
-    updateNavbarPage(session, "mainpage",
-                     selected = tabtitle0)
-  })
-  
+  ###########################START OVER#########################################
+    # if start over is hit, go to home page
+    # start assessment button then resets everything
+    observeEvent(input$start_over,{
+      shinyjs::reset("intro_tab")
+      updateTabsetPanel(session, "glide", "glide1")
+      updateNavbarPage(session, "mainpage",
+                       selected = tabtitle0)
+    })
   
   ################################### THIS IS WHRERE IRT STUFF GETS INCORPORATED ########################
   # observe event will take an action if an input changes. here the next button or the enter key
@@ -370,12 +386,10 @@ server <- function(input, output, session) {
     }
     # don't run this on start up. 
   }, ignoreInit = T)
-  ######################### END OF IRT OBSERVER ################################# 
   
-  
-################################## REACTIVE DATA ##########################################  
-# -----------------------------------------------------------------------------------------
-###########################################################################################  
+################################## REACTIVE DATA ############################### 
+# ------------------------------------------------------------------------------
+################################################################################
   
   # holds the item-level responses. 
   results_data_long <- reactive({
@@ -410,433 +424,159 @@ server <- function(input, output, session) {
   
   # tracks final irt data.
   irt_final <- eventReactive(input$mainpage=="tabtitle2",{
-    df = tibble(
-      ability = values$irt_out[[1]],
-      sem = values$irt_out[[3]],
-      last_ability = NA,
-      last_sem = NA,
-      first_ability = NA,
-      first_sem = NA
-      )
+    get_final_numbers(out = values$irt_out,
+                      previous = values$previous,
+                      num_previous = values$num_previous)
     
-    if(!is.null(values$previous)){
-      if(values$num_previous==1){
-        df$last_ability = values$previous[values$previous$sem==min(values$previous$sem),]$ability
-        df$last_sem = min(values$previous$sem)
-      } else if (values$num_previous == 2){
-        prev_dat = values$previous %>% filter(date == max(date))
-        df$last_ability = prev_dat[prev_dat$sem==min(prev_dat$sem),]$ability
-        df$last_sem = min(prev_dat$sem)
-        first_dat = values$previous %>% filter(date == min(date))
-        df$first_ability = first_dat[first_dat$sem==min(first_dat$sem),]$ability
-        df$first_sem = min(first_dat$sem)
-      }
-    }
-    print(df)
-    return(df)
   })
   
+################################## EXPORT TEST DATA ############################
+# ------------------------------------------------------------------------------
+################################################################################
+  # get data into strings for exporting...test only
   observeEvent(input$mainpage==tabtitle2,{
-  
-    # this is for making data available for export during testing.
-    if (isTRUE(getOption("shiny.testmode"))) {  
-        values$out_words <- paste(results_data_long() %>% drop_na(response) %>%pull(target), collapse = "_")
-        values$out_nums <- paste(results_data_long() %>% drop_na(response) %>%pull(response), collapse = "_")
-        values$out_ability <- paste(results_data_long() %>% drop_na(response) %>%pull(ability), collapse = "_")
-        values$out_sem <- paste(results_data_long() %>% drop_na(response) %>%pull(sem), collapse = "_")
-        values$item_dif <- paste(results_data_long() %>% drop_na(response) %>%pull(itemDifficulty), collapse = "_")
-        values$disc <- paste(results_data_long() %>% drop_na(response) %>%pull(discrimination), collapse = "_")
-        values$key <- paste(results_data_long() %>% drop_na(response) %>%pull(key), collapse = "_")
-        values$order <- paste(results_data_long() %>% drop_na(response) %>%pull(order), collapse = "_")
-        values$item_number <- paste(results_data_long() %>% drop_na(response) %>%pull(item_number), collapse = "_")
-    }
-          
+    get_exported_data(results = results_data_long())
     })
-      
-    # This makes the above data available after running unit test.
-    exportTestValues(abil = values$out_ability,
-                     sem = values$out_sem,
-                     words = values$out_words,
-                     responses = values$out_nums,
-                     itemDifficulty = values$item_dif,
-                     discrimination = values$disc,
-                     key_press = values$key,
-                     order = values$order,
-                     item_number = values$item_number
-                     )
+  # This makes the above data available after running unit test.
+  exportTestValues(abil = values$out_ability,
+                   sem = values$out_sem,
+                   words = values$out_words,
+                   responses = values$out_nums,
+                   itemDifficulty = values$item_dif,
+                   discrimination = values$disc,
+                   key_press = values$key,
+                   order = values$order,
+                   item_number = values$item_number
+                   )
 
-################################## OUTPUTS ##############################################    
-# ---------------------------------------------------------------------------------------
-#########################################################################################
-  
-  # outputs a table of the item level responses
-  output$results_table <- renderDT({
-      results_data_long() %>%
-        drop_na(response) %>%
-      select(order, target, resp, key, itemDifficulty, ability, sem)
-  }, rownames = F,
-     options = list(dom = "tp"))
-  
+################################## SUMMARY TEXT ################################
+# ------------------------------------------------------------------------------
+################################################################################
   #  outputs a summary sentence
-  output$results_summary <- renderUI({
-      summary = 
-        paste(
-                "The total accuracy for this test was",
-                 round(results_data_summary()*100, 1),
-                 "%.",
-                 "The final IRT ability estimate is",
-                 round(irt_final()$ability, 2),
-                 "and the standard error of the mean is",
-                 round(irt_final()$sem,2),
-                 "(blue).", "This naming ability estimate is in the ",
-                round(pnorm(irt_final()$ability, 0, 1.48)*100,1), "percentile of naming ability."
-               ,sep = " ")
-      
-      if(!is.null(values$num_previous)){
-        summary = 
-            paste(
-                    summary,
-                    "Last assessment, the final IRT ability estimate was ",
-                    round(irt_final()$last_ability,2),
-                    "and the standard error of the mean was",
-                    round(irt_final()$last_sem,2),
-                    "(red).", "The previous naming ability estimate was in the",
-                    round(pnorm(irt_final()$last_ability, 0, 1.48)*100,1), " percentile."
-                ,sep = " ")
-        
-        if(values$num_previous == 2){
-          summary = 
-            paste(
-              summary,
-              " In the first assessment, the final IRT ability estimate was ",
-              round(irt_final()$first_ability,2),
-              "and the standard error of the mean was",
-              round(irt_final()$first_sem,2),
-              "(green).", "The first naming ability estimate was in the",
-              round(pnorm(irt_final()$first_ability, 0, 1.48)*100,1), "percentile."
-            ,sep = " ")
-          
+    output$results_summary <- renderUI({
+        summary = get_text_summary(acc = results_data_summary(),
+                               ability = irt_final()$ability,
+                               sem = irt_final()$sem,
+                               last_ability = irt_final()$last_ability,
+                               last_sem = irt_final()$last_sem,
+                               first_ability = irt_final()$first_ability,
+                               first_sem = irt_final()$first_sem,
+                               num_previous = values$num_previous)
+    })
+################################## DOWNLOAD ####################################  
+# ------------------------------------------------------------------------------
+################################################################################
+    # creates a data for downloading. added to accomodate previous data
+    download_data <- eventReactive(input$mainpage=="tabtitle2",{
+      if(!is.na(irt_final()$last_ability)){
+        d1 = results_data_long() %>% mutate_all(as.character)
+        d2 = values$previous %>% mutate_all(as.character)
+        d3 = bind_rows(d1, d2)
+      } else {
+        d3 = results_data_long()
+      }
+      return(d3)
+    })
+    # downloading output
+    output$downloadData <- downloadHandler(
+        filename = function() {
+          paste(gsub(" ", "-", input$name),
+                as.character(Sys.Date()),
+                "pnt.csv", sep = "_"
+                )
+        },
+        content = function(file) {
+          write.csv(download_data(), file, row.names = FALSE)
         }
-      }
-      
-      return(p(summary))
-  })
+    )
   
-  ################################## DOWNLOAD ##############################################    
-  # ---------------------------------------------------------------------------------------
-  #########################################################################################
-  
-  # creates a data for downloading. added to accomodate previous data
-  download_data <- eventReactive(input$mainpage=="tabtitle2",{
-    
-    if(!is.na(irt_final()$last_ability)){
-      d1 = results_data_long() %>% mutate_all(as.character)
-      d2 = values$previous %>% mutate_all(as.character)
-      d3 = bind_rows(d1, d2)
-    } else {
-      d3 = results_data_long()
-    }
-    
-    return(d3)
-    
-  })
-  
-  # downloading output
-  output$downloadData <- downloadHandler(
-      filename = function() {
-        paste(gsub(" ", "-", input$name), as.character(Sys.Date()), "pnt.csv", sep = "_")
-      },
-      content = function(file) {
-        write.csv(download_data(), file, row.names = FALSE)
-      }
-  )
-  
-  ################################## FOOTER MODAL ##########################################
-  # ---------------------------------------------------------------------------------------
-  #########################################################################################
-  
+################################## FOOTER MODAL ################################
+# ------------------------------------------------------------------------------
+################################################################################
   # More information modal
   observeEvent(input$info, {
     showModal(modalDialog(
       # This is the content
-              title = "This modal will contain important information about the app",
-              "This is important",
-              br(), br(), br(),br(), br(), br(),br(), br(), br(),br(), br(), 
-              "Link to papers, contact info, more detailed scoring info etc...",
-              br(), br(), br(),br(), br(), br(),br(), br(), br(),br(), br(), 
-              "Dismiss it by clicking anywhere outside of it.",
+          title = "This modal will contain important information about the app",
+          "This is important",
+          br(), br(), br(),br(), br(), br(),br(), br(), br(),br(), br(), 
+          "Link to papers, contact info, more detailed scoring info etc...",
+          br(), br(), br(),br(), br(), br(),br(), br(), br(),br(), br(), 
+          "Dismiss it by clicking anywhere outside of it.",
       easyClose = TRUE,
       footer = NULL,
       size = "m"
     ))
   })
-  
+  # readme modal. probabily will be deleted
   observeEvent(input$dev, {
     showModal(modalDialog(
-      tags$iframe(src="README.html", width = "100%", height = "650px", frameBorder = "0"),
+      tags$iframe(src="README.html", width = "100%",
+                  height = "650px", frameBorder = "0"),
       size = "l",
       easyClose = TRUE,
       footer = NULL
     ))
   })
   
-  ################################## PLOT #################################################    
-  # ---------------------------------------------------------------------------------------
-  #########################################################################################
-
-  
+################################## PLOT ######################################## 
+# ------------------------------------------------------------------------------
+################################################################################
+  # plot
   output$plot <- renderPlot({# Fergadiotis, 2019
     w$show()
     req(irt_final())
-    
-   dens = density(bayestestR::distribution_normal(1000, 0, 1.48))
-   df <- tibble(
-      x = dens$x,
-      y = dens$y,
-      lower = irt_final()$ability - irt_final()$sem,
-      upper = irt_final()$ability + irt_final()$sem,
-      last_lower = ifelse(is.na(irt_final()$last_ability), 
-                          1000,
-                          irt_final()$last_ability - irt_final()$last_sem),
-      last_upper = ifelse(is.na(irt_final()$last_ability), 
-                          1001,
-                          irt_final()$last_ability + irt_final()$last_sem),
-      first_lower = ifelse(is.na(irt_final()$first_ability), 
-                          1000,
-                          irt_final()$first_ability - irt_final()$first_sem),
-      first_upper = ifelse(is.na(irt_final()$first_ability), 
-                          1001,
-                          irt_final()$first_ability + irt_final()$first_sem)
-      ) %>%
-     rowwise() %>%
-     mutate(fill1 = factor(ifelse(between(x, lower, upper),
-                                  "current", NA)),
-            fill2 = factor(ifelse(between(x, last_lower, last_upper),
-                                  "last", NA)),
-            fill3 = factor(ifelse(!between(x, lower, upper) & !between(x, last_lower, last_upper) & !between(x, first_lower, first_upper),
-                                  "neither", NA)),
-            fill4 = factor(ifelse(between(x, first_lower, first_upper),
-                                  "first", NA))
-     )
-
-  p = df %>%
-     ggplot2::ggplot(aes(x = x, y = y)) +
-    geom_area(data = df %>% filter(fill3 == "neither"),
-              aes(y = y),position = "identity", fill = "#F1F1F1", color = NA) +
-    geom_area(data = df %>% filter(fill1 == "current"),
-              aes(y = y),position = "identity", fill = "#619CFF", alpha = .4, color = NA) +
-      
-    geom_line(size = 2) +
-    geom_vline(aes(xintercept = irt_final()$ability), color = "#619CFF", alpha = .8, size = 1) +
-    scale_x_continuous(breaks=seq(-5,5,.5), limits = c(-5,5)) +
-    scale_fill_manual(guide = "none", values = colors) +
-    theme_minimal(base_size = 15) +
-    xlab("PNT Ability Estimate") +
-    ylab(NULL) +
-    theme(axis.title.x = element_text(vjust=-1),
-          plot.margin = unit(c(15, 5.5, 15, 5.5), "pt"),
-          legend.position = "none",
-          panel.grid = element_blank(),
-          axis.title.y = element_blank(),
-          axis.text.y = element_blank(),
-          axis.ticks.y = element_blank()) 
-  
-  if (!is.null(values$num_previous)){
-    p = p + 
-      geom_area(data = df %>% filter(fill2 == "last"),
-                aes(y = y),position = "identity", fill = "#F8766D", alpha = .4, color = NA) +
-      geom_vline(aes(xintercept = irt_final()$last_ability), color = "#F8766D", alpha = .8, size = 1)
-    
-    if(values$num_previous == 2){
-      p = p + 
-        geom_area(data = df %>% filter(fill4 == "first"),
-                  aes(y = y),position = "identity", fill = "#00BA38", alpha = .4, color = NA) +
-        geom_vline(aes(xintercept = irt_final()$first_ability), color = "#00BA38", alpha = .8, size = 1)
-    }
-    
-  } 
-  
-  
-  
-  return(p)
-
+    get_plot(values = values, irt_final = irt_final())
   })
 
+################################## TABLE #######################################
+# ------------------------------------------------------------------------------
+################################################################################
+  # outputs a table of the item level responses
+  output$results_table <- renderDT({
+    results_data_long() %>%
+      drop_na(response) %>%
+      select(order, target, resp, key, itemDifficulty, ability, sem)
+  }, rownames = F,
+  options = list(dom = "tp"))
   
-  ################################## TAB UI ##############################################    
-  # ---------------------------------------------------------------------------------------
-  #########################################################################################
-  
-  # this UI is on the server side so that it can be dynamic based on other conditions in the app. 
+################################## TAB UI ######################################
+# ------------------------------------------------------------------------------
+################################################################################
+  # this UI is on the server side so that it can be dynamic based. 
+  # see scripts named tab_*.R 
   
   # intro tab. see glide.R
-  output$intro_tab <-
-    renderUI({
-      column(width = 12,
-        fluidRow(
-          column(align = "center", width = 12,
-                 div(
-                   style = "width:50%;",
-                   instruction_div
-                 )
-          )
-        ),br(),
-        fluidRow(
-          column(width = 12,# offset = 4,
-                 getting_started,
-          )
-        )
-      )
+  output$intro_tab <- renderUI({
+      intro_tab_div
     })
   outputOptions(output, "intro_tab", suspendWhenHidden = FALSE)
   
   # this shows the practice slides
-  output$practice_tab <-
-    renderUI({
-      column(width = 12,
-               fluidRow(
-                 if(values$i %in% c(3:12)){
-                   if (isTruthy(values$key_val == incorrect_key_response | values$key_val == correct_key_response)){
-                     icon("dot-circle", style = "color: grey; position: absolute; right: 5px;")
-                   } else {
-                     icon("circle", style = "color: grey; position: absolute; right: 5px;")
-                   }
-                 }
-               ),
-            fluidRow(
-              column(width = 8, offset = 2, align = "center",
-                  tags$img(src = paste0("PNT/Slide", values$i, ".jpeg")),
-                  # start button, at the end of the practice slides
-                  if(values$i == 13){
-                    div(br(),
-                        actionButton("start", inputstart)
-                    )
-                  }
-              ),
-              column(width = 2)
-            )
-      )
+  output$practice_tab <- renderUI({
+      practice_tab_div(values = values)
     })
   
   # UI for assessment slides
-  output$slides_tab <- 
-    renderUI({
-      column(width = 12,
-          fluidRow(
-            
-                       if (isTruthy(values$key_val == incorrect_key_response | values$key_val == correct_key_response)){
-                         icon("dot-circle", style = "color: grey; position: absolute; right: 10px;")
-                       } else {
-                         icon("circle", style = "color: grey; position: absolute; right: 10px;")
-                       }
-          ),
-          fluidRow(
-              column(width = 8, offset = 2, align = "center",
-                              tags$img(src = paste0("PNT/Slide", values$n, ".jpeg")),
-                     # note the progress bar and next/back buttons are not in the slide image. They
-                     # are their  own static area below the slides. 
-                     fluidRow(
-                       div(align = "center", style = "width: 50%;",
-                           
-                           if (input$progbar){
-                               progressBar(id = "progress_bar",
-                                           value = values$i, display_pct = F,
-                                           size = "xs",
-                                           range_value = c(1,values$test_length+1))
-                           },br()
-                           
-                       )
-                     )
-              )#,
-              #column(width = 2)
-          )
-      )
+  output$slides_tab <- renderUI({
+    slides_tab_div(values = values, progbar = input$progbar)
   })
   
   # UI for results page
   output$results_tab <- renderUI({
-    
-               fluidRow(
-                 column(width = 8,offset = 2,
-                        tabsetPanel(type = "pills",
-                          tabPanel("Summary",br(),
-                                   uiOutput("results_summary"), 
-                                   plotOutput("plot")
-                          ),
-                          tabPanel("Data", 
-                                   DTOutput("results_table"),
-                          )
-                      ), 
-                      tags$div(align = "center",
-                               downloadButton("downloadData",
-                                              "Download results"),
-                               actionButton("start_over",
-                                            "Start Over",
-                                            icon = icon("undo-alt")
-                                            )
-                      )
-                  )#,
-                 #column(width = 2)
-              )
+    results_tab_div
   })
   outputOptions(output, "results_table", suspendWhenHidden = FALSE)
-  #bs_themer()
-  
-  
-  
+
+# end of app
 }
 
-
-
-
-# Run the application 
+################################## RUN APP######################################
+# ------------------------------------------------------------------------------
 shinyApp(ui = ui, server = server)
+# ------------------------------------------------------------------------------
+################################################################################
 
 
-
-# fluidRow(
-#   column(width = 6,
-#     h5("Input participant information"), br(),
-#     textInput("name", nameinput),
-#     textInput("notes", otherinput),
-#     fileInput("file1", "Upload previous results", accept = ".csv")
-#   ),
-#   column(width = 6,
-#     h5("Choose test options"), br(),
-#     ### Use this to set how many items to run. 
-#     radioButtons(inputId = "numitems",
-#                  label = "Number of items (10 is for testing)",
-#                  choices = c("10", "30", "60", "100", "175", "SEM"),
-#                  selected = "10",
-#                  inline = T
-#                  ),
-#     
-#     # sets SEM precision. disabled if SEM not selected in numitems radio buttons
-#     sliderInput("sem", "Minimum acceptable SEM",
-#                 min = 0.1,
-#                 max = 0.5,
-#                 step = 0.01,
-#                 value = 0.3),
-#     # show the progress bar?
-#     checkboxInput("progbar",
-#                   "Show progress bar (fixed only)",
-#                   value = F),
-#     # randomize PNT order if doing the full 175 item test?
-#     checkboxInput("random",
-#                   "Random Order (175 only)",
-#                   value = F),
-#   )
-# ),br(),
-# div(align = "center",
-#     
-#     # start!
-#     actionButton("start_practice",
-#                  "Start Practice"),
-#     # this is so that the app plays a click. probably could be moved elsewhere. 
-#     tags$audio(id = "audio",
-#                src = "click.wav",
-#                type = "audio/wav",
-#                style = "display:none;")
-#     )
 
 
