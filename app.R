@@ -104,13 +104,13 @@ server <- function(input, output, session) {
   observeEvent(input$file1,{
     file <- input$file1
     ext <- tools::file_ext(file$datapath)
-    
+    # check upload
     req(file)
     validate(need(ext == "csv", "Please upload a csv file"))
-    
+    # save upload
     values$previous <- read.csv(file$datapath) %>%
       drop_na(response)
-    
+    # assign number of previous values
     values$num_previous <- length(unique(values$previous$date))
       
   })
@@ -120,7 +120,6 @@ server <- function(input, output, session) {
 ################################################################################
   
   ###########################Intro tab next and back############################
-  
     observeEvent(input$glide_next1,{
       updateTabsetPanel(session, "glide", "glide2")
     })
@@ -136,9 +135,7 @@ server <- function(input, output, session) {
     observeEvent(input$glide_back2,{
       updateTabsetPanel(session, "glide", "glide2")
     })
-  
   ################################ START PRACTICE ##############################
-  
     observeEvent(input$start_practice,{
       runjs("document.getElementById('audio').play();") # play click
       values$i = 1 # reset values$i
@@ -150,18 +147,17 @@ server <- function(input, output, session) {
       values$IRT = ifelse(input$numitems == "175", FALSE, TRUE)
     })
   
-  ################################ START ASSESSMENT ############################
-  
+################################## START ASSESSMENT ############################
   # start button. sets the i value to 1 corresponding to the first slide
   # switches to the assessment tab
   # updates the progress bar very slightly. 
   # initialize values in here so that they reset whever someone hits start. 
   observeEvent(input$start, {
-    # dataframe of items, difficulty, discrimination; NA column for responses to start.
+    # dataframe of items, difficulty, discrimination; NA column for responses 
     values$item_difficulty <- items  
     values$i = 1
     
-    # randomly orders stuff if the random order box is checked. only affects 175 selection
+    # randomly orders stuff if the random order box is checked. only affects 175
     if(isTruthy(input$random)){
       values$item_difficulty <-
         values$item_difficulty %>%
@@ -170,11 +166,8 @@ server <- function(input, output, session) {
     }
     
     values$n = if(isTruthy(values$IRT)){
-
       # samples one of four first possible items, unless used previously...
         get_first_item(values$previous)
-        
-      
     } else if (isTruthy(input$random)) {
       # if random, grab first row in values$item_difficulty,
       # which is already randomized in code above
@@ -182,28 +175,22 @@ server <- function(input, output, session) {
     } else {
       14 #otherwise candle
     }
-    
     # for testing:
     if (isTRUE(getOption("shiny.testmode"))) {
     reset("keys")
     }
-    
     values$keyval = NULL # keeps track of button press 1 (error) or 2 (correct)
     values$irt_out <- list(0, 0, 1)
-    
     #js$click_sound()
     runjs("document.getElementById('audio').play();")
-    
     # got to slides
     updateNavbarPage(session, "mainpage", selected = tabtitle1)
     if(input$numitems != "SEM"){
       updateProgressBar(session = session, id = "progress_bar", value = 0)
     }
-    
   })
   
   ##########################NUM ITEMS AND PRECISION#############################
-  
     # enables or disables precision option if SEM is or isn't selected. 
     # also converts the numeric option to a number
     # saves either to values$test_length
@@ -222,7 +209,7 @@ server <- function(input, output, session) {
           values$min_sem <- input$sem
         })
   
-  ###########################KEY PRESS##########################################
+#############################KEY PRESS##########################################
     # tracks the key inputs
     observeEvent(input$keys, {
       values$key_val = input$keys
@@ -239,8 +226,7 @@ server <- function(input, output, session) {
         
       }
     })
-  
-  ###########################START OVER#########################################
+#############################START OVER#########################################
     # if start over is hit, go to home page
     # start assessment button then resets everything
     observeEvent(input$start_over,{
@@ -249,7 +235,6 @@ server <- function(input, output, session) {
       updateNavbarPage(session, "mainpage",
                        selected = tabtitle0)
     })
-  
 ################ THIS IS WHRERE IRT STUFF GETS INCORPORATED ####################
     
 # observe event will take an action if an input changes.
@@ -263,7 +248,6 @@ server <- function(input, output, session) {
       # then check if this number has already been shown
     # returns TRUE or FALSE
     if(input$mainpage==tabtitle_practice){
-      
       # if slide 13, don't iterate, just show a message that says hit start...
       if(values$i == 13){
         showNotification("Press start to start testing", type = "message")
@@ -271,11 +255,9 @@ server <- function(input, output, session) {
       # essentially, if we're on the first two instruction slides,
         # don't require a 1 or 2..
       else if(values$i %in% c(1, 2)){
-        
         runjs("document.getElementById('audio').play();")
         #js$click_sound()
         values$i = ifelse(values$i<13, values$i + 1, values$i)
-        
       # otherwise, (i.e. not a practice slide)
       } else if(is.null(values$key_val)){ 
               # require a key press
@@ -288,24 +270,18 @@ server <- function(input, output, session) {
               # updateNavbarPage(session, "mainpage",
               #                  selected = tabtitle1)
             }
-      
       values$key_val = NULL
-      
     } else {
-      
           another_item <- if(input$numitems == "SEM"){
                             values$min_sem<values$irt_out[[3]]
                           } else {
                             values$i<=values$test_length
                           }
-          
           # require a key input response
           if(is.null(values$key_val)){ 
               showNotification("Enter a score", type = "error")
-            
             # as long as there's a response or it's an insturction slide...
           } else if (another_item) {
-            
             runjs("document.getElementById('audio').play();")
               #js$click_sound()
               # If a key press was detected, store it in our dataframe of items,
@@ -315,7 +291,6 @@ server <- function(input, output, session) {
             values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <-
               ifelse(values$key_val == incorrect_key_response, 1,
                 ifelse(values$key_val == correct_key_response, 0, "NR"))
-              
             # see R/next_slide for this script.
             # it takes in the current data, values$item_difficulty
             # which also includes the most recent response 
@@ -332,8 +307,6 @@ server <- function(input, output, session) {
                 tibble(
                   # what trial was the item presented
                   order = values$i,
-                  # what picture did the item call
-                  #slide_num = values$n,
                   # what was the key press
                   key = values$key_val,
                   # 1 is incorrect (1) and 2 is correct (0).
@@ -348,7 +321,6 @@ server <- function(input, output, session) {
                   # NEW sem 
                   sem = round(values$irt_out[[3]], 3)
               )
-              
               # pick the next slide using the output of the irt
               # conditional fixes a bug for the last item
               # if the test goes all the way to 175
@@ -360,21 +332,15 @@ server <- function(input, output, session) {
                   } else {
                     190
                   }
-                  
                 } else {
-              
                   values$irt_out[[2]][[2]]
-                  
               } 
-                
               # iterate the order
               values$i = values$i + 1
-          
         } 
         # prints to the console
         print(tail(values$item_difficulty %>% drop_na(response) %>%
                      arrange(order), 10))
-        
         # decides whether to cut to the results page or not!
         # returns TRUE or FALSE
         go_to_results <- if(is.na(values$n)){
@@ -384,13 +350,11 @@ server <- function(input, output, session) {
                           } else {
                             values$i>values$test_length
                           }
-        
             # go to results if indicated
             if (go_to_results){
               updateNavbarPage(session, "mainpage",
                                selected = tabtitle2)
             }
-        
         values$key_val = NULL
         #for testing::
         if (isTRUE(getOption("shiny.testmode"))) {
@@ -399,11 +363,9 @@ server <- function(input, output, session) {
     }
     # don't run this on start up. 
   }, ignoreInit = T)
-  
 ################################## REACTIVE DATA ############################### 
 # ------------------------------------------------------------------------------
 ################################################################################
-  
   # holds the item-level responses. 
   results_data_long <- reactive({
     req(input$numitems)
@@ -442,7 +404,6 @@ server <- function(input, output, session) {
                       num_previous = values$num_previous)
     
   })
-  
 ################################## EXPORT TEST DATA ############################
 # ------------------------------------------------------------------------------
 ################################################################################
@@ -461,7 +422,6 @@ server <- function(input, output, session) {
                    order = values$order,
                    item_number = values$item_number
                    )
-
 ################################## SUMMARY TEXT ################################
 # ------------------------------------------------------------------------------
 ################################################################################
