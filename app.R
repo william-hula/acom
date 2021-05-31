@@ -115,9 +115,9 @@ server <- function(input, output, session) {
       
   })
   
-################################## OBSERVERS ##############################################    
-# -----------------------------------------------------------------------------------------
-###########################################################################################    
+################################## OBSERVERS ###################################
+# ------------------------------------------------------------------------------
+################################################################################
   
   ###########################Intro tab next and back############################
   
@@ -176,7 +176,8 @@ server <- function(input, output, session) {
         
       
     } else if (isTruthy(input$random)) {
-      # if random, grab first row in values$item_difficulty, which is already randomized in code above
+      # if random, grab first row in values$item_difficulty,
+      # which is already randomized in code above
       values$item_difficulty[values$item_difficulty$pnt_order == 1,]$slide_num 
     } else {
       14 #otherwise candle
@@ -187,7 +188,7 @@ server <- function(input, output, session) {
     reset("keys")
     }
     
-    values$keyval = NULL # keeps track of the button press 1 (error) or 2 (correct)
+    values$keyval = NULL # keeps track of button press 1 (error) or 2 (correct)
     values$irt_out <- list(0, 0, 1)
     
     #js$click_sound()
@@ -249,13 +250,17 @@ server <- function(input, output, session) {
                        selected = tabtitle0)
     })
   
-  ################################### THIS IS WHRERE IRT STUFF GETS INCORPORATED ########################
-  # observe event will take an action if an input changes. here the next button or the enter key
+################ THIS IS WHRERE IRT STUFF GETS INCORPORATED ####################
+    
+# observe event will take an action if an input changes.
+# here the next button or the enter key
   # This is where the app will interact with the IRT algorithm
   observeEvent(input$enter_key, {
     # should the app show another item?
-    # if the stopping choice is SEM, check if the current sem is less than the desired precision
-    # if its just a static number of items, then check if this number has already been shown
+    # if the stopping choice is SEM,
+      # check if the current sem is less than the desired precision
+    # if its just a static number of items,
+      # then check if this number has already been shown
     # returns TRUE or FALSE
     if(input$mainpage==tabtitle_practice){
       
@@ -263,7 +268,8 @@ server <- function(input, output, session) {
       if(values$i == 13){
         showNotification("Press start to start testing", type = "message")
       }
-      # essentially, if we're on the first two instruction slides, don't require a 1 or 2..
+      # essentially, if we're on the first two instruction slides,
+        # don't require a 1 or 2..
       else if(values$i %in% c(1, 2)){
         
         runjs("document.getElementById('audio').play();")
@@ -301,88 +307,95 @@ server <- function(input, output, session) {
           } else if (another_item) {
             
             runjs("document.getElementById('audio').play();")
-                #js$click_sound()
-                # If a keyu press was detected, store it in our dataframe of items, difficulty, discrimination etc...
-                # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
-                values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <- ifelse(
-                  values$key_val == incorrect_key_response, 1,
-                  ifelse(values$key_val == correct_key_response, 0, "NR"))
-                
-                # see R/next_slide for this script.
-                # it takes in the current data, values$item_difficulty
-                # which also includes the most recent response (See code immediately above)
-                # returns a list of 3 elements
-                # element[[1]] is the new ability estimate
-                # element[[2]] is a list of information returned by catR::nextSlide(), 
-                # including $name, the name of the next item
-                # element[[3]] returns the sem after re-estimating the model
-                values$irt_out = irt_function(values$item_difficulty, IRT = values$IRT, previous = values$previous)
-                # save info to the item_difficulty data_frame
-                values$item_difficulty[values$item_difficulty$slide_num == values$n,][7:11] = tibble(
-                  
+              #js$click_sound()
+              # If a key press was detected, store it in our dataframe of items,
+                # difficulty, discrimination etc...
+              # 1 is incorrect (1) and 2 is correct (0).
+              # IRT model reverses 1 and 0...
+            values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <-
+              ifelse(values$key_val == incorrect_key_response, 1,
+                ifelse(values$key_val == correct_key_response, 0, "NR"))
+              
+            # see R/next_slide for this script.
+            # it takes in the current data, values$item_difficulty
+            # which also includes the most recent response 
+            # returns a list of 3 elements
+            # element[[1]] is the new ability estimate
+            # element[[2]] is a list of info returned by catR::nextSlide(), 
+            # including $name, the name of the next item
+            # element[[3]] returns the sem after re-estimating the model
+              values$irt_out = irt_function(values$item_difficulty,
+                                            IRT = values$IRT,
+                                            previous = values$previous)
+              # save info to the item_difficulty data_frame
+              values$item_difficulty[values$item_difficulty$slide_num == values$n,][7:11] <-
+                tibble(
                   # what trial was the item presented
                   order = values$i,
                   # what picture did the item call
                   #slide_num = values$n,
                   # what was the key press
                   key = values$key_val,
-                  # 1 is incorrect (1) and 2 is correct (0). IRT model reverses 1 and 0...
-                  resp = ifelse(values$key_val == incorrect_key_response, "incorrect",
-                                ifelse(values$key_val == correct_key_response, "correct", "NR")
+                  # 1 is incorrect (1) and 2 is correct (0).
+                  # IRT model reverses 1 and 0...
+                  resp = ifelse(values$key_val == incorrect_key_response,
+                                "incorrect",
+                                ifelse(values$key_val == correct_key_response,
+                                       "correct", "NR")
                   ),
                   # NEW ability estimate after model restimation
                   ability = round(values$irt_out[[1]],3),
                   # NEW sem 
                   sem = round(values$irt_out[[3]], 3)
-                  
-                )
+              )
+              
+              # pick the next slide using the output of the irt
+              # conditional fixes a bug for the last item
+              # if the test goes all the way to 175
+              values$n = 
+                if(values$IRT){
                 
-                # pick the next slide using the output of the irt
-                # conditional fixes a bug for the last item if the test goes all the way to 175
-                values$n = 
-                  if(values$IRT){
-                  
-                      if(!is.na(values$irt_out[[2]][[1]])){
-                      values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
-                    } else {
-                      190
-                    }
-                    
+                    if(!is.na(values$irt_out[[2]][[1]])){
+                    values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
                   } else {
-                
-                    values$irt_out[[2]][[2]]
-                    
-                } 
+                    190
+                  }
                   
-                # iterate the order
-                values$i = values$i + 1
-            
-          } 
-          # prints to the console
-          #print(tail(values$item_difficulty %>% drop_na(response) %>% arrange(order), 10))
+                } else {
+              
+                  values$irt_out[[2]][[2]]
+                  
+              } 
+                
+              # iterate the order
+              values$i = values$i + 1
           
-          
-          # decides whether to cut to the results page or not!
-          # returns TRUE or FALSE
-          go_to_results <- if(is.na(values$n)){
-                              TRUE
-                            } else if(input$numitems == "SEM"){
-                              values$min_sem>values$irt_out[[3]]
-                            } else {
-                              values$i>values$test_length
-                            }
-          
-              # go to results if indicated
-              if (go_to_results){
-                updateNavbarPage(session, "mainpage",
-                                 selected = tabtitle2)
-              }
-          
-          values$key_val = NULL
-          #for testing::
-          if (isTRUE(getOption("shiny.testmode"))) {
-            reset("keys")
-          }
+        } 
+        # prints to the console
+        print(tail(values$item_difficulty %>% drop_na(response) %>%
+                     arrange(order), 10))
+        
+        # decides whether to cut to the results page or not!
+        # returns TRUE or FALSE
+        go_to_results <- if(is.na(values$n)){
+                            TRUE
+                          } else if(input$numitems == "SEM"){
+                            values$min_sem>values$irt_out[[3]]
+                          } else {
+                            values$i>values$test_length
+                          }
+        
+            # go to results if indicated
+            if (go_to_results){
+              updateNavbarPage(session, "mainpage",
+                               selected = tabtitle2)
+            }
+        
+        values$key_val = NULL
+        #for testing::
+        if (isTRUE(getOption("shiny.testmode"))) {
+          reset("keys")
+        }
     }
     # don't run this on start up. 
   }, ignoreInit = T)
