@@ -132,9 +132,20 @@ server <- function(input, output, session) {
     observeEvent(input$glide_back2,{
       updateTabsetPanel(session, "glide", "glide2")
     })
+  ################################ SOUND ON ##### ##############################
+    
+    observeEvent(input$sound,{
+      if(!isTruthy(input$sound)){
+        values$sound = "document.getElementById('audio').play();"
+      } else {
+        values$sound = ""
+      }
+    })
+    
   ################################ START PRACTICE ##############################
     observeEvent(input$start_practice,{
-      runjs("document.getElementById('audio').play();") # play click
+      # runjs("document.getElementById('audio').play();") # play click
+      runjs(values$sound)
       values$i = 1 # reset values$i
       values$keyval = NULL # keeps track of button press 1 (error), 2 (correct)
       # only use IRT function if NOT 175 items

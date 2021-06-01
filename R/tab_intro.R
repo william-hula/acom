@@ -51,6 +51,9 @@ intro_tab_div <-
                                                  checkboxInput("random",
                                                                "Random Order (175 only)",
                                                                value = F),
+                                                 checkboxInput("sound",
+                                                               "Mute sound",
+                                                               value = F),
                                                  div(align = "center",
                                                      actionButton("glide_back1", "Back"),
                                                      actionButton("glide_next2", "Next")

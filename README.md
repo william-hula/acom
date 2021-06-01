@@ -81,6 +81,8 @@ Update 5-24: Now preliminary version is on shinyapps.io:
     -   use prior from previous adminstration?
     -   ~~download data with all previous administrations for n = 2+i’th
         upload.~~
+    -   ~~added option to mute sound~~
+    -   ~~removed progress bar to avoid shinyWidgets dependency~~
 
 ### Longer-term:
 
