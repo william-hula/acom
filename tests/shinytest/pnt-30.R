@@ -16,7 +16,7 @@
 # app title in text.R
 # reset("keys)
 
-
+library(shinytest)
 library(here)
 library(tidyverse)
 library(progress)
@@ -29,14 +29,14 @@ observed <- read_csv(here("validation", "validation.csv")) %>%
   mutate(response = ifelse(response == "correct", "2", "1")) %>%
   select(examinee, response)
 
-examinees <- unique(observed$examinee)
+examinees <- unique(observed$examinee)[1]
 print(paste0("The number of participants to test is ", length(examinees)))
 pb <- progress_bar$new(
   format = "  testing in progress [:bar] :current/:total in :elapsed",
   total = length(examinees), clear = FALSE, width= 60, force = T)
 pb$tick(0)
 
-
+i = examinees
 for(i in examinees){
 # start the test
 app <- ShinyDriver$new(here())
@@ -46,14 +46,16 @@ app$snapshotInit("pnt-30")
 app$setInputs(name = i)
 # ntoes is just notes. 
 app$setInputs(notes = "notes")
+# next intro slide
+app$setInputs(glide_next1 = "click")
 # 30 items
 app$setInputs(numitems = "30")
-# the date on teh unit test is a little funky. I've just left it
-# it doesn't matter. its not tracked
-#app$setInputs(date = 18769)
+# next
+app$setInputs(glide_next2 = "click")
 
 # click to get started
 app$setInputs(start_practice = "click")
+app$snapshot()
 
 pr_resp = rep(c("1", "2"), 6)
 for(n in pr_resp){

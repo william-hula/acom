@@ -20,7 +20,8 @@ footer_div <- p(
              label = "Development Status",
              icon = icon("code-branch"),
              style = "background:transparent; border:none;"
-           )                            
+           ),
+           uiOutput("test_inputs"),
          )
   )
 )

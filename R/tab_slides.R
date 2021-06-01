@@ -10,21 +10,7 @@ tmp_div =  column(width = 12,
        ),
        fluidRow(
          column(width = 8, offset = 2, align = "center",
-                tags$img(src = paste0("PNT/Slide", values$n, ".jpeg")),
-                # note the progress bar and next/back buttons are not in the slide image. They
-                # are their  own static area below the slides. 
-                fluidRow(
-                  div(align = "center", style = "width: 50%;",
-                      
-                      if (progbar){
-                        progressBar(id = "progress_bar",
-                                    value = values$i, display_pct = F,
-                                    size = "xs",
-                                    range_value = c(1,values$test_length+1))
-                      },br()
-                      
-                  )
-                )
+                tags$img(src = paste0("PNT/Slide", values$n, ".jpeg"))
          )
        )
 )

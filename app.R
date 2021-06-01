@@ -13,22 +13,19 @@ library(shiny)
 
 ui <- tagList(
   
-    ############################### SETUP ######################################
-      
-                # css no clicky on tabs
-                #tags$head(tags$style(HTML('.navbar-nav a {cursor: default}'))),
-                # imports javascript for hotkeys
+################################### SETUP ######################################
+
                 useKeys(),
                 useShinyjs(),
                 use_waiter(),
-                #extendShinyjs(script = "click2.js", functions = "click_sound"),
                 keysInput("keys", response_keys),
                 keysInput("enter_key", enter),
                 includeCSS("www/style.css"),
       
-    ############################### layout starts here ######################### 
+################################### layout starts here ######################### 
       
-        navbarPage(title = pagetitle, id = "mainpage",
+        navbarPage(title = pagetitle,
+                   id = "mainpage",
                    footer = tags$div(
                     id = "footer_id",
                     class = "footer",
@@ -38,30 +35,30 @@ ui <- tagList(
 
         ############################ Instructions ############################## 
         
-         tabPanel(tabtitle0,
+        tabPanelBody(value = "Home",
                   tags$audio(id = "audio",
                              src = "click.wav",
                              type = "audio/wav",
                              style = "display:none;"),
-                  uiOutput("intro_tab")
+                  intro_tab_div
          ),
         
         ############################ Practice ##################################
         
-        tabPanel(title = tabtitle_practice,
+        tabPanelBody(value = "Practice", 
                  uiOutput("practice_tab")
                  ),
          
         ############################ Assessment ################################
         
-         tabPanel(title = tabtitle1,
+        tabPanelBody(value = "Assessment", 
                   uiOutput("slides_tab")
                   ),
         
         ############################ Results ###################################
         
-         tabPanel(title = tabtitle2, 
-                  uiOutput("results_tab")
+        tabPanelBody(value = "Results", 
+                     results_tab_div
                  )
         
         ########################################################################
@@ -140,17 +137,16 @@ server <- function(input, output, session) {
       runjs("document.getElementById('audio').play();") # play click
       values$i = 1 # reset values$i
       values$keyval = NULL # keeps track of button press 1 (error), 2 (correct)
-      # go to practice slides
-      updateNavbarPage(session, "mainpage",
-                       selected = tabtitle_practice)
       # only use IRT function if NOT 175 items
       values$IRT = ifelse(input$numitems == "175", FALSE, TRUE)
+      # go to practice slides
+      updateNavbarPage(session, "mainpage",
+                       selected = "Practice")
     })
   
 ################################## START ASSESSMENT ############################
   # start button. sets the i value to 1 corresponding to the first slide
   # switches to the assessment tab
-  # updates the progress bar very slightly. 
   # initialize values in here so that they reset whever someone hits start. 
   observeEvent(input$start, {
     # dataframe of items, difficulty, discrimination; NA column for responses 
@@ -184,10 +180,8 @@ server <- function(input, output, session) {
     #js$click_sound()
     runjs("document.getElementById('audio').play();")
     # got to slides
-    updateNavbarPage(session, "mainpage", selected = tabtitle1)
-    if(input$numitems != "SEM"){
-      updateProgressBar(session = session, id = "progress_bar", value = 0)
-    }
+    updateNavbarPage(session, "mainpage", selected = "Assessment")
+    
   })
   
   ##########################NUM ITEMS AND PRECISION#############################
@@ -217,7 +211,7 @@ server <- function(input, output, session) {
   
     #no key presses on home or results page
     observe({
-      if(input$mainpage==tabtitle2 || input$mainpage==tabtitle0){
+      if(input$mainpage=="Results" || input$mainpage=="Home"){
         pauseKey()
         shinyjs::show("footer_id")
       } else {
@@ -233,7 +227,7 @@ server <- function(input, output, session) {
       shinyjs::reset("intro_tab")
       updateTabsetPanel(session, "glide", "glide1")
       updateNavbarPage(session, "mainpage",
-                       selected = tabtitle0)
+                       selected = "Home")
     })
 ################ THIS IS WHRERE IRT STUFF GETS INCORPORATED ####################
     
@@ -247,7 +241,7 @@ server <- function(input, output, session) {
     # if its just a static number of items,
       # then check if this number has already been shown
     # returns TRUE or FALSE
-    if(input$mainpage==tabtitle_practice){
+    if(input$mainpage=="Practice"){
       # if slide 13, don't iterate, just show a message that says hit start...
       if(values$i == 13){
         showNotification("Press start to start testing", type = "message")
@@ -267,8 +261,6 @@ server <- function(input, output, session) {
               runjs("document.getElementById('audio').play();")
               #js$click_sound()
               values$i = ifelse(values$i<13, values$i + 1, values$i)
-              # updateNavbarPage(session, "mainpage",
-              #                  selected = tabtitle1)
             }
       values$key_val = NULL
     } else {
@@ -283,7 +275,6 @@ server <- function(input, output, session) {
             # as long as there's a response or it's an insturction slide...
           } else if (another_item) {
             runjs("document.getElementById('audio').play();")
-              #js$click_sound()
               # If a key press was detected, store it in our dataframe of items,
                 # difficulty, discrimination etc...
               # 1 is incorrect (1) and 2 is correct (0).
@@ -291,8 +282,7 @@ server <- function(input, output, session) {
             values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <-
               ifelse(values$key_val == incorrect_key_response, 1,
                 ifelse(values$key_val == correct_key_response, 0, "NR"))
-            # see R/next_slide for this script.
-            # it takes in the current data, values$item_difficulty
+            # irt_function: takes in the current data, values$item_difficulty
             # which also includes the most recent response 
             # returns a list of 3 elements
             # element[[1]] is the new ability estimate
@@ -353,7 +343,7 @@ server <- function(input, output, session) {
             # go to results if indicated
             if (go_to_results){
               updateNavbarPage(session, "mainpage",
-                               selected = tabtitle2)
+                               selected = "Results")
             }
         values$key_val = NULL
         #for testing::
@@ -368,7 +358,6 @@ server <- function(input, output, session) {
 ################################################################################
   # holds the item-level responses. 
   results_data_long <- reactive({
-    req(input$numitems)
     precision = if(input$numitems == "SEM"){
       paste0("SEM: ", input$sem)
     } else {
@@ -398,7 +387,7 @@ server <- function(input, output, session) {
   })
   
   # tracks final irt data.
-  irt_final <- eventReactive(input$mainpage=="tabtitle2",{
+  irt_final <- eventReactive(input$mainpage=="Results",{
     get_final_numbers(out = values$irt_out,
                       previous = values$previous,
                       num_previous = values$num_previous)
@@ -408,8 +397,25 @@ server <- function(input, output, session) {
 # ------------------------------------------------------------------------------
 ################################################################################
   # get data into strings for exporting...test only
-  observeEvent(input$mainpage==tabtitle2,{
-    get_exported_data(results = results_data_long())
+  observeEvent(input$mainpage=="Results",{
+    values$out_words <- paste(results_data_long() %>% drop_na(response) %>%
+                                 pull(target), collapse = "_")
+    values$out_nums <- paste(results_data_long() %>% drop_na(response) %>%
+                               pull(response), collapse = "_")
+    values$out_ability <- paste(results_data_long() %>% drop_na(response) %>%
+                                  pull(ability), collapse = "_")
+    values$out_sem <- paste(results_data_long() %>% drop_na(response) %>%
+                              pull(sem), collapse = "_")
+    values$item_dif <- paste(results_data_long() %>% drop_na(response) %>%
+                               pull(itemDifficulty), collapse = "_")
+    values$disc <- paste(results_data_long() %>% drop_na(response) %>%
+                           pull(discrimination), collapse = "_")
+    values$key <- paste(results_data_long() %>% drop_na(response) %>%
+                          pull(key), collapse = "_")
+    values$order <- paste(results_data_long() %>% drop_na(response) %>%
+                            pull(order), collapse = "_")
+    values$item_number <- paste(results_data_long() %>% drop_na(response) %>%
+                                  pull(item_number), collapse = "_")
     })
   # This makes the above data available after running unit test.
   exportTestValues(abil = values$out_ability,
@@ -440,7 +446,7 @@ server <- function(input, output, session) {
 # ------------------------------------------------------------------------------
 ################################################################################
     # creates a data for downloading. added to accomodate previous data
-    download_data <- eventReactive(input$mainpage=="tabtitle2",{
+    download_data <- eventReactive(input$mainpage=="Results",{
       if(!is.na(irt_final()$last_ability)){
         d1 = results_data_long() %>% mutate_all(as.character)
         d2 = values$previous %>% mutate_all(as.character)
@@ -519,12 +525,6 @@ server <- function(input, output, session) {
   # this UI is on the server side so that it can be dynamic based. 
   # see scripts named tab_*.R 
   
-  # intro tab. see glide.R
-  output$intro_tab <- renderUI({
-      intro_tab_div
-    })
-  outputOptions(output, "intro_tab", suspendWhenHidden = FALSE)
-  
   # this shows the practice slides
   output$practice_tab <- renderUI({
       practice_tab_div(values = values)
@@ -535,10 +535,6 @@ server <- function(input, output, session) {
     slides_tab_div(values = values, progbar = input$progbar)
   })
   
-  # UI for results page
-  output$results_tab <- renderUI({
-    results_tab_div
-  })
   outputOptions(output, "results_table", suspendWhenHidden = FALSE)
 
 # end of app

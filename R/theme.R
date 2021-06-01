@@ -1,4 +1,7 @@
-minimal_theme = bs_theme(bootswatch = "default",
+minimal_theme = if (isTRUE(getOption("shiny.testmode"))) {
+ 
+} else {
+  bs_theme(bootswatch = "default",
                  base_font = font_google("Open Sans"),
                  heading_font = font_google("Open Sans"),
                  version = "4",
@@ -6,3 +9,4 @@ minimal_theme = bs_theme(bootswatch = "default",
                  `enable-transitions` = F,
                  primary = "#1665AC"
 )
+}

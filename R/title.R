@@ -10,13 +10,3 @@ pagetitle = if (isTRUE(getOption("shiny.testmode"))) {
 } else {
   "CAT-PNT"
 }
-
-
-tabtitle0 = "Home"
-tabtitle_practice = "Practice"
-tabtitle1 = "Assessment"
-tabtitle2 = "Results"
-
-backbutton = "Back"
-nextbutton = "Next"
-resultstext = "This page has the results"

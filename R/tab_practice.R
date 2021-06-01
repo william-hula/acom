@@ -1,4 +1,3 @@
-inputstart = "Start Assessment"
 
 practice_tab_div <- function(values){
     column(width = 12,
@@ -17,7 +16,7 @@ practice_tab_div <- function(values){
                     # start button, at the end of the practice slides
                     if(values$i == 13){
                       div(br(),
-                          actionButton("start", inputstart)
+                          actionButton("start", "Start Assessment")
                       )
                     }
              ),
