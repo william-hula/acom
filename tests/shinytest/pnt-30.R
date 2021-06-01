@@ -29,7 +29,7 @@ observed <- read_csv(here("validation", "validation.csv")) %>%
   mutate(response = ifelse(response == "correct", "2", "1")) %>%
   select(examinee, response)
 
-examinees <- unique(observed$examinee)[1]
+examinees <- unique(observed$examinee)
 print(paste0("The number of participants to test is ", length(examinees)))
 pb <- progress_bar$new(
   format = "  testing in progress [:bar] :current/:total in :elapsed",
@@ -55,7 +55,6 @@ app$setInputs(glide_next2 = "click")
 
 # click to get started
 app$setInputs(start_practice = "click")
-app$snapshot()
 
 pr_resp = rep(c("1", "2"), 6)
 for(n in pr_resp){
