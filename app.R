@@ -486,16 +486,11 @@ server <- function(input, output, session) {
   # More information modal
   observeEvent(input$info, {
     showModal(modalDialog(
-      # This is the content
-          title = "This modal will contain important information about the app",
-          "This is important",
-          br(), br(), br(),br(), br(), br(),br(), br(), br(),br(), br(), 
-          "Link to papers, contact info, more detailed scoring info etc...",
-          br(), br(), br(),br(), br(), br(),br(), br(), br(),br(), br(), 
-          "Dismiss it by clicking anywhere outside of it.",
+      tags$iframe(src="info.html", width = "100%",
+                  height = "650px", frameBorder = "0"),
       easyClose = TRUE,
       footer = NULL,
-      size = "m"
+      size = "l"
     ))
   })
   # readme modal. probabily will be deleted
