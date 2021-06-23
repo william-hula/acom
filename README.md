@@ -30,6 +30,8 @@ Update 5-24: Now preliminary version is on shinyapps.io:
 
 ## To do list
 
+**ARE THERE ANY COPYRIGHT CONCERNS WE NEED TO ADDRESS?**
+
 ### Validation
 
 -   ~~Check if app is choosing the same items as catpuccino~~
