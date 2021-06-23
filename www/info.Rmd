@@ -1,6 +1,6 @@
 ---
 title: "Shiny Computer Adapative Philadelphia Naming Test"
-author: "Alex Swiderski, Rob Cavanaugh...G? WH?"
+author: "AS, RC...GF,WH?"
 output:
   github_document:
     keep_html: true

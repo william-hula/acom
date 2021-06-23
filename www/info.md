@@ -1,6 +1,6 @@
 Shiny Computer Adapative Philadelphia Naming Test
 ================
-Alex Swiderski, Rob Cavanaugh…G? WH?
+AS, RC…GF,WH?
 
 last updated: 2021-06-22
 
