@@ -88,6 +88,7 @@ Update 5-24: Now preliminary version is on shinyapps.io:
 
 ### Longer-term:
 
+-   Convert to a progressive web app - very easy. see {shiny.pwa}
 -   randomly select one of 2-3 best next options
 -   PNT 60 item with harder items after n = 30
 -   Convert to an R package. I started this, but its tricky and things
