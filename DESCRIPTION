@@ -32,4 +32,5 @@ Imports:
     ggplot2,
     bayestestR,
     htmltools,
-    waiter
+    waiter,
+    shiny.pwa

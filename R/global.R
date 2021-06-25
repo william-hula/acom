@@ -15,6 +15,7 @@ library(htmltools)
 library(bslib)
 library(bayestestR)
 library(waiter)
+library(shiny.pwa)
 
 ######## DEFINE GLOBAL VARIABLES ########
 
