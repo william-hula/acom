@@ -28,7 +28,7 @@ response_keys <- c(
 )
 
 # The next button
-enter <- "enter"
+enter <- c("enter", "space")
 
 `%!in%` <- Negate(`%in%`)
 
