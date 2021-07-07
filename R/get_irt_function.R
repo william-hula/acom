@@ -63,6 +63,8 @@ irt_function <- function(all_items, IRT = T, previous = NULL){
        # generates the next item
        # standard error of the mean
        sem = semTheta(ability, bank, x)
+       
+      #print(fullDist(th = ability, it = bank, method = "EAP", range = c(-5, 5)))
     
        if(IRT){
          
@@ -73,6 +75,7 @@ irt_function <- function(all_items, IRT = T, previous = NULL){
          }
          
        # save to a list to return to the app
+       #   tmp_list = list()
        # tmp_list[[1]] = ability
        # tmp_list[[2]] = next_item
        # tmp_list[[3]] = sem
@@ -81,7 +84,7 @@ irt_function <- function(all_items, IRT = T, previous = NULL){
          ability,
          next_item,
          sem
-       )
+         )
         
        return(tmp_list)
        

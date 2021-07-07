@@ -7,7 +7,7 @@ get_text_summary <- function(
   last_sem,
   first_ability,
   first_sem,
-  num_previous = NULL
+  num_previous
 ){
     summary =  paste(
         "The total accuracy for this test was",
@@ -21,7 +21,7 @@ get_text_summary <- function(
         round(pnorm(ability, 0, 1.48)*100,1), "percentile of naming ability."
         ,sep = " ")
     
-    if(!is.null(num_previous)){
+    if(num_previous >= 1){
       summary = 
         paste(
           summary,
@@ -32,8 +32,9 @@ get_text_summary <- function(
           "(red).", "The previous naming ability estimate was in the",
           round(pnorm(last_ability, 0, 1.48)*100,1), " percentile."
           ,sep = " ")
+    }
       
-      if(values$num_previous == 2){
+      if(num_previous == 2){
         summary = 
           paste(
             summary,
@@ -46,7 +47,6 @@ get_text_summary <- function(
             ,sep = " ")
         
       }
-    }
     
     return(p(summary))
   

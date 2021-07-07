@@ -92,7 +92,7 @@ server <- function(input, output, session) {
   values$irt_out <- list(0, 0, 1) # will be overwritten if IRT 
   values$min_sem <- NULL # sem precision
   values$previous <- NULL # previous data if uploaded
-  values$num_previous <- NULL # number of previous tests
+  values$num_previous <- 0 # number of previous tests
   values$datetime <- Sys.time() # establishes datetime when app opens for saving
   
 ################################## PREVIOUS DATA ###############################
@@ -241,6 +241,8 @@ server <- function(input, output, session) {
       updateTabsetPanel(session, "glide", "glide1")
       updateNavbarPage(session, "mainpage",
                        selected = "Home")
+      values$datetime <- Sys.time() # reestablishes datetime
+      
     })
 ################ THIS IS WHRERE IRT STUFF GETS INCORPORATED ####################
     
@@ -305,6 +307,7 @@ server <- function(input, output, session) {
               values$irt_out = irt_function(values$item_difficulty,
                                             IRT = values$IRT,
                                             previous = values$previous)
+              #print(values$irt_out[[4]])
               # save info to the item_difficulty data_frame
               values$item_difficulty[values$item_difficulty$slide_num == values$n,][7:11] <-
                 tibble(

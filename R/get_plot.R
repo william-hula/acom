@@ -52,11 +52,12 @@ get_plot <- function(values, irt_final){
           axis.text.y = element_blank(),
           axis.ticks.y = element_blank()) 
   
-  if (!is.null(values$num_previous)){
+  if (values$num_previous>=1){
     p = p + 
       geom_area(data = df %>% filter(fill2 == "last"),
                 aes(y = y),position = "identity", fill = "#F8766D", alpha = .4, color = NA) +
       geom_vline(aes(xintercept = irt_final$last_ability), color = "#F8766D", alpha = .8, size = 1)
+  }
     
     if(values$num_previous == 2){
       p = p + 
@@ -64,8 +65,6 @@ get_plot <- function(values, irt_final){
                   aes(y = y),position = "identity", fill = "#00BA38", alpha = .4, color = NA) +
         geom_vline(aes(xintercept = irt_final$first_ability), color = "#00BA38", alpha = .8, size = 1)
     }
-    
-  } 
   
   
   

@@ -5,6 +5,7 @@
 library(here)
 library(tidyverse)
 source(here('R', 'next_slide.R'))
+library(catR)
 
 # observed data
 observed <- read_csv(here("validation", "validation.csv")) %>%
