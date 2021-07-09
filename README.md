@@ -30,3 +30,6 @@ Update 5-24: Now preliminary version is on shinyapps.io:
 
 Update 7-10 Bugs/issues/feature requests have been moved to
 [issues](https://github.com/rbcavanaugh/pnt/issues).
+
+-   Anyone is welcome to submit an issue with a bug/feedback/feature
+    requests.
