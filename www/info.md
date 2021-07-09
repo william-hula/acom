@@ -2,7 +2,7 @@ Shiny Computer Adapative Philadelphia Naming Test
 ================
 AS, RC…GF,WH?
 
-last updated: 2021-06-22
+last updated: 2021-07-09
 
 **Ideas we want to convey here:**
 
@@ -11,15 +11,20 @@ last updated: 2021-06-22
     -   why naming assessments? (brief, high correlations to overall
         severity, discourse…etc)
 -   what you don’t get from CAT + PNT (error stuff)
--   other details about where the current CAT + PNT reserach stands
+-   other details about where the current CAT + PNT researach stands
 -   how to leave feedback, report issues or ask questions (ideally
     github issues but also contact info)
 -   privacy/security (nothing stored)
 -   how to cite the app?
--   license info?
+-   license info/credits?
+    -   MRRI
+    -   MAPPD
+    -   Roach 1996
+    -   Mirman 2010
+    -   Walker 2012
 -   link to pre-print of publication
 
-**Initial text from Alex:**
+**Some initial text from Alex:**
 
 This shiny application provides a simple user interface that provides
 various options for delivering the Philadelphia Naming Test (PNT; Roach

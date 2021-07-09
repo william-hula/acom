@@ -43,76 +43,7 @@ body {
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>shiny<span class="sc">::</span><span class="fu">runGitHub</span>(<span class="st">&quot;rbcavanaugh/pnt&quot;</span>)</span></code></pre></div>
 <p>Or clone the repository and run locally.</p>
 <p>Update 5-24: Now preliminary version is on shinyapps.io: <a href="https://rb-cavanaugh.shinyapps.io/pnt-cat/">https://rb-cavanaugh.shinyapps.io/pnt-cat/</a></p>
-<h2 id="to-do-list">To do list</h2>
-<p><strong>ARE THERE ANY COPYRIGHT CONCERNS WE NEED TO ADDRESS?</strong></p>
-<h3 id="validation">Validation</h3>
-<ul>
-<li><del>Check if app is choosing the same items as catpuccino</del></li>
-<li><del>validate final results in app use (bonus if automated)</del>
-<ul>
-<li>QUESTION: How does catpuccino handle ties? Testing is showing occasional inconsistencies in which items are being chosen, but its only in cases where difficulty is the same (e.g. kite: -0.475 and bridge: -0.475). Shouldn’t affect final ability estimate right?</li>
-</ul></li>
-<li><del>ensure no bias in slight differences between catR and catpuccino</del></li>
-<li><del>Redo validation script to adjust for practice slides</del> Looks good!</li>
-</ul>
-<h3 id="for-short-term-use">For short-term use</h3>
-<ul>
-<li><del>Add slides with practice trials</del>
-<ul>
-<li><del>NOTE: Responses not currently logged. ok?</del></li>
-</ul></li>
-<li>Add instructions, background info, and other important info ALEX
-<ul>
-<li>just refer to MRRI vs. including info…?</li>
-</ul></li>
-<li><del>produce a results plot, norms, and any other information to interpret the results</del>
-<ul>
-<li><del>QUESTION: plot distribution sd = 1.48? Also, harder to get &gt;3 or &lt;3 in ability… OK</del></li>
-</ul></li>
-<li><del>click sound</del></li>
-<li><del>Make it pretty</del></li>
-<li><del>indicator that response has been logged</del></li>
-<li><del>Add full PNT</del>
-<ul>
-<li><del>QUESTION: Add option to randomize full PNT? Done</del></li>
-</ul></li>
-<li><del>Add source code</del></li>
-<li><del>Add ability estimate to full 175 PNT (random and not-random)</del></li>
-<li>Incorporate PNT stop rule? (transform SEM to information?) ALEX</li>
-<li>Plot: what is the bell curve? ALEX</li>
-</ul>
-<h3 id="small-stuff--bugs">Small stuff &amp; Bugs:</h3>
-<ul>
-<li>Clearer instructions for progressing through slides</li>
-<li><del>More informative error messages on non-assessment slides</del></li>
-<li><del>Spacing throughout app. make sure ipad friendly.</del> Tentatively, this looks better…</li>
-<li><del>Sound not working on shinyapps.io</del></li>
-<li><del>UI resizing after opening modal.</del></li>
-</ul>
-<h3 id="current-agenda-items">Current agenda items:</h3>
-<ul>
-<li>create ability to upload previous file to prevent reuse of previously tested words.
-<ul>
-<li><del>able to upload and don’t repeat</del></li>
-<li><del>compare performacne between administrations (hidden results tab only visible if fileupload exists?)</del></li>
-<li>use prior from previous adminstration?</li>
-<li><del>download data with all previous administrations for n = 2+i’th upload.</del></li>
-<li><del>added option to mute sound</del></li>
-<li><del>removed progress bar to avoid shinyWidgets dependency</del></li>
-</ul></li>
-</ul>
-<h3 id="longer-term">Longer-term:</h3>
-<ul>
-<li>Convert to a progressive web app - very easy. see {shiny.pwa}</li>
-<li>randomly select one of 2-3 best next options</li>
-<li>PNT 60 item with harder items after n = 30</li>
-<li>Convert to an R package. I started this, but its tricky and things go wrong so I reverted back. right now, there’s an r-package branch to be worked on…</li>
-<li>make a “report” that is downloadable
-<ul>
-<li>I think this would just be a formulaic summary paragraph at the top, a small table with the main results</li>
-<li>and either use DT or another method of storing the output CSV in the report</li>
-</ul></li>
-</ul>
+<p>Update 7-10 Bugs/issues/feature requests have been moved to <a href="https://github.com/rbcavanaugh/pnt/issues">issues</a>.</p>
 
 </body>
 </html>

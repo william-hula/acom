@@ -14,15 +14,20 @@ last updated: `r Sys.Date()`
 - what are the advantages of CAT + PNT
   - why naming assessments? (brief, high correlations to overall severity, discourse...etc)
 - what you don't get from CAT + PNT (error stuff)
-- other details about where the current CAT + PNT reserach stands
+- other details about where the current CAT + PNT researach stands
 - how to leave feedback, report issues or ask questions (ideally github issues but also contact info)
 - privacy/security (nothing stored)
 - how to cite the app?
-- license info?
+- license info/credits?
+  - MRRI
+  - MAPPD
+  - Roach 1996
+  - Mirman 2010
+  - Walker 2012
 - link to pre-print of publication
 
 
-**Initial text from Alex:**
+**Some initial text from Alex:**
 
 This shiny application provides a simple user interface that provides various options for delivering the Philadelphia Naming Test (PNT; Roach et al., 1996) in an item response theory framework (IRT). The PNT is a confrontation naming test utilized for assessing anomia severity from people with aphasia. The IRT parameters of this model were estimated with an archival picture naming tests set of people with aphasia (Mirman et al., 2010). Please note, that the intended population for this assessment are individuals with acquired language impairments and the testing instrument may be unreliable for other populations.
 
