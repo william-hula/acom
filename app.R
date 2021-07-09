@@ -494,7 +494,6 @@ server <- function(input, output, session) {
       tags$iframe(src="info.html", width = "100%",
                   height = "650px", frameBorder = "0"),
       easyClose = TRUE,
-      footer = NULL,
       size = "l"
     ))
   })
@@ -505,7 +504,6 @@ server <- function(input, output, session) {
                   height = "650px", frameBorder = "0"),
       size = "l",
       easyClose = TRUE,
-      footer = NULL
     ))
   })
   
