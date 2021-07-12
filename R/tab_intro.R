@@ -9,7 +9,7 @@ intro_tab_div <-
                       h5(
                         "Welcome to the computer adaptive version of the",
                         tags$a(href = "https://mrri.org/philadelphia-naming-test/",
-                               "Philadelphia Naming Test.",
+                               HTML("Philadelphia&nbsp;Naming&nbsp;Test."),
                                target = "_blank", style = "text-decoration: underline;cursor: pointer;")
                       )
                     )
