@@ -38,15 +38,15 @@ intro_tab_div <-
                                                  ### Use this to set how many items to run.
                                                  radioButtons(inputId = "numitems",
                                                               label = "Number of items (10 is for testing)",
-                                                              choices = c("10", "30", "60", "100", "175", "SEM"),
+                                                              choices = c("10", "30", "60", "100", "175", "Precision" = "SEM"), #Precision" = "SEM"),
                                                               selected = "10",
                                                               inline = T),
                                                  # sets SEM precision. disabled if SEM not selected in numitems radio buttons
-                                                 sliderInput("sem", "Minimum acceptable SEM",
-                                                             min = 0.1,
-                                                             max = 0.5,
-                                                             step = 0.01,
-                                                             value = 0.3),
+                                                 sliderInput("ci_95", "Minimum acceptable 95% CI",
+                                                             min = 0.5,
+                                                             max = 1,
+                                                             step = 0.05,
+                                                             value = 0.5),
                                                  # randomize PNT order if doing the full 175 item test?
                                                  checkboxInput("random",
                                                                "Random Order (175 only)",

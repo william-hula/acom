@@ -4,23 +4,24 @@ get_final_numbers <- function(out,
   df = tibble(
     ability = out[[1]],
     sem = out[[3]],
+    ci_95 = out[[3]]*1.96,
     last_ability = NA,
-    last_sem = NA,
+    last_ci_95 = NA,
     first_ability = NA,
-    first_sem = NA
+    first_ci_95 = NA
   )
   
   if(!is.null(previous)){
     if(num_previous==1){
-      df$last_ability = previous[previous$sem==min(previous$sem),]$ability
-      df$last_sem = min(previous$sem)
+      df$last_ability = previous[previous$ci_95==min(previous$ci_95),]$ability
+      df$last_ci_95 = min(previous$ci_95)
     } else if (num_previous == 2){
       prev_dat = previous %>% filter(date == max(date))
-      df$last_ability = prev_dat[prev_dat$sem==min(prev_dat$sem),]$ability
-      df$last_sem = min(prev_dat$sem)
+      df$last_ability = prev_dat[prev_dat$ci_95==min(prev_dat$ci_95),]$ability
+      df$last_ci_95 = min(prev_dat$ci_95)
       first_dat = previous %>% filter(date == min(date))
-      df$first_ability = first_dat[first_dat$sem==min(first_dat$sem),]$ability
-      df$first_sem = min(first_dat$sem)
+      df$first_ability = first_dat[first_dat$ci_95==min(first_dat$ci_95),]$ability
+      df$first_ci_95 = min(first_dat$ci_95)
     }
   }
   return(df)

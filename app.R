@@ -203,7 +203,7 @@ server <- function(input, output, session) {
     # saves either to values$test_length
         observeEvent(input$numitems,{
           if(input$numitems == "SEM"){
-            values$test_length <- "SEM"
+            values$test_length <- "95_ci"
             shinyjs::enable("sem")
           } else {
             values$test_length <- as.numeric(input$numitems)
@@ -212,8 +212,8 @@ server <- function(input, output, session) {
         })
         
         # records the sem input
-        observeEvent(input$sem,{
-          values$min_sem <- input$sem
+        observeEvent(input$ci_95,{
+          values$min_sem <- input$ci_95/1.96
         })
   
 #############################KEY PRESS##########################################
@@ -307,7 +307,6 @@ server <- function(input, output, session) {
               values$irt_out = irt_function(values$item_difficulty,
                                             IRT = values$IRT,
                                             previous = values$previous)
-              #print(values$irt_out[[4]])
               # save info to the item_difficulty data_frame
               values$item_difficulty[values$item_difficulty$slide_num == values$n,][7:11] <-
                 tibble(
@@ -375,13 +374,14 @@ server <- function(input, output, session) {
   # holds the item-level responses. 
   results_data_long <- reactive({
     precision = if(input$numitems == "SEM"){
-      paste0("SEM: ", input$sem)
+      paste0("95% CI: ", input$ci_95)
     } else {
       paste0(input$numitems, " items")
     }
     
     tmp = dplyr::bind_rows(values$item_difficulty) %>%
-      mutate(precision = precision,
+      mutate(ci_95 = sem*1.96,
+             precision = precision,
              name = input$name,
              date = values$datetime,
              notes = NA
@@ -397,7 +397,8 @@ server <- function(input, output, session) {
     dplyr::bind_rows(values$item_difficulty) %>%
       # have to switch 0s and 1s because IRT is dumb. 
       drop_na() %>%
-      mutate(response = as.numeric(ifelse(response == 0, 1, 0))) %>%
+      mutate(response = as.numeric(ifelse(response == 0, 1, 0)),
+             ci_95 = sem*1.96) %>%
       summarize(accuracy = mean(response)) %>%
       pull(accuracy)
   })
@@ -451,11 +452,11 @@ server <- function(input, output, session) {
     output$results_summary <- renderUI({
         summary = get_text_summary(acc = results_data_summary(),
                                ability = irt_final()$ability,
-                               sem = irt_final()$sem,
+                               ci_95 = irt_final()$ci_95,
                                last_ability = irt_final()$last_ability,
-                               last_sem = irt_final()$last_sem,
+                               last_ci_95 = irt_final()$last_ci_95,
                                first_ability = irt_final()$first_ability,
-                               first_sem = irt_final()$first_sem,
+                               first_ci_95 = irt_final()$first_ci_95,
                                num_previous = values$num_previous)
     })
 ################################## DOWNLOAD ####################################  
