@@ -134,10 +134,10 @@ shinyServer(function(input, output, session) {
         observeEvent(input$numitems,{
           if(input$numitems == "SEM"){
             values$test_length <- "95_ci"
-            shinyjs::enable("sem")
+            shinyjs::enable("ci_95")
           } else {
             values$test_length <- as.numeric(input$numitems)
-            shinyjs::disable("sem")
+            shinyjs::disable("ci_95")
           }
         })
         
