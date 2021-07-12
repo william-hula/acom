@@ -2,7 +2,8 @@
 ################## PACKAGES ###################
 
 #!!!!!!!!!!!! Make sure each of these is listed in the description file!!!
-
+library(shiny)
+library(waiter)
 library(ggplot2)
 library(shiny)
 library(dplyr)
