@@ -145,6 +145,12 @@ shinyServer(function(input, output, session) {
         observeEvent(input$ci_95,{
           values$min_sem <- input$ci_95/1.96
         })
+        
+        observeEvent(input$file1,{
+          if(values$num_previous>0){
+            shinyjs::enable("avoid_prev")
+          }
+        })
   
 #############################KEY PRESS##########################################
     # tracks the key inputs
@@ -236,7 +242,11 @@ shinyServer(function(input, output, session) {
             # element[[3]] returns the sem after re-estimating the model
               values$irt_out = irt_function(values$item_difficulty,
                                             IRT = values$IRT,
-                                            previous = values$previous)
+                                            previous = ifelse(isTruthy(input$avoid_prev),
+                                                              values$previous,
+                                                              "ignore"
+                                                              )
+                                            )
               # save info to the item_difficulty data_frame
               values$item_difficulty[values$item_difficulty$slide_num == values$n,][7:11] <-
                 tibble(

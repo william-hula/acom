@@ -27,7 +27,7 @@ starting_items <- c(130, 25, 39, 154) # are 0.02 or -0.02. closest to 0.
 
 # the magic!
 
-irt_function <- function(all_items, IRT = T, previous = NULL){
+irt_function <- function(all_items, IRT = T, previous = "ignore"){
 
       # this is for the out argument. 
       # creates a vector of the items that have already been completed
@@ -37,7 +37,7 @@ irt_function <- function(all_items, IRT = T, previous = NULL){
         pull(item_number)
       
       # don't re-use previous items
-      if(!is.null(previous)){
+      if(previous != "ignore"){
         previously_completed = previous %>%
           drop_na(response) %>%
           pull(item_number)
