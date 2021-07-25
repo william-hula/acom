@@ -81,7 +81,10 @@ shinyServer(function(input, output, session) {
       values$i = 1 # reset values$i
       values$keyval = NULL # keeps track of button press 1 (error), 2 (correct)
       # only use IRT function if NOT 175 items
-      values$IRT = ifelse(input$numitems == "175", FALSE, TRUE)
+      values$IRT = ifelse(input$numitems == "175", FALSE,
+                          ifelse(input$numitems == "walker", FALSE,
+                                 TRUE)
+      )
       # go to practice slides
       updateNavbarPage(session, "mainpage",
                        selected = "Practice")
@@ -96,6 +99,13 @@ shinyServer(function(input, output, session) {
     values$item_difficulty <- items  
     values$i = 1
     
+    
+    if(isTruthy(input$numitems == "walker")){
+      values$item_difficulty <- 
+        values$item_difficulty %>%
+          filter(walker == input$walker)
+    }
+    
     # randomly orders stuff if the random order box is checked. only affects 175
     if(isTruthy(input$random)){
       values$item_difficulty <-
@@ -107,6 +117,9 @@ shinyServer(function(input, output, session) {
     values$n = if(isTruthy(values$IRT)){
       # samples one of four first possible items, unless used previously...
         get_first_item(values$previous)
+    } else if (input$numitems == "walker"){
+      values$item_difficulty[values$item_difficulty$walker_order == 1,]$slide_num 
+      
     } else if (isTruthy(input$random)) {
       # if random, grab first row in values$item_difficulty,
       # which is already randomized in code above
@@ -133,11 +146,29 @@ shinyServer(function(input, output, session) {
     # saves either to values$test_length
         observeEvent(input$numitems,{
           if(input$numitems == "SEM"){
+            # precision condition
             values$test_length <- "95_ci"
-            shinyjs::enable("ci_95")
-          } else {
+            shinyjs::show("ci_95")
+            shinyjs::hide("random")
+            shinyjs::hide("walker")
+          } else if(input$numitems == "walker") {
+            # walker short form
+            values$test_length <- 30
+            shinyjs::hide("ci_95")
+            shinyjs::show("walker")
+            shinyjs::hide("random")
+          } else if(input$numitems == "175"){
+            # full pnt
             values$test_length <- as.numeric(input$numitems)
-            shinyjs::disable("ci_95")
+              shinyjs::show("random")
+              shinyjs::hide("ci_95")
+              shinyjs::hide("walker")
+          } else {
+            # fixed length IRT
+            values$test_length <- as.numeric(input$numitems)
+            shinyjs::hide("ci_95")
+            shinyjs::hide("walker")
+            shinyjs::hide("random")
           }
         })
         
@@ -148,7 +179,7 @@ shinyServer(function(input, output, session) {
         
         observeEvent(input$file1,{
           if(values$num_previous>0){
-            shinyjs::enable("avoid_prev")
+            shinyjs::show("avoid_prev")
           }
         })
   
@@ -245,10 +276,11 @@ shinyServer(function(input, output, session) {
                                             previous = ifelse(isTruthy(input$avoid_prev),
                                                               values$previous,
                                                               "ignore"
-                                                              )
+                                                              ),
+                                            test = input$numitems
                                             )
               # save info to the item_difficulty data_frame
-              values$item_difficulty[values$item_difficulty$slide_num == values$n,][7:11] <-
+              values$item_difficulty[values$item_difficulty$slide_num == values$n,][9:13] <-
                 tibble(
                   # what trial was the item presented
                   order = values$i,
@@ -274,12 +306,12 @@ shinyServer(function(input, output, session) {
                 
                     if(!is.na(values$irt_out[[2]][[1]])){
                     values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
-                  } else {
-                    190
-                  }
-                } else {
-                  values$irt_out[[2]][[2]]
-              } 
+                      } else {
+                        190
+                    }
+              } else {
+                values$irt_out[[2]][[2]]
+            } 
               # iterate the order
               values$i = values$i + 1
         } 

@@ -38,9 +38,15 @@ intro_tab_div <-
                                    ### Use this to set how many items to run.
                                    radioButtons(inputId = "numitems",
                                                 label = "Number of items (10 is for testing)",
-                                                choices = c("10", "30", "60", "100", "175", "Precision" = "SEM"), #Precision" = "SEM"),
+                                                choices = c("10-item IRT" = "10",
+                                                            "30-item IRT" = "30",
+                                                            "60-item IRT" = "60",
+                                                            "100-item IRT" = "100",
+                                                            "Precision-based IRT" = "SEM",
+                                                            "175-item full PNT" = "175",
+                                                            "30-item short PNT" = "walker"), #Precision" = "SEM"),
                                                 selected = "10",
-                                                inline = T),
+                                                inline = F),
                                    # sets SEM precision. disabled if SEM not selected in numitems radio buttons
                                    sliderInput("ci_95", "Minimum acceptable 95% CI",
                                                min = 0.5,
@@ -48,13 +54,22 @@ intro_tab_div <-
                                                step = 0.05,
                                                value = 0.5),
                                    # randomize PNT order if doing the full 175 item test?
-                                   checkboxInput("random",
-                                                 "Random Order (175 only)",
-                                                 value = F),
-                                   disabled(
+                                   hidden(
+                                     checkboxInput("random",
+                                                   "Random Order (175 only)",
+                                                   value = F)
+                                   ),
+                                   hidden(
                                      checkboxInput("avoid_prev",
                                                    "Avoid previous items",
                                                    value = F)
+                                   ),
+                                   hidden(
+                                     radioButtons("walker",
+                                                   "Choose 30-item short form",
+                                                  choices = c("A", "B"),
+                                                  selected = "A"
+                                                    )
                                    ),
                                    checkboxInput("sound",
                                                  "Mute sound",

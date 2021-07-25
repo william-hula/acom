@@ -17,7 +17,10 @@ library(bslib)
 library(bayestestR)
 library(waiter)
 library(shiny.pwa)
-
+library(tibble)
+library(dplyr) 
+library(catR)
+library(here)
 ######## DEFINE GLOBAL VARIABLES ########
 
 # These indicate errors (1) and correct responses (2)
@@ -32,4 +35,22 @@ response_keys <- c(
 enter <- c("enter", "space")
 
 `%!in%` <- Negate(`%in%`)
+
+items = read.csv(here("data", "item_difficulty.csv")) %>% 
+  dplyr::select(target, itemDifficulty = Item.Difficulty, discrimination = Discrimination, slide_num, walker, walker_order) %>%
+  arrange(slide_num)%>%
+  mutate(response = NA,
+         item_number = row_number(),
+         order = NA,
+         key = NA,
+         resp = NA,
+         ability = NA,
+         sem = NA,
+         pnt_order = row_number()
+  )
+
+item_key = read.csv(here("data", "item_difficulty.csv")) %>% 
+  dplyr::select(target, slide_num, itemDifficulty = Item.Difficulty, walker, walker_order)
+
+starting_items <- c(130, 25, 39, 154) # are 0.02 or -0.02. closest to 0.
 

@@ -2,32 +2,10 @@
 
 # This is where all the magic happens
 
-library(tibble)
-library(dplyr) 
-library(catR)
-library(here)
-
-items = read.csv(here("data", "item_difficulty.csv")) %>% 
-  dplyr::select(target, itemDifficulty = Item.Difficulty, discrimination = Discrimination, slide_num) %>%
-  arrange(slide_num)%>%
-  mutate(response = NA,
-         item_number = row_number(),
-         order = NA,
-         key = NA,
-         resp = NA,
-         ability = NA,
-         sem = NA,
-         pnt_order = row_number()
-  )
-
-item_key = read.csv(here("data", "item_difficulty.csv")) %>% 
-  dplyr::select(target, slide_num, itemDifficulty = Item.Difficulty)
-
-starting_items <- c(130, 25, 39, 154) # are 0.02 or -0.02. closest to 0.
 
 # the magic!
 
-irt_function <- function(all_items, IRT = T, previous = "ignore"){
+irt_function <- function(all_items, IRT = T, previous = "ignore", test = NA){
 
       # this is for the out argument. 
       # creates a vector of the items that have already been completed
@@ -64,8 +42,6 @@ irt_function <- function(all_items, IRT = T, previous = "ignore"){
        # standard error of the mean
        sem = semTheta(ability, bank, x)
        
-      #print(fullDist(th = ability, it = bank, method = "EAP", range = c(-5, 5)))
-    
        if(IRT){
          
          next_item = if(length(completed)<175){
@@ -73,12 +49,6 @@ irt_function <- function(all_items, IRT = T, previous = "ignore"){
          } else {
            NA
          }
-         
-       # save to a list to return to the app
-       #   tmp_list = list()
-       # tmp_list[[1]] = ability
-       # tmp_list[[2]] = next_item
-       # tmp_list[[3]] = sem
        
          tmp_list = list(
          ability,
@@ -88,9 +58,24 @@ irt_function <- function(all_items, IRT = T, previous = "ignore"){
         
        return(tmp_list)
        
-    } else {
+    } else if(test == "walker") {
       # randomize? if true, then use random order column
-
+      next_slide_num <- all_items %>%
+        mutate(next_item = ifelse(!is.na(response), walker_order+1, NA)) %>%
+        filter(walker_order == max(next_item, na.rm = T)) 
+      
+      tmp_list = list(
+        ability,
+        list(
+          NA,
+          slide_num_out = ifelse(nrow(next_slide_num) < 1, 190, next_slide_num$slide_num)
+        ),
+        sem
+      )
+      
+      return(tmp_list)
+      
+    } else {
       next_slide_num <- all_items %>%
         mutate(next_item = ifelse(!is.na(response), pnt_order+1, NA)) %>%
         filter(pnt_order == max(next_item, na.rm = T)) 
