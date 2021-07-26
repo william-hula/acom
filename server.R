@@ -75,6 +75,25 @@ shinyServer(function(input, output, session) {
       }
     })
     
+    ################################ END TEST ##################################
+    
+    observeEvent(input$end_test,{
+      confirmSweetAlert(
+        inputId = "confirm_end_test",
+        session = session,
+        title = "End test early?",
+        text = "Only items with confirmed responses will be saved",
+        type = "Warning",
+      )
+    })
+    
+    observeEvent(input$confirm_end_test,{
+      if(isTruthy(input$confirm_end_test)){
+        updateNavbarPage(session, "mainpage",
+                         selected = "Results")
+      }
+    })
+    
   ################################ START PRACTICE ##############################
     observeEvent(input$start_practice,{
       # runjs("document.getElementById('audio').play();") # play click

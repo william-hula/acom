@@ -3,9 +3,9 @@
 
 #!!!!!!!!!!!! Make sure each of these is listed in the description file!!!
 library(shiny)
+library(here)
 library(waiter)
 library(ggplot2)
-library(shiny)
 library(dplyr)
 library(tidyr)
 library(tibble)
@@ -13,14 +13,12 @@ library(keys)
 library(DT)
 library(shinyjs)
 library(htmltools)
+library(shinyWidgets)
 library(bslib)
-library(bayestestR)
-library(waiter)
 library(shiny.pwa)
-library(tibble)
-library(dplyr) 
+
 library(catR)
-library(here)
+library(shinyWidgets)
 ######## DEFINE GLOBAL VARIABLES ########
 
 # These indicate errors (1) and correct responses (2)
@@ -33,6 +31,7 @@ response_keys <- c(
 
 # The next button
 enter <- c("enter", "space")
+end_test_key = "esc"
 
 `%!in%` <- Negate(`%in%`)
 

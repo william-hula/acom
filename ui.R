@@ -14,6 +14,7 @@ shinyUI(
                 waiter_preloader(html = spin_plus()),
                 keysInput("keys", response_keys),
                 keysInput("enter_key", enter),
+                keysInput("end_test", end_test_key),
                 includeCSS("www/style.css"),
       
 ################################### layout starts here ######################### 
