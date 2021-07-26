@@ -122,7 +122,8 @@ shinyServer(function(input, output, session) {
                        previous = values$previous,
                        exclude_previous = values$exclude_previous)
       
-      values$item_difficulty[values$item_difficulty$target == first_item_num,]$slide_num
+      values$item_difficulty[values$item_difficulty$target == first_item_num
+                             ,]$slide_num
       
     } else if (input$numitems == "walker"){
       values$item_difficulty[values$item_difficulty$walker_order == 1,]$slide_num 
@@ -151,7 +152,7 @@ shinyServer(function(input, output, session) {
     # enables or disables precision option if SEM is or isn't selected. 
     # also converts the numeric option to a number
     # saves either to values$test_length
-        observeEvent(input$glide_next1,{
+        observe({
           if(input$numitems == "SEM"){
             # precision condition
             values$test_length <- "95_ci"
