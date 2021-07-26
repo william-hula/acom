@@ -118,12 +118,9 @@ shinyServer(function(input, output, session) {
     
     values$n = if(isTruthy(values$IRT)){
       # samples one of four first possible items, unless used previously...
-      first_item_num =  get_first_item(all_items = values$item_difficulty,
+      get_first_item(all_items = values$item_difficulty,
                        previous = values$previous,
                        exclude_previous = values$exclude_previous)
-      
-      values$item_difficulty[values$item_difficulty$target == first_item_num
-                             ,]$slide_num
       
     } else if (input$numitems == "walker"){
       values$item_difficulty[values$item_difficulty$walker_order == 1,]$slide_num 

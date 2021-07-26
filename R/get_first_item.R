@@ -39,8 +39,10 @@ get_first_item <- function(all_items, previous, exclude_previous = F){ #previous
     # ability estimate using bayes modal:
     ability = thetaEst(bank, x, method = "EAP", range = c(-5, 5))
     first_item = nextItem(itemBank = bank, theta = ability, out = completed$item_number)
+    
+    first_slide_num = all_items[all_items$target==first_item$name,]$slide_num
 
-    return(first_item$name)
+    return(first_slide_num)
   }
   
   
