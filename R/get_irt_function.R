@@ -5,7 +5,7 @@
 
 # the magic!
 
-irt_function <- function(all_items, IRT = T, previous = "ignore", test = NA){
+irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, test = NA){
 
       # this is for the out argument. 
       # creates a vector of the items that have already been completed
@@ -15,10 +15,15 @@ irt_function <- function(all_items, IRT = T, previous = "ignore", test = NA){
         pull(item_number)
       
       # don't re-use previous items
-      if(previous != "ignore"){
+      if(exclude_previous){
         previously_completed = previous %>%
-          drop_na(response) %>%
-          pull(item_number)
+          # this section limits ignoring to only the previous test
+                                group_by(date) %>%
+                                mutate(num = cur_group_id()) %>%
+                                filter(num == max(num)) %>%
+        # selects only done items and grabs them.
+                                    drop_na(response) %>%
+                                    pull(item_number)
           
         completed = c(completed, previously_completed)
       }
@@ -50,6 +55,8 @@ irt_function <- function(all_items, IRT = T, previous = "ignore", test = NA){
            NA
          }
        
+         print(next_item)
+         
          tmp_list = list(
          ability,
          next_item,

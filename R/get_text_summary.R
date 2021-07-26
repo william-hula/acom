@@ -27,7 +27,7 @@ get_text_summary <- function(
           "Last assessment, the final IRT ability estimate was ",
           round(last_ability,2),
           " [95% CI: ", round(ability - last_ci_95,2), ", ", round(ability + last_ci_95,2), "]. ",
-          "The previous naming ability estimate was in the ",
+          "The naming ability estimate was in the ",
           round(pnorm(last_ability, 0, 1.48)*100,1), " percentile."
           ,sep = "")
     }

@@ -48,11 +48,13 @@ intro_tab_div <-
                                                 selected = "10",
                                                 inline = F),
                                    # sets SEM precision. disabled if SEM not selected in numitems radio buttons
-                                   sliderInput("ci_95", "Minimum acceptable 95% CI",
-                                               min = 0.5,
-                                               max = 1,
-                                               step = 0.05,
-                                               value = 0.5),
+                                   hidden(
+                                     sliderInput("ci_95", "Minimum acceptable 95% CI",
+                                                 min = 0.5,
+                                                 max = 1,
+                                                 step = 0.05,
+                                                 value = 0.5)
+                                     ),
                                    # randomize PNT order if doing the full 175 item test?
                                    hidden(
                                      checkboxInput("random",
@@ -60,8 +62,8 @@ intro_tab_div <-
                                                    value = F)
                                    ),
                                    hidden(
-                                     checkboxInput("avoid_prev",
-                                                   "Avoid previous items",
+                                     checkboxInput("exclude_previous",
+                                                   "Exclude items from the previous test?",
                                                    value = F)
                                    ),
                                    hidden(

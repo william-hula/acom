@@ -21,6 +21,7 @@ shinyServer(function(input, output, session) {
   values$test_length <- NULL # number of items to test
   values$irt_out <- list(0, 0, 1) # will be overwritten if IRT 
   values$min_sem <- NULL # sem precision
+  values$exclude_previous <- NULL
   values$previous <- NULL # previous data if uploaded
   values$num_previous <- 0 # number of previous tests
   values$datetime <- Sys.time() # establishes datetime when app opens for saving
@@ -41,7 +42,7 @@ shinyServer(function(input, output, session) {
       drop_na(response)
     # assign number of previous values
     values$num_previous <- length(unique(values$previous$date))
-      
+
   })
   
 ################################## OBSERVERS ###################################
@@ -80,6 +81,7 @@ shinyServer(function(input, output, session) {
       runjs(values$sound)
       values$i = 1 # reset values$i
       values$keyval = NULL # keeps track of button press 1 (error), 2 (correct)
+      values$exclude_previous <- input$exclude_previous
       # only use IRT function if NOT 175 items
       values$IRT = ifelse(input$numitems == "175", FALSE,
                           ifelse(input$numitems == "walker", FALSE,
@@ -116,7 +118,12 @@ shinyServer(function(input, output, session) {
     
     values$n = if(isTruthy(values$IRT)){
       # samples one of four first possible items, unless used previously...
-        get_first_item(values$previous)
+      first_item_num =  get_first_item(all_items = values$item_difficulty,
+                       previous = values$previous,
+                       exclude_previous = values$exclude_previous)
+      
+      values$item_difficulty[values$item_difficulty$target == first_item_num,]$slide_num
+      
     } else if (input$numitems == "walker"){
       values$item_difficulty[values$item_difficulty$walker_order == 1,]$slide_num 
       
@@ -144,31 +151,39 @@ shinyServer(function(input, output, session) {
     # enables or disables precision option if SEM is or isn't selected. 
     # also converts the numeric option to a number
     # saves either to values$test_length
-        observeEvent(input$numitems,{
+        observeEvent(input$glide_next1,{
           if(input$numitems == "SEM"){
             # precision condition
             values$test_length <- "95_ci"
             shinyjs::show("ci_95")
             shinyjs::hide("random")
             shinyjs::hide("walker")
-          } else if(input$numitems == "walker") {
+              if(values$num_previous>0){
+                shinyjs::show("exclude_previous")
+              }
+            } else if(input$numitems == "walker") {
             # walker short form
             values$test_length <- 30
             shinyjs::hide("ci_95")
             shinyjs::show("walker")
             shinyjs::hide("random")
+            shinyjs::hide("exclude_previous")
           } else if(input$numitems == "175"){
             # full pnt
             values$test_length <- as.numeric(input$numitems)
               shinyjs::show("random")
               shinyjs::hide("ci_95")
               shinyjs::hide("walker")
+              shinyjs::hide("exclude_previous")
           } else {
             # fixed length IRT
             values$test_length <- as.numeric(input$numitems)
             shinyjs::hide("ci_95")
             shinyjs::hide("walker")
             shinyjs::hide("random")
+            if(values$num_previous>0){
+              shinyjs::show("exclude_previous")
+            }
           }
         })
         
@@ -177,11 +192,6 @@ shinyServer(function(input, output, session) {
           values$min_sem <- input$ci_95/1.96
         })
         
-        observeEvent(input$file1,{
-          if(values$num_previous>0){
-            shinyjs::show("avoid_prev")
-          }
-        })
   
 #############################KEY PRESS##########################################
     # tracks the key inputs
@@ -205,10 +215,21 @@ shinyServer(function(input, output, session) {
     # start assessment button then resets everything
     observeEvent(input$start_over,{
       shinyjs::reset("intro_tab")
+      values = reactiveValues()
+      values$item_difficulty <- items #dataframe of potential values
+      values$i = 0 # this is the counter to track the slide number
+      values$test_length <- NULL # number of items to test
+      values$irt_out <- list(0, 0, 1) # will be overwritten if IRT 
+      values$min_sem <- NULL # sem precision
+      values$previous <- NULL # previous data if uploaded
+      values$exclude_previous <- NULL # should we exlcude the previoustest? 
+      values$num_previous <- 0 # number of previous tests
+      values$datetime <- Sys.time() # reestablishes datetime
+      shinyjs::reset("file1")
       updateTabsetPanel(session, "glide", "glide1")
       updateNavbarPage(session, "mainpage",
                        selected = "Home")
-      values$datetime <- Sys.time() # reestablishes datetime
+      
       
     })
 ################ THIS IS WHRERE IRT STUFF GETS INCORPORATED ####################
@@ -271,12 +292,10 @@ shinyServer(function(input, output, session) {
             # element[[2]] is a list of info returned by catR::nextSlide(), 
             # including $name, the name of the next item
             # element[[3]] returns the sem after re-estimating the model
-              values$irt_out = irt_function(values$item_difficulty,
+              values$irt_out = irt_function(all_items = values$item_difficulty,
                                             IRT = values$IRT,
-                                            previous = ifelse(isTruthy(input$avoid_prev),
-                                                              values$previous,
-                                                              "ignore"
-                                                              ),
+                                            exclude_previous = values$exclude_previous,
+                                            previous = values$previous,
                                             test = input$numitems
                                             )
               # save info to the item_difficulty data_frame
