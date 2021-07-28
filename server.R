@@ -81,9 +81,10 @@ shinyServer(function(input, output, session) {
       confirmSweetAlert(
         inputId = "confirm_end_test",
         session = session,
-        title = "End test early?",
-        text = "Only items with confirmed responses will be saved",
-        type = "Warning",
+        title = "Are you sure you want to stop?",
+        text = "Only items with confirmed responses will be saved. 
+                Ending tests early may reduce accuracy and precision of naming ability estimates.",
+        type = "warning",
       )
     })
     
@@ -418,6 +419,8 @@ shinyServer(function(input, output, session) {
                       num_previous = values$num_previous)
     
   })
+  
+
 ################################## EXPORT TEST DATA ############################
 # ------------------------------------------------------------------------------
 ################################################################################

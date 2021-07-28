@@ -25,28 +25,31 @@ suppressWarnings(
   })
 )
 
-full_pnt_order<- read_csv(col_types = cols(), here("data", "items.csv"))[14:189,] %>%
-  mutate(n = row_number()) %>%
-  select(item = target, n)
+suppressWarnings(
+walker <- read_csv(col_types = cols(), here("data", "item_difficulty.csv")) %>%
+  select(item = target, walker, walker_order)
+)
+
 # who has a full test
 full_test_id = read_csv(col_types = cols(), here("validation", "validation.csv")) %>%
   filter(modelType == "3pl") %>%
   count(examinee) %>%
   filter(n == 175) %>%
   pull(examinee)
+
 # observed data
 observed <- read_csv(col_types = cols(), here("validation", "validation.csv")) %>%
   # only need rows with testing
   filter(modelType == "3pl",
          examinee %in% full_test_id) %>%
   mutate(response = ifelse(response == "correct", "2", "1")) %>%
-  left_join(full_pnt_order, by = "item") %>%
-  arrange(examinee, n) %>%
-  select(examinee, item, response)
-
+  left_join(walker, by = "item") %>%
+  filter(walker == "B") %>%
+  arrange(examinee, walker_order) %>%
+  select(examinee, item, walker, walker_order, response)
+  
 examinees <- unique(observed$examinee)
 print(paste0("The number of participants to test is ", length(examinees)))
-print("This test can take around 10 minutes")
 pb <- progress_bar$new(
   format = "  testing in progress [:bar] :current/:total in :elapsed",
   total = length(examinees), clear = FALSE, width= 60, force = T)
@@ -57,7 +60,7 @@ for(i in examinees){
   # start the test
   app <- ShinyDriver$new(here())
   # give it a name
-  app$snapshotInit("pnt-175")
+  app$snapshotInit("pnt-walker-b")
   # name is the examinee name
   app$setInputs(name = i)
   # ntoes is just notes. 
@@ -65,7 +68,9 @@ for(i in examinees){
   # next intro slide
   app$setInputs(glide_next1 = "click")
   # 30 items
-  app$setInputs(numitems = "175")
+  app$setInputs(numitems = "walker")
+  # form A
+  app$setInputs(walker = "B")
   # next
   app$setInputs(glide_next2 = "click")
   
@@ -111,7 +116,7 @@ for(i in examinees){
   )
   # save the .csv file
   
-  write.csv(df, here("tests", "test_output", "pnt_175", Sys.Date(), paste0(i, "_test_dat.csv")))
+  write.csv(df, here("tests", "test_output", "walker_b", Sys.Date(), paste0(i, "_test_dat.csv")))
   pb$tick()
 }
 
@@ -129,7 +134,7 @@ suppressWarnings(
     
   })
 )
-files <- fs::dir_ls(here("tests", "test_output", "pnt_175",Sys.Date()))
+files <- fs::dir_ls(here("tests", "test_output", "walker_b", Sys.Date()))
 
 df = suppressMessages(
   vroom::vroom(files)
@@ -146,6 +151,8 @@ observed <- read.csv(here("validation", "validation.csv")) %>%
   filter(modelType == "3pl",
          examinee %in% full_test_id) %>%
   mutate(response = ifelse(response == "correct", 0, 1)) %>%
+  left_join(walker, by = "item") %>%
+  filter(walker == "B") %>%
   hablar::retype() %>%
   group_by(examinee) %>%
   mutate(order = row_number()) %>%
@@ -159,13 +166,11 @@ together <- observed %>%
   full_join(shiny, by = c("examinee", "target")) %>%
   select(examinee, target, response, obs_response)
 
-write.csv(together, here("tests", "agreement_data", paste0(Sys.Date(), "_175_shiny_vs_observed.csv")))
+write.csv(together, here("tests", "agreement_data", paste0(Sys.Date(), "_walker-b_shiny_vs_observed.csv")))
 
-test_that("Full PNT test of all responses", {
-  print("Full PNT test of equivalent responses")
+test_that("Walker B all responses", {
+  print("Walker B; test of equivalent responses")
   expect_true(
-      sum(together$obs_response == together$response) == nrow(together)
+    sum(together$obs_response == together$response) == nrow(together)
   )
 })
-
-

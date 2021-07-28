@@ -15,22 +15,19 @@
 # things to change to enable test to run:
 # app title in text.R
 # reset("keys)
-shhh <- suppressPackageStartupMessages # It's a library, so shhh!
-suppressWarnings(
-    shhh({
-      library(shinytest)
-      library(here)
-      library(tidyverse)
-      library(progress)
-    })
-)
+
+library(shinytest)
+library(here)
+library(tidyverse)
+library(progress)
+
 # observed data
-observed <- read_csv(col_types = cols(),here("validation", "validation.csv")) %>%
+observed <- read_csv(here("validation", "validation.csv")) %>%
   # only need rows with testing
   filter(modelType == "3pl",
-         exam == "PNT-CAT30") %>%
+         exam == "PNT-CAT30" | exam == "PNT-CAT60") %>%
   mutate(response = ifelse(response == "correct", "2", "1")) %>%
-  select(examinee, response) 
+  select(examinee, response)
 
 examinees <- unique(observed$examinee)
 print(paste0("The number of participants to test is ", length(examinees)))
@@ -52,7 +49,7 @@ app$setInputs(notes = "notes")
 # next intro slide
 app$setInputs(glide_next1 = "click")
 # 30 items
-app$setInputs(numitems = "30")
+app$setInputs(numitems = "60")
 # next
 app$setInputs(glide_next2 = "click")
 
@@ -79,7 +76,7 @@ responses <- observed$response[observed$examinee==i]
   }
 
 
-#app$snapshot()
+app$snapshot()
 # grabs the values at the end of the test. 
 # this refers to a new chunk in the server side "exportTestValues" currently
 # around line 340
@@ -98,7 +95,7 @@ df <- tibble(
 )
 # save the .csv file
 
-write.csv(df, here("tests", "test_output", "irt_30", Sys.Date(), paste0(i, "_test_dat.csv")))
+write.csv(df, here("tests", "test_output", Sys.Date(), paste0(i, "_test_dat.csv")))
 pb$tick()
 }
 
@@ -106,17 +103,11 @@ pb$tick()
 Sys.sleep(1)
 
 # read in test data
-suppressWarnings(
-  shhh({
-    library(fs)
-    library(vroom)
-    library(tidyr)
-    library(stringr)
-    library(testthat)
-    
-  })
-)
-files <- fs::dir_ls(here("tests", "test_output", "irt_30", Sys.Date()))
+library(fs)
+library(vroom)
+library(tidyr)
+library(stringr)
+files <- fs::dir_ls(here("tests", "test_output", Sys.Date()))
 
 df = suppressMessages(
   vroom::vroom(files)
@@ -131,7 +122,7 @@ shiny <- df %>%
 observed <- read.csv(here("validation", "validation.csv")) %>%
   # only need rows with testing
   filter(modelType == "3pl",
-         exam == "PNT-CAT30") %>%
+         exam == "PNT-CAT30" | "PNT-CAT60") %>%
   mutate(response = ifelse(response == "correct", 0, 1)) %>%
   hablar::retype() %>%
   group_by(examinee) %>%
@@ -170,6 +161,11 @@ sem = irr::icc(tibble(a = final$error, b = final$obs_error),
                model = "twoway",
                type = "agreement")
 
+print(ab)
+
+print(sem)
+
+library(testthat)
 test_that("agreement is excellent", {
            expect_gt(ab$value, 0.99)
            expect_gt(sem$value, 0.99)

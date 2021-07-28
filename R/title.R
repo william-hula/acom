@@ -8,5 +8,5 @@ pagetitle = if (isTRUE(getOption("shiny.testmode"))) {
     actionButton("enter_key", "enter")
   )#)
 } else {
-  "CAT-PNT"
+  "PNT-CAT"
 }
