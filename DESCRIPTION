@@ -20,7 +20,6 @@ Imports:
     catR,
     dplyr,
     DT,
-    hablar,
     here,
     keys,
     lubridate,
