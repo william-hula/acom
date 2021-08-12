@@ -16,7 +16,6 @@ library(htmltools)
 library(shinyWidgets)
 library(bslib)
 library(shiny.pwa)
-
 library(catR)
 library(shinyWidgets)
 ######## DEFINE GLOBAL VARIABLES ########

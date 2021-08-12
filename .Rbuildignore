@@ -7,3 +7,6 @@
 ^rsconnect$
 ^reprex$
 ^Manuscript$
+^dev$
+^README\.Rmd$
+^app\.R$

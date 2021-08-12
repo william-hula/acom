@@ -5,7 +5,7 @@
 `%!in%` <- Negate(`%in%`)
 
 # Define server logic required to draw a histogram
-shinyServer(function(input, output, session) {
+app_server <- function(input, output, session) {
   
 ########################## Initialize reactive values ##########################
 # ------------------------------------------------------------------------------
@@ -561,7 +561,7 @@ shinyServer(function(input, output, session) {
 
 # end of app
 }
-)
+
 
 
 

@@ -7,12 +7,15 @@ Authors@R:
            role = c("aut", "cre"),
            email = "first.last@example.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: R Shiny implementation of a computer adaptive Philadelphia Naming Test
+Description: R Shiny implementation of a computer adaptive Philadelphia Naming Test.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Depends:
+    shiny,
+    R (>= 3.0.2)
 Imports: 
     catR,
     dplyr,
@@ -21,16 +24,12 @@ Imports:
     here,
     keys,
     lubridate,
-    magrittr,
-    shiny,
     shinyjs,
     shinyWidgets,
     tibble,
     tidyr,
-    vroom,
-    fs,
     ggplot2,
-    bayestestR,
-    htmltools,
     waiter,
-    shiny.pwa
+    shiny.pwa,
+    magrittr,
+    bslib
