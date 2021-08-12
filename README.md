@@ -3,6 +3,9 @@ PNT-CAT (beta)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
+
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 Beta-version of computer adaptive philadelphia naming test
@@ -33,3 +36,11 @@ Update 7-10 Bugs/issues/feature requests have been moved to
 
 -   Anyone is welcome to submit an issue with a bug/feedback/feature
     requests.
+
+Update 8-12-21: Now can be downloaded as a package! (which will address
+dependencies)
+
+``` r
+install.packages("remotes")
+remotes::install_github("rbcavanaugh/pnt")
+```
