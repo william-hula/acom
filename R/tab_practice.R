@@ -1,4 +1,8 @@
 
+#' practice
+#'
+#' @param values values
+#' @export
 practice_tab_div <- function(values){
     column(width = 12,
            fluidRow(
@@ -11,8 +15,8 @@ practice_tab_div <- function(values){
              }
            ),
            fluidRow(
-             column(width = 8, offset = 2, align = "center",
-                    tags$img(src = paste0("PNT/Slide", values$i, ".jpeg")),
+             column(width = 12, align = "center",
+                    tags$img(src = paste0("PNT/Slide", values$i, ".jpeg"), style = "height:80vh;"),
                     # start button, at the end of the practice slides
                     if(values$i == 13){
                       div(br(),

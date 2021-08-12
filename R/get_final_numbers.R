@@ -1,7 +1,13 @@
+#' final numbers
+#'
+#' @param out out
+#' @param previous prev
+#' @param num_previous num prev
+#' @export
 get_final_numbers <- function(out,
                               previous,
                               num_previous){
-  df = tibble(
+  df = tibble::tibble(
     ability = out[[1]],
     sem = out[[3]],
     ci_95 = out[[3]]*1.96,
@@ -16,10 +22,10 @@ get_final_numbers <- function(out,
       df$last_ability = previous[previous$ci_95==min(previous$ci_95),]$ability
       df$last_ci_95 = min(previous$ci_95)
     } else if (num_previous == 2){
-      prev_dat = previous %>% filter(date == max(date))
+      prev_dat = previous %>% dplyr::filter(date == max(date))
       df$last_ability = prev_dat[prev_dat$ci_95==min(prev_dat$ci_95),]$ability
       df$last_ci_95 = min(prev_dat$ci_95)
-      first_dat = previous %>% filter(date == min(date))
+      first_dat = previous %>% dplyr::filter(date == min(date))
       df$first_ability = first_dat[first_dat$ci_95==min(first_dat$ci_95),]$ability
       df$first_ci_95 = min(first_dat$ci_95)
     }

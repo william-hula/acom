@@ -33,7 +33,6 @@ response_keys <- c(
 enter <- c("enter", "space")
 end_test_key = "esc"
 
-`%!in%` <- Negate(`%in%`)
 
 items = read.csv(here("data", "item_difficulty.csv")) %>% 
   dplyr::select(target, itemDifficulty = Item.Difficulty, discrimination = Discrimination, slide_num, walker, walker_order) %>%

@@ -1,5 +1,7 @@
-
-intro_tab_div <-
+#' Intro doc
+#' @export
+intro_tab_div <- function(){
+  
   column(width = 12,
          fluidRow(
            column(align = "center", width = 12,
@@ -106,6 +108,6 @@ intro_tab_div <-
            )
          )
   )
-
+}
 
 

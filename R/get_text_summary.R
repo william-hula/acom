@@ -1,4 +1,15 @@
   
+#' get text summary
+#'
+#' @param acc acc
+#' @param ability ability
+#' @param ci_95 ci95
+#' @param last_ability last abil
+#' @param last_ci_95 last ci95
+#' @param first_ability last first
+#' @param first_ci_95 first ci
+#' @param num_previous num prev
+#' @export
 get_text_summary <- function(
   acc,
   ability,

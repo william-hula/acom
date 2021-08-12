@@ -1,5 +1,9 @@
-footer_div <- p(
-  column(10, offset = 1, align = "center",
+#' footer
+#'
+#' @export
+footer_div <- function(){
+  p(
+    column(10, offset = 1, align = "center",
          p(
            actionButton(
              inputId='source',
@@ -23,5 +27,6 @@ footer_div <- p(
            ),
            uiOutput("test_inputs"),
          )
-  )
-)
+      )
+    )
+}

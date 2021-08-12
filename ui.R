@@ -8,35 +8,38 @@ shinyUI(
   
 ################################### SETUP ######################################
 
-                useKeys(),
-                useShinyjs(),
-                use_waiter(),
-                waiter_preloader(html = spin_plus()),
-                keysInput("keys", response_keys),
-                keysInput("enter_key", enter),
-                keysInput("end_test", end_test_key),
+                keys::useKeys(),
+                shinyjs::useShinyjs(),
+                waiter::use_waiter(),
+                waiter::waiter_preloader(html = waiter::spin_plus()),
+                keys::keysInput("keys", response_keys),
+                keys::keysInput("enter_key", enter),
+                keys::keysInput("end_test", end_test_key),
                 includeCSS("www/style.css"),
       
 ################################### layout starts here ######################### 
       
-        navbarPage(title = pagetitle,
+        navbarPage(title = pagetitle(),
                    id = "mainpage",
                    footer = tags$div(
                     id = "footer_id",
                     class = "footer",
-                    footer_div
+                    footer_div()
                    ),
-                   theme = minimal_theme,
+                   theme = minimal_theme(),
 
         ############################ Instructions ############################## 
         
         tabPanelBody(value = "Home",
-                  pwa("https://rb-cavanaugh.shinyapps.io/pnt-cat/", output = "www", title = "shinyCAT", icon = "www/cat.png"),
+                  shiny.pwa::pwa("https://rb-cavanaugh.shinyapps.io/pnt-cat/",
+                                 output = "www",
+                                 title = "shinyCAT",
+                                 icon = "www/cat.png"),
                   tags$audio(id = "audio",
                              src = "click.wav",
                              type = "audio/wav",
                              style = "display:none;"),
-                  intro_tab_div
+                  intro_tab_div()
          ),
         
         ############################ Practice ##################################
@@ -54,7 +57,7 @@ shinyUI(
         ############################ Results ###################################
         
         tabPanelBody(value = "Results", 
-                     results_tab_div
+                     results_tab_div()
                  )
         
         ########################################################################

@@ -1,3 +1,8 @@
+#' slides tab
+#'
+#' @param values values
+#' @param progbar progress bar (not used)
+#' @export
 slides_tab_div <- function(values, progbar){
 tmp_div =  column(width = 12,
        fluidRow(
@@ -9,8 +14,8 @@ tmp_div =  column(width = 12,
          }
        ),
        fluidRow(
-         column(width = 8, offset = 2, align = "center",
-                tags$img(src = paste0("PNT/Slide", values$n, ".jpeg"))
+         column(width = 12, align = "center",
+                tags$img(src = paste0("PNT/Slide", values$n, ".jpeg"), style = "height:80vh;")
          )
        )
 )

@@ -2,6 +2,7 @@
 ################################## SERVER ######################################
 # ------------------------------------------------------------------------------
 ################################################################################
+`%!in%` <- Negate(`%in%`)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
@@ -10,8 +11,8 @@ shinyServer(function(input, output, session) {
 # ------------------------------------------------------------------------------
 ################################################################################
   #establishes plot loading 
-  w <- Waiter$new(id = "plot",
-                  html = spin_loader(), 
+  w <- waiter::Waiter$new(id = "plot",
+                  html = waiter::spin_loader(), 
                   color = "white")
   
   # reactiveValues is a list where elements of the list can change
@@ -125,15 +126,15 @@ shinyServer(function(input, output, session) {
     if(isTruthy(input$numitems == "walker")){
       values$item_difficulty <- 
         values$item_difficulty %>%
-          filter(walker == input$walker)
+          dplyr::filter(walker == input$walker)
     }
     
     # randomly orders stuff if the random order box is checked. only affects 175
     if(isTruthy(input$random)){
       values$item_difficulty <-
         values$item_difficulty %>%
-        mutate(pnt_order = sample(pnt_order)) %>%
-        arrange(pnt_order)
+        dplyr::mutate(pnt_order = sample(pnt_order)) %>%
+        dplyr::arrange(pnt_order)
     }
     
     values$n = if(isTruthy(values$IRT)){
@@ -154,12 +155,12 @@ shinyServer(function(input, output, session) {
     }
     # for testing:
     if (isTRUE(getOption("shiny.testmode"))) {
-    reset("keys")
+    shinyjs::reset("keys")
     }
     values$keyval = NULL # keeps track of button press 1 (error) or 2 (correct)
     values$irt_out <- list(0, 0, 1)
     #js$click_sound()
-    runjs("document.getElementById('audio').play();")
+    shinyjs::runjs("document.getElementById('audio').play();")
     # got to slides
     updateNavbarPage(session, "mainpage", selected = "Assessment")
     
@@ -220,10 +221,10 @@ shinyServer(function(input, output, session) {
     #no key presses on home or results page
     observe({
       if(input$mainpage=="Results" || input$mainpage=="Home"){
-        pauseKey()
+        keys::pauseKey()
         shinyjs::show("footer_id")
       } else {
-        unpauseKey()
+        keys::unpauseKey()
         shinyjs::hide("footer_id")
         
       }
@@ -270,7 +271,7 @@ shinyServer(function(input, output, session) {
       # essentially, if we're on the first two instruction slides,
         # don't require a 1 or 2..
       else if(values$i %in% c(1, 2)){
-        runjs("document.getElementById('audio').play();")
+        shinyjs::runjs("document.getElementById('audio').play();")
         #js$click_sound()
         values$i = ifelse(values$i<13, values$i + 1, values$i)
       # otherwise, (i.e. not a practice slide)
@@ -279,7 +280,7 @@ shinyServer(function(input, output, session) {
               showNotification("Enter a score", type = "error")
               # as long as there's a response or it's an insturction slide...
             } else {
-              runjs("document.getElementById('audio').play();")
+              shinyjs::runjs("document.getElementById('audio').play();")
               #js$click_sound()
               values$i = ifelse(values$i<13, values$i + 1, values$i)
             }
@@ -295,7 +296,7 @@ shinyServer(function(input, output, session) {
               showNotification("Enter a score", type = "error")
             # as long as there's a response or it's an insturction slide...
           } else if (another_item) {
-            runjs("document.getElementById('audio').play();")
+            shinyjs::runjs("document.getElementById('audio').play();")
               # If a key press was detected, store it in our dataframe of items,
                 # difficulty, discrimination etc...
               # 1 is incorrect (1) and 2 is correct (0).
@@ -389,13 +390,13 @@ shinyServer(function(input, output, session) {
     }
     
     tmp = dplyr::bind_rows(values$item_difficulty) %>%
-      mutate(ci_95 = sem*1.96,
+      dplyr::mutate(ci_95 = sem*1.96,
              precision = precision,
              name = input$name,
              date = values$datetime,
              notes = NA
       ) %>%
-      arrange(order)
+      dplyr::arrange(order)
     
     tmp$notes[[1]] = input$notes
     return(tmp)
@@ -405,11 +406,11 @@ shinyServer(function(input, output, session) {
   results_data_summary <- reactive({
     dplyr::bind_rows(values$item_difficulty) %>%
       # have to switch 0s and 1s because IRT is dumb. 
-      drop_na() %>%
-      mutate(response = as.numeric(ifelse(response == 0, 1, 0)),
+      tidyr::drop_na() %>%
+      dplyr::mutate(response = as.numeric(ifelse(response == 0, 1, 0)),
              ci_95 = sem*1.96) %>%
-      summarize(accuracy = mean(response)) %>%
-      pull(accuracy)
+      dplyr::summarize(accuracy = mean(response)) %>%
+      dplyr::pull(accuracy)
   })
   
   # tracks final irt data.
@@ -426,24 +427,24 @@ shinyServer(function(input, output, session) {
 ################################################################################
   # get data into strings for exporting...test only
   observeEvent(input$mainpage=="Results",{
-    values$out_words <- paste(results_data_long() %>% drop_na(response) %>%
-                                 pull(target), collapse = "_")
-    values$out_nums <- paste(results_data_long() %>% drop_na(response) %>%
-                               pull(response), collapse = "_")
-    values$out_ability <- paste(results_data_long() %>% drop_na(response) %>%
-                                  pull(ability), collapse = "_")
-    values$out_sem <- paste(results_data_long() %>% drop_na(response) %>%
-                              pull(sem), collapse = "_")
-    values$item_dif <- paste(results_data_long() %>% drop_na(response) %>%
-                               pull(itemDifficulty), collapse = "_")
-    values$disc <- paste(results_data_long() %>% drop_na(response) %>%
-                           pull(discrimination), collapse = "_")
-    values$key <- paste(results_data_long() %>% drop_na(response) %>%
-                          pull(key), collapse = "_")
-    values$order <- paste(results_data_long() %>% drop_na(response) %>%
-                            pull(order), collapse = "_")
-    values$item_number <- paste(results_data_long() %>% drop_na(response) %>%
-                                  pull(item_number), collapse = "_")
+    values$out_words <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+                                 dplyr::pull(target), collapse = "_")
+    values$out_nums <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+                               dplyr::pull(response), collapse = "_")
+    values$out_ability <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+                                  dplyr::pull(ability), collapse = "_")
+    values$out_sem <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+                              dplyr::pull(sem), collapse = "_")
+    values$item_dif <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+                               dplyr::pull(itemDifficulty), collapse = "_")
+    values$disc <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+                           dplyr::pull(discrimination), collapse = "_")
+    values$key <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+                          dplyr::pull(key), collapse = "_")
+    values$order <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+                            dplyr::pull(order), collapse = "_")
+    values$item_number <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+                                  dplyr::pull(item_number), collapse = "_")
     })
   # This makes the above data available after running unit test.
   exportTestValues(abil = values$out_ability,
@@ -476,9 +477,9 @@ shinyServer(function(input, output, session) {
     # creates a data for downloading. added to accomodate previous data
     download_data <- eventReactive(input$mainpage=="Results",{
       if(!is.na(irt_final()$last_ability)){
-        d1 = results_data_long() %>% mutate_all(as.character)
-        d2 = values$previous %>% mutate_all(as.character)
-        d3 = bind_rows(d1, d2)
+        d1 = results_data_long() %>% dplyr::mutate_all(as.character)
+        d2 = values$previous %>% dplyr::mutate_all(as.character)
+        d3 = dplyr::bind_rows(d1, d2)
       } else {
         d3 = results_data_long()
       }
@@ -535,8 +536,8 @@ shinyServer(function(input, output, session) {
   # outputs a table of the item level responses
   output$results_table <- renderDT({
     results_data_long() %>%
-      drop_na(response) %>%
-      select(order, target, resp, key, itemDifficulty, ability, sem)
+      tidyr::drop_na(response) %>%
+      dplyr::select(order, target, resp, key, itemDifficulty, ability, sem)
   }, rownames = F,
   options = list(dom = "tp"))
   

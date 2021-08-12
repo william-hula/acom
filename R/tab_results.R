@@ -1,4 +1,7 @@
-results_tab_div <- fluidRow(
+#' results tab
+#' @export
+results_tab_div <- function(){
+  fluidRow(
   column(width = 8,offset = 2,
          tabsetPanel(type = "pills",
                      tabPanel("Summary",br(),
@@ -6,7 +9,7 @@ results_tab_div <- fluidRow(
                               plotOutput("plot")
                      ),
                      tabPanel("Data", 
-                              DTOutput("results_table"),
+                              DT::DTOutput("results_table"),
                      )
          ), 
          tags$div(align = "center",
@@ -16,6 +19,7 @@ results_tab_div <- fluidRow(
                                "Start Over",
                                icon = icon("undo-alt")
                   )
-         )
-  )
-)
+             )
+      )
+    )
+}
