@@ -504,7 +504,7 @@ app_server <- function(input, output, session) {
   # More information modal
   observeEvent(input$info, {
     showModal(modalDialog(
-      tags$iframe(src="info.html", width = "100%",
+      tags$iframe(src="www/info.html", width = "100%",
                   height = "650px", frameBorder = "0"),
       easyClose = TRUE,
       size = "l"
@@ -513,7 +513,7 @@ app_server <- function(input, output, session) {
   # readme modal. probabily will be deleted
   observeEvent(input$dev, {
     showModal(modalDialog(
-      tags$iframe(src="README.html", width = "100%",
+      tags$iframe(src="www/README.html", width = "100%",
                   height = "650px", frameBorder = "0"),
       size = "l",
       easyClose = TRUE,
