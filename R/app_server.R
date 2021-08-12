@@ -319,7 +319,7 @@ app_server <- function(input, output, session) {
                                             )
               # save info to the item_difficulty data_frame
               values$item_difficulty[values$item_difficulty$slide_num == values$n,][9:13] <-
-                tibble(
+                tibble::tibble(
                   # what trial was the item presented
                   order = values$i,
                   # what was the key press
