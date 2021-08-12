@@ -34,24 +34,34 @@ body {
 <!-- badges: end -->
 
 <p>Beta-version of computer adaptive philadelphia naming test</p>
-<p>To run, make sure these packages are installed on your local machine:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># not run</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&quot;here&quot;</span>, <span class="st">&quot;shiny&quot;</span>, <span class="st">&quot;tibble&quot;</span>, <span class="st">&quot;dplyr&quot;</span>, <span class="st">&quot;tidyr&quot;</span>, <span class="st">&quot;ggplot2&quot;</span>,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;shinyWidgets&quot;</span>, <span class="st">&quot;htmltools&quot;</span>, <span class="st">&quot;keys&quot;</span>, <span class="st">&quot;DT&quot;</span>, <span class="st">&quot;shinyjs&quot;</span>, <span class="st">&quot;catR&quot;</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;bslib&quot;</span>, <span class="st">&quot;bayestestR&quot;</span>))</span></code></pre></div>
-<p>Then run the following:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># not run</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>shiny<span class="sc">::</span><span class="fu">runGitHub</span>(<span class="st">&quot;aphasia-apps/pnt&quot;</span>)</span></code></pre></div>
-<p>Or clone the repository and run locally.</p>
-<p>Update 5-24: Now preliminary version is on shinyapps.io: <a href="https://rb-cavanaugh.shinyapps.io/pnt-cat/">https://rb-cavanaugh.shinyapps.io/pnt-cat/</a></p>
-<p>Update 7-10 Bugs/issues/feature requests have been moved to <a href="https://github.com/rbcavanaugh/pnt/issues">issues</a>.</p>
-<ul>
-<li>Anyone is welcome to submit an issue with a bug/feedback/feature requests.</li>
-</ul>
-<p>Update 8-12-21: Now can be downloaded as a package! (which will address dependencies)</p>
+<p>There are a number of ways to try out the current version of the app.</p>
+<ol style="list-style-type: decimal">
+<li>via <code>remotes::install_github()</code></li>
+</ol>
 <p>*Note: It’s likely that installing the package will prompt you to update packages on your local machine. This may be necessary if you have much older versions of some packages installed (e.g. the {bslib} package). The number of packages to update is large, as the current app uses quite a few {tidyverse} apps which have a number of dependencies. Please raise an issue in github if there are any issues downloading. *</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;remotes&quot;</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;aphasia-apps/pnt&quot;</span>)</span></code></pre></div>
+<p>First, download the package:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;remotes&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;aphasia-apps/pnt&quot;</span>)</span></code></pre></div>
+<p>Then, run the app using the built in function</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pnt)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pnt<span class="sc">::</span><span class="fu">runPNT</span>()</span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>via <code>shiny::runGitHub()</code></li>
+</ol>
+<p>Necessary packages must be installed first:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&quot;here&quot;</span>, <span class="st">&quot;shiny&quot;</span>, <span class="st">&quot;tibble&quot;</span>, <span class="st">&quot;dplyr&quot;</span>, <span class="st">&quot;tidyr&quot;</span>, <span class="st">&quot;ggplot2&quot;</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;shinyWidgets&quot;</span>, <span class="st">&quot;htmltools&quot;</span>, <span class="st">&quot;keys&quot;</span>, <span class="st">&quot;DT&quot;</span>, <span class="st">&quot;shinyjs&quot;</span>, <span class="st">&quot;catR&quot;</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                   <span class="st">&quot;bslib&quot;</span>, <span class="st">&quot;bayestestR&quot;</span>))</span></code></pre></div>
+<p>Then the app can be run straight from Github</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>shiny<span class="sc">::</span><span class="fu">runGitHub</span>(<span class="st">&quot;aphasia-apps/pnt&quot;</span>)</span></code></pre></div>
+<p><em>Note: If you get any errors about missing a package, install it, restart your session, and try again</em></p>
+<ol start="3" style="list-style-type: decimal">
+<li><p>Access the website via the URL posted here: <a href="https://rb-cavanaugh.shinyapps.io/pnt-cat/">https://rb-cavanaugh.shinyapps.io/pnt-cat/</a></p></li>
+<li><p>Clone the repository and run locally.</p></li>
+</ol>
+<!-- -->
+
+<pre><code>git clone https://github.com/aphasia-apps/pnt.git</code></pre>
 
 </body>
 </html>
