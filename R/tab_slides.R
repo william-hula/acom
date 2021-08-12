@@ -15,7 +15,8 @@ tmp_div =  column(width = 12,
        ),
        fluidRow(
          column(width = 12, align = "center",
-                tags$img(src = paste0("PNT/Slide", values$n, ".jpeg"), style = "height:80vh;")
+                #imageOutput("practice_image")
+                tags$img(src = paste0("slides/Slide", values$n, ".jpeg"), style = "height:80vh;")
          )
        )
 )

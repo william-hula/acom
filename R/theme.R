@@ -14,7 +14,7 @@ minimal_theme <- function(){
                      `enable-rounded` = FALSE,
                      `enable-transitions` = F,
                      primary = "#1665AC"
-    )
+    ) 
     }
   
 }

@@ -4,11 +4,16 @@
 ################################################################################
 
 app_ui <- function(request) {
+  addResourcePath('www', system.file("www", package = "pnt"))
+  addResourcePath('slides', system.file("slides", package = "pnt"))
+  
   shinyUI(
   tagList(
   
 ################################### SETUP ######################################
-
+                tags$head(
+                  tags$link(rel = "stylesheet", type = "text/css", href = file.path("www","style.css"))
+                ),
                 keys::useKeys(),
                 shinyjs::useShinyjs(),
                 waiter::use_waiter(),
@@ -16,8 +21,7 @@ app_ui <- function(request) {
                 keys::keysInput("keys", response_keys),
                 keys::keysInput("enter_key", enter),
                 keys::keysInput("end_test", end_test_key),
-                includeCSS("www/style.css"),
-      
+
 ################################### layout starts here ######################### 
       
         navbarPage(title = pagetitle(),
@@ -32,10 +36,10 @@ app_ui <- function(request) {
         ############################ Instructions ############################## 
         
         tabPanelBody(value = "Home",
-                  shiny.pwa::pwa("https://rb-cavanaugh.shinyapps.io/pnt-cat/",
-                                 output = "www",
-                                 title = "shinyCAT",
-                                 icon = "www/cat.png"),
+                  # shiny.pwa::pwa("https://rb-cavanaugh.shinyapps.io/pnt-cat/",
+                  #                output = "inst",
+                  #                title = "shinyCAT",
+                  #                icon = "www/cat.png"),
                   tags$audio(id = "audio",
                              src = "click.wav",
                              type = "audio/wav",
