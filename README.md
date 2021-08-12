@@ -19,7 +19,7 @@ packages on your local machine. This may be necessary if you have much
 older versions of some packages installed (e.g. the {bslib} package).
 The number of packages to update is large, as the current app uses quite
 a few {tidyverse} apps which have a number of dependencies. Please raise
-an issue in github if there are any issues downloading. *
+an issue in github if there are any issues downloading.*
 
 First, download the package:
 
