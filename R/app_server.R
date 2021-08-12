@@ -99,7 +99,7 @@ app_server <- function(input, output, session) {
   ################################ START PRACTICE ##############################
     observeEvent(input$start_practice,{
       # runjs("document.getElementById('audio').play();") # play click
-      runjs(values$sound)
+      shinyjs::runjs(values$sound)
       values$i = 1 # reset values$i
       values$keyval = NULL # keeps track of button press 1 (error), 2 (correct)
       values$exclude_previous <- input$exclude_previous
