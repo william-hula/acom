@@ -40,7 +40,7 @@ app_server <- function(input, output, session) {
     validate(need(ext == "csv", "Please upload a csv file"))
     # save upload
     values$previous <- read.csv(file$datapath) %>%
-      drop_na(response)
+      tidyr::drop_na(response)
     # assign number of previous values
     values$num_previous <- length(unique(values$previous$date))
 
@@ -354,8 +354,8 @@ app_server <- function(input, output, session) {
               values$i = values$i + 1
         } 
         # prints to the console
-        print(tail(values$item_difficulty %>% drop_na(response) %>%
-                     arrange(order), 10))
+        print(tail(values$item_difficulty %>% tidyr::drop_na(response) %>%
+                     dplyr::arrange(order), 10))
         # decides whether to cut to the results page or not!
         # returns TRUE or FALSE
         go_to_results <- if(is.na(values$n)){
