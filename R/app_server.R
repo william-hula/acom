@@ -534,7 +534,7 @@ app_server <- function(input, output, session) {
 # ------------------------------------------------------------------------------
 ################################################################################
   # outputs a table of the item level responses
-  output$results_table <- renderDT({
+  output$results_table <- DT::renderDT({
     results_data_long() %>%
       tidyr::drop_na(response) %>%
       dplyr::select(order, target, resp, key, itemDifficulty, ability, sem)
