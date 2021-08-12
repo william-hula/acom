@@ -50,7 +50,7 @@ intro_tab_div <- function(){
                                                 selected = "10",
                                                 inline = F),
                                    # sets SEM precision. disabled if SEM not selected in numitems radio buttons
-                                   hidden(
+                                   shinyjs::hidden(
                                      sliderInput("ci_95", "Minimum acceptable 95% CI",
                                                  min = 0.5,
                                                  max = 1,
@@ -58,17 +58,17 @@ intro_tab_div <- function(){
                                                  value = 0.5)
                                      ),
                                    # randomize PNT order if doing the full 175 item test?
-                                   hidden(
+                                   shinyjs::hidden(
                                      checkboxInput("random",
                                                    "Random Order (175 only)",
                                                    value = F)
                                    ),
-                                   hidden(
+                                   shinyjs::hidden(
                                      checkboxInput("exclude_previous",
                                                    "Exclude items from the previous test?",
                                                    value = F)
                                    ),
-                                   hidden(
+                                   shinyjs::hidden(
                                      radioButtons("walker",
                                                    "Choose 30-item short form",
                                                   choices = c("A", "B"),
