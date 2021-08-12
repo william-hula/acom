@@ -31,4 +31,8 @@ Imports:
     waiter,
     shiny.pwa,
     magrittr,
-    bslib
+    bslib (>= 0.2.5.0)
+URL: https://www.github.com/rbcavanaugh/pnt
+BugReports: https://www.github.com/rbcavanaugh/pnt/issues
+Language: en-US
+
