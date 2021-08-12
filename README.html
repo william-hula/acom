@@ -49,6 +49,7 @@ body {
 <li>Anyone is welcome to submit an issue with a bug/feedback/feature requests.</li>
 </ul>
 <p>Update 8-12-21: Now can be downloaded as a package! (which will address dependencies)</p>
+<p>*Note: It’s likely that installing the package will prompt you to update packages on your local machine. This may be necessary if you have much older versions of some packages installed (e.g. the {bslib} package). The number of packages to update is large, as the current app uses quite a few {tidyverse} apps which have a number of dependencies. Please raise an issue in github if there are any issues downloading. *</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;remotes&quot;</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;aphasia-apps/pnt&quot;</span>)</span></code></pre></div>
 
