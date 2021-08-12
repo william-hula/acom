@@ -23,7 +23,7 @@ Then run the following:
 
 ``` r
 # not run
-shiny::runGitHub("rbcavanaugh/pnt")
+shiny::runGitHub("aphasia-apps/pnt")
 ```
 
 Or clone the repository and run locally.
@@ -42,5 +42,5 @@ dependencies)
 
 ``` r
 install.packages("remotes")
-remotes::install_github("rbcavanaugh/pnt")
+remotes::install_github("aphasia-apps/pnt")
 ```
