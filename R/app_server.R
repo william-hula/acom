@@ -177,6 +177,7 @@ app_server <- function(input, output, session) {
             shinyjs::show("ci_95")
             shinyjs::hide("random")
             shinyjs::hide("walker")
+            shinyjs::hide("eskimo")
               if(values$num_previous>0){
                 shinyjs::show("exclude_previous")
               }
@@ -187,6 +188,7 @@ app_server <- function(input, output, session) {
             shinyjs::show("walker")
             shinyjs::hide("random")
             shinyjs::hide("exclude_previous")
+            shinyjs::hide("eskimo")
           } else if(input$numitems == "175"){
             # full pnt
             values$test_length <- as.numeric(input$numitems)
@@ -194,12 +196,14 @@ app_server <- function(input, output, session) {
               shinyjs::hide("ci_95")
               shinyjs::hide("walker")
               shinyjs::hide("exclude_previous")
+              shinyjs::show("eskimo")
           } else {
             # fixed length IRT
             values$test_length <- as.numeric(input$numitems)
             shinyjs::hide("ci_95")
             shinyjs::hide("walker")
             shinyjs::hide("random")
+            shinyjs::hide("eskimo")
             if(values$num_previous>0){
               shinyjs::show("exclude_previous")
             }
@@ -315,7 +319,8 @@ app_server <- function(input, output, session) {
                                             IRT = values$IRT,
                                             exclude_previous = values$exclude_previous,
                                             previous = values$previous,
-                                            test = input$numitems
+                                            test = input$numitems,
+                                            no_eskimo = ifelse(input$numitems == "175",input$eskimo, T)
                                             )
               # save info to the item_difficulty data_frame
               values$item_difficulty[values$item_difficulty$slide_num == values$n,][9:13] <-

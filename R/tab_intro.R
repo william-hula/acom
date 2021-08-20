@@ -75,6 +75,12 @@ intro_tab_div <- function(){
                                                   selected = "A"
                                                     )
                                    ),
+                                   shinyjs::hidden(
+                                     checkboxInput("eskimo",
+                                                  'Exclude item "Eskimo"',
+                                                  value = T
+                                     )
+                                   ),
                                    checkboxInput("sound",
                                                  "Mute sound",
                                                  value = F),
