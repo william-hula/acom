@@ -13,7 +13,7 @@
 #' @param previous prev if
 #' @param test test
 #' @export
-irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, test = NA, no_eskimo = T){
+irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, test = NA, exclude_eskimo = T){
 
       # this is for the out argument. 
       # creates a vector of the items that have already been completed
@@ -21,6 +21,8 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, tes
       completed = all_items %>% 
         tidyr::drop_na(response) %>%
         dplyr::pull(item_number)
+
+      
       
       # don't re-use previous items
       if(exclude_previous){
@@ -36,11 +38,6 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, tes
         completed = c(completed, previously_completed)
       }
       
-      if(no_eskimo){
-        all_items <- all_items %>%
-          dplyr::filter(target != "eskimo")
-      }
-      
       # dataframe of inputs
       pars = data.frame(a = all_items$discrimination,
                         b = all_items$itemDifficulty,
@@ -53,7 +50,6 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, tes
       bank = prov$itemPar
       rownames(bank) <- all_items$target
       x = all_items$response
-      
        # ability estimate using bayes modal:
        ability = catR::thetaEst(bank, x, method = "EAP", range = c(-5, 5))
        # generates the next item
@@ -61,14 +57,16 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, tes
        sem = catR::semTheta(ability, bank, x)
        
        if(IRT){
+         # removes eskimo
+         completed = c(completed, 49)
          
-         next_item = if(length(completed)<175){
+         next_item = if(length(completed)<174){
            catR::nextItem(itemBank = bank, theta = ability, out = completed)
          } else {
            NA
          }
        
-         print(next_item)
+         print(next_item$name)
          
          tmp_list = list(
          ability,
@@ -95,18 +93,39 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, tes
       
       return(tmp_list)
       
-    } else {
+    } else { # this is the full PNT
+      if(exclude_eskimo){
+        
       next_slide_num <- all_items %>%
-        dplyr::filter(is.na(response)) %>%
-        dplyr::filter(pnt_order == min(pnt_order))
-        #dplyr::mutate(next_item = ifelse(!is.na(response), pnt_order+1, NA)) %>%
-        #dplyr::filter(pnt_order == max(next_item, na.rm = T)) 
+        dplyr::filter(item_number != 49) %>% 
+        dplyr::filter(is.na(response))
+      
+          if(nrow(next_slide_num)>=1){
+            next_slide_num <- next_slide_num %>%
+              dplyr::filter(pnt_order == min(pnt_order))
+          }
+      
+      # helps with ending the test
+      out_stop = 189
+      
+      } else {
+        
+        next_slide_num <- all_items %>%
+          dplyr::filter(is.na(response)) 
+        
+          if(nrow(next_slide_num)>=1){
+            next_slide_num <- next_slide_num %>%
+              dplyr::filter(pnt_order == min(pnt_order))
+          }
+      # helps with ending the test. see tmp list
+      out_stop = 190
+      }
       
       tmp_list = list(
         ability,
         list(
           NA,
-          slide_num_out = ifelse(nrow(next_slide_num) < 1, 190, next_slide_num$slide_num)
+          slide_num_out = ifelse(nrow(next_slide_num) < 1, out_stop, next_slide_num$slide_num)
           ),
         sem
       )

@@ -11,13 +11,15 @@ app_server <- function(input, output, session) {
 # ------------------------------------------------------------------------------
 ################################################################################
   #establishes plot loading 
-  w <- waiter::Waiter$new(id = "plot",
+  w <- waiter::Waiter$new(
+                  id = "plot",
                   html = waiter::spin_loader(), 
-                  color = "white")
+                  color = "white"
+                  )
   
   # reactiveValues is a list where elements of the list can change
   values = reactiveValues()
-  values$item_difficulty <- items #dataframe of potential values
+  values$item_difficulty <- items #items...see observe #dataframe of potential values
   values$i = 0 # this is the counter to track the slide number
   values$test_length <- NULL # number of items to test
   values$irt_out <- list(0, 0, 1) # will be overwritten if IRT 
@@ -79,7 +81,7 @@ app_server <- function(input, output, session) {
     ################################ END TEST ##################################
     
     observeEvent(input$end_test,{
-      confirmSweetAlert(
+      shinyWidgets::confirmSweetAlert(
         inputId = "confirm_end_test",
         session = session,
         title = "Are you sure you want to stop?",
@@ -96,11 +98,14 @@ app_server <- function(input, output, session) {
       }
     })
     
+    
   ################################ START PRACTICE ##############################
     observeEvent(input$start_practice,{
+
       # runjs("document.getElementById('audio').play();") # play click
       shinyjs::runjs(values$sound)
       values$i = 1 # reset values$i
+      values$n = 130 # reset
       values$keyval = NULL # keeps track of button press 1 (error), 2 (correct)
       values$exclude_previous <- input$exclude_previous
       # only use IRT function if NOT 175 items
@@ -118,8 +123,7 @@ app_server <- function(input, output, session) {
   # switches to the assessment tab
   # initialize values in here so that they reset whever someone hits start. 
   observeEvent(input$start, {
-    # dataframe of items, difficulty, discrimination; NA column for responses 
-    values$item_difficulty <- items  
+    
     values$i = 1
     
     
@@ -163,7 +167,6 @@ app_server <- function(input, output, session) {
     shinyjs::runjs("document.getElementById('audio').play();")
     # got to slides
     updateNavbarPage(session, "mainpage", selected = "Assessment")
-    
   })
   
   ##########################NUM ITEMS AND PRECISION#############################
@@ -191,7 +194,7 @@ app_server <- function(input, output, session) {
             shinyjs::hide("eskimo")
           } else if(input$numitems == "175"){
             # full pnt
-            values$test_length <- as.numeric(input$numitems)
+            values$test_length <- ifelse(input$eskimo, 174, 175)
               shinyjs::show("random")
               shinyjs::hide("ci_95")
               shinyjs::hide("walker")
@@ -237,21 +240,22 @@ app_server <- function(input, output, session) {
     # if start over is hit, go to home page
     # start assessment button then resets everything
     observeEvent(input$start_over,{
-      shinyjs::reset("intro_tab")
-      values = reactiveValues()
-      values$item_difficulty <- items #dataframe of potential values
-      values$i = 0 # this is the counter to track the slide number
-      values$test_length <- NULL # number of items to test
-      values$irt_out <- list(0, 0, 1) # will be overwritten if IRT 
-      values$min_sem <- NULL # sem precision
-      values$previous <- NULL # previous data if uploaded
-      values$exclude_previous <- NULL # should we exlcude the previoustest? 
-      values$num_previous <- 0 # number of previous tests
-      values$datetime <- Sys.time() # reestablishes datetime
-      shinyjs::reset("file1")
-      updateTabsetPanel(session, "glide", "glide1")
-      updateNavbarPage(session, "mainpage",
-                       selected = "Home")
+      # shinyjs::reset("intro_tab")
+      # values = reactiveValues()
+      # values$item_difficulty <- items #dataframe of potential values
+      # values$i = 0 # this is the counter to track the slide number
+      # values$test_length <- NULL # number of items to test
+      # values$irt_out <- list(0, 0, 1) # will be overwritten if IRT 
+      # values$min_sem <- NULL # sem precision
+      # values$previous <- NULL # previous data if uploaded
+      # values$exclude_previous <- NULL # should we exlcude the previoustest? 
+      # values$num_previous <- 0 # number of previous tests
+      # values$datetime <- Sys.time() # reestablishes datetime
+      # shinyjs::reset("file1")
+      # updateTabsetPanel(session, "glide", "glide1")
+      # updateNavbarPage(session, "mainpage",
+      #                  selected = "Home")
+      session$reload()
       
       
     })
@@ -290,6 +294,7 @@ app_server <- function(input, output, session) {
             }
       values$key_val = NULL
     } else {
+
           another_item <- if(input$numitems == "SEM"){
                             values$min_sem<values$irt_out[[3]]
                           } else {
@@ -320,7 +325,7 @@ app_server <- function(input, output, session) {
                                             exclude_previous = values$exclude_previous,
                                             previous = values$previous,
                                             test = input$numitems,
-                                            no_eskimo = ifelse(input$numitems == "175",input$eskimo, T)
+                                            exclude_eskimo = input$eskimo
                                             )
               # save info to the item_difficulty data_frame
               values$item_difficulty[values$item_difficulty$slide_num == values$n,][9:13] <-
@@ -360,7 +365,7 @@ app_server <- function(input, output, session) {
         } 
         # prints to the console
         print(tail(values$item_difficulty %>% tidyr::drop_na(response) %>%
-                     dplyr::arrange(order), 10))
+                     dplyr::arrange(order), 5))
         # decides whether to cut to the results page or not!
         # returns TRUE or FALSE
         go_to_results <- if(is.na(values$n)){
@@ -388,6 +393,7 @@ app_server <- function(input, output, session) {
 ################################################################################
   # holds the item-level responses. 
   results_data_long <- reactive({
+    req(input$mainpage=="Results")
     precision = if(input$numitems == "SEM"){
       paste0("95% CI: ", input$ci_95)
     } else {
@@ -409,6 +415,7 @@ app_server <- function(input, output, session) {
   
   # holds the mean accuracy
   results_data_summary <- reactive({
+    req(input$mainpage=="Results")
     dplyr::bind_rows(values$item_difficulty) %>%
       # have to switch 0s and 1s because IRT is dumb. 
       tidyr::drop_na() %>%
@@ -419,7 +426,8 @@ app_server <- function(input, output, session) {
   })
   
   # tracks final irt data.
-  irt_final <- eventReactive(input$mainpage=="Results",{
+  irt_final <- reactive({
+    req(input$mainpage=="Results")
     get_final_numbers(out = values$irt_out,
                       previous = values$previous,
                       num_previous = values$num_previous)
@@ -559,9 +567,9 @@ app_server <- function(input, output, session) {
   
   # UI for assessment slides
   output$slides_tab <- renderUI({
-    slides_tab_div(values = values, progbar = input$progbar)
+    slides_tab_div(values = values)
   })
-  
+  outputOptions(output, "slides_tab", suspendWhenHidden = FALSE)
   outputOptions(output, "results_table", suspendWhenHidden = FALSE)
 
 # end of app

@@ -17,7 +17,7 @@ app_ui <- function(request) {
                 keys::useKeys(),
                 shinyjs::useShinyjs(),
                 waiter::use_waiter(),
-                waiter::waiter_preloader(html = waiter::spin_plus()),
+                waiter::waiter_preloader(html = waiter::spin_dots(), color = "white"),
                 keys::keysInput("keys", response_keys),
                 keys::keysInput("enter_key", enter),
                 keys::keysInput("end_test", end_test_key),
