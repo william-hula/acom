@@ -4,7 +4,14 @@
 \alias{irt_function}
 \title{irt magic function}
 \usage{
-irt_function(all_items, IRT = T, exclude_previous = F, previous, test = NA)
+irt_function(
+  all_items,
+  IRT = T,
+  exclude_previous = F,
+  previous,
+  test = NA,
+  exclude_eskimo = T
+)
 }
 \arguments{
 \item{all_items}{everything}

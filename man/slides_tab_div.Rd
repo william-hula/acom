@@ -4,7 +4,7 @@
 \alias{slides_tab_div}
 \title{slides tab}
 \usage{
-slides_tab_div(values, progbar)
+slides_tab_div(values)
 }
 \arguments{
 \item{values}{values}
