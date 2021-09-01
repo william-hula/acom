@@ -91,12 +91,16 @@ golem_add_external_resources <- function(){
   add_resource_path(
     'www', app_sys('app/www')
   )
+  
+  add_resource_path(
+    'slides', app_sys('app/www/slides')
+  )
  
   tags$head(
     favicon(),
     bundle_resources(
       path = app_sys('app/www'),
-      app_title = 'pnt-golem'
+      app_title = 'PNT.CAT'
     )
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert() 

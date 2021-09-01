@@ -9,7 +9,7 @@
 #' 
 #' @noRd
 app_sys <- function(...){
-  system.file(..., package = "pnt")
+  system.file(..., package = "PNT.CAT")
 }
 
 

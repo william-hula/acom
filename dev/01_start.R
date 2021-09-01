@@ -19,13 +19,13 @@
 ## to change the name in the app_sys() function in app_config.R /!\
 ## 
 golem::fill_desc(
-  pkg_name = "pnt", # The Name of the package containing the App 
-  pkg_title = "PKG_TITLE", # The Title of the package containing the App 
-  pkg_description = "PKG_DESC.", # The Description of the package containing the App 
+  pkg_name = "PNT.CAT", # The Name of the package containing the App 
+  pkg_title = "Philadelphia Naming Test - Computer Adaptive Test", # The Title of the package containing the App 
+  pkg_description = "This is a package description.", # The Description of the package containing the App 
   author_first_name = "AUTHOR_FIRST", # Your First Name
   author_last_name = "AUTHOR_LAST", # Your Last Name
   author_email = "AUTHOR@MAIL.COM", # Your Email
-  repo_url = NULL # The URL of the GitHub Repo (optional) 
+  repo_url = "https://github.com/aphaisa-apps/pnt" # The URL of the GitHub Repo (optional) 
 )     
 
 ## Set {golem} options ----
