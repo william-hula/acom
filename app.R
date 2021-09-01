@@ -4,4 +4,4 @@
 
 pkgload::load_all(export_all = FALSE,helpers = FALSE,attach_testthat = FALSE)
 options( "golem.app.prod" = TRUE)
-pnt::run_app() # add parameters here (if any)
+PNT.CAT::run_app() # add parameters here (if any)
