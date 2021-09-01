@@ -111,6 +111,7 @@ app_server <- function( input, output, session ) {
     values$keyval = NULL # keeps track of button press 1 (error), 2 (correct)
     values$exclude_previous <- input$exclude_previous
     # only use IRT function if NOT 175 items
+    # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
     values$IRT = ifelse(input$numitems == "175", FALSE,
                         ifelse(input$numitems == "walker", FALSE,
                                TRUE)
@@ -216,6 +217,7 @@ app_server <- function( input, output, session ) {
   })
   
   # records the sem input
+  # THIS IS WONG ALEX PLEASE FIX
   observeEvent(input$ci_95,{
     values$min_sem <- input$ci_95/1.96
   })
@@ -402,6 +404,7 @@ app_server <- function( input, output, session ) {
       paste0(input$numitems, " items")
     }
     
+    # ALEX 95 CI???
     tmp = dplyr::bind_rows(values$item_difficulty) %>%
       dplyr::mutate(ci_95 = sem*1.96,
                     precision = precision,
@@ -415,6 +418,7 @@ app_server <- function( input, output, session ) {
     return(tmp)
   })
   
+  # ALEX 95% CI HERE TOO
   # holds the mean accuracy
   results_data_summary <- reactive({
     req(input$mainpage=="Results")

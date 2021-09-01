@@ -94,32 +94,32 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, tes
       return(tmp_list)
       
     } else { # this is the full PNT
-      if(exclude_eskimo){
-        
-      next_slide_num <- all_items %>%
-        dplyr::filter(item_number != 49) %>% 
-        dplyr::filter(is.na(response))
-      
-          if(nrow(next_slide_num)>=1){
-            next_slide_num <- next_slide_num %>%
-              dplyr::filter(pnt_order == min(pnt_order))
-          }
-      
-      # helps with ending the test
-      out_stop = 189
-      
-      } else {
-        
+        if(exclude_eskimo){
+          
         next_slide_num <- all_items %>%
-          dplyr::filter(is.na(response)) 
+          dplyr::filter(item_number != 49) %>% 
+          dplyr::filter(is.na(response))
         
-          if(nrow(next_slide_num)>=1){
-            next_slide_num <- next_slide_num %>%
-              dplyr::filter(pnt_order == min(pnt_order))
-          }
-      # helps with ending the test. see tmp list
-      out_stop = 190
-      }
+            if(nrow(next_slide_num)>=1){
+              next_slide_num <- next_slide_num %>%
+                dplyr::filter(pnt_order == min(pnt_order))
+            }
+        
+        # helps with ending the test
+        out_stop = 189
+        
+        } else {
+          
+          next_slide_num <- all_items %>%
+            dplyr::filter(is.na(response)) 
+          
+            if(nrow(next_slide_num)>=1){
+              next_slide_num <- next_slide_num %>%
+                dplyr::filter(pnt_order == min(pnt_order))
+            }
+        # helps with ending the test. see tmp list
+        out_stop = 190
+        }
       
       tmp_list = list(
         ability,

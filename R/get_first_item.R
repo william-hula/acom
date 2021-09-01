@@ -1,6 +1,10 @@
-# gets first item. 
-
-get_first_item <- function(all_items, previous, exclude_previous = F){ #previous_dat = NULL, 
+#' get first item
+#'
+#' @param all_items out
+#' @param previous prev
+#' @param exclude_previous num prev
+#' @export
+get_first_item <- function(all_items, previous, exclude_previous = F){ 
   
   #choices = c(130, 25, 39, 154)
   
@@ -47,7 +51,6 @@ get_first_item <- function(all_items, previous, exclude_previous = F){ #previous
   
   
 }
-
 
 
 
