@@ -517,6 +517,30 @@ app_server <- function( input, output, session ) {
     }
   )
   
+  ################################## SCORE EXISTING TEST MODAL ################################
+  # ------------------------------------------------------------------------------
+  ################################################################################
+  # More information modal
+  observeEvent(input$score_test, {
+    showModal(modalDialog(
+      div(
+        h3("Scoring an offline or completed test"),
+        p("This will be instructions about scoring an offline test or re-estimating
+          ability and stuff after modifying existing test output."),
+        p("We will give the option to download an empty CSV with instructions for
+          how to fill it out here"),
+        p("Then we will have a file upload where this csv can be uploaded"),
+        p("We will need to be clear about what the format of the .csv is and 
+          have an effective validation for the format of any uploaded .csv files."),
+        p("the validation will need to have clear error messages"),
+        p("Then we will use the get_IRT() functionality to get the estimate"),
+        p("We will navigate the user directly then to the results page with all
+          the usuall stuff")
+      ),
+      easyClose = TRUE,
+      size = "l"
+    ))
+  })
   ################################## FOOTER MODAL ################################
   # ------------------------------------------------------------------------------
   ################################################################################

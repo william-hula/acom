@@ -29,7 +29,11 @@ intro_tab_div <- function(){
                                    textInput("notes", "Enter any notes"),
                                    fileInput("file1", "Upload previous results", accept = ".csv"),
                                    div(align="center",
-                                       actionButton("glide_next1", "Next"))
+                                       actionButton("glide_next1", "Next"), br(), br(),
+                                       actionButton("score_test", "Score offline/rescored test (temp location)")
+                                       )
+                                   
+                                   
                                )
                            )
                   ),
