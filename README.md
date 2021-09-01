@@ -55,7 +55,7 @@ shiny::runGitHub("aphasia-apps/pnt")
 restart your session, and try again*
 
 3.  Access the website via the URL posted here:
-    <https://rb-cavanaugh.shinyapps.io/pnt-cat/>
+    <https://aphasia-apps.shinyapps.io/PNT-CAT/>
 
 4.  Clone the repository and run locally.
 
