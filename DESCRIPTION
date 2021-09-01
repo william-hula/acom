@@ -1,22 +1,13 @@
 Package: pnt
-Title: Computer adaptive Philadelphia Naming Test
+Title: PKG_TITLE
 Version: 0.0.0.9000
-Authors@R: 
-    person(given = "First",
-           family = "Last",
-           role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: R Shiny implementation of a computer adaptive Philadelphia Naming Test.
-License: GPL (>= 3)
-Encoding: UTF-8
-LazyData: true
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
-Depends:
-    shiny,
-    R (>= 3.0.2)
+Authors@R: person('AUTHOR_FIRST', 'AUTHOR_LAST', email = 'AUTHOR@MAIL.COM', role = c('cre', 'aut'))
+Description: PKG_DESC.
+License: What license is it under?
 Imports: 
+    config (>= 0.3.1),
+    golem (>= 0.3.1),
+    shiny (>= 1.6.0),
     catR,
     dplyr,
     DT,
@@ -33,7 +24,6 @@ Imports:
     magrittr,
     bslib (>= 0.2.5.0),
     pkgload
-URL: https://www.github.com/rbcavanaugh/pnt
-BugReports: https://www.github.com/rbcavanaugh/pnt/issues
-Language: en-US
-
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
