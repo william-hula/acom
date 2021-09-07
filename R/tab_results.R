@@ -11,15 +11,15 @@ results_tab_div <- function(){
                      tabPanel("Data", 
                               DT::DTOutput("results_table"),
                      )
-         ), 
-         tags$div(align = "center",
-                  downloadButton("downloadData",
-                                 "Download results"),
-                  actionButton("start_over",
-                               "Start Over",
-                               icon = icon("undo-alt")
-                  )
-             )
+         )#, 
+         # tags$div(align = "center",
+         #          downloadButton("downloadData",
+         #                         "Download results"),
+         #          actionButton("start_over",
+         #                       "Start Over",
+         #                       icon = icon("undo-alt")
+         #          )
+         #     )
       )
     )
 }

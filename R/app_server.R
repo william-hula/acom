@@ -383,6 +383,7 @@ app_server <- function( input, output, session ) {
       if (go_to_results){
         updateNavbarPage(session, "mainpage",
                          selected = "Results")
+        shinyjs::show("downloadData")
       }
       values$key_val = NULL
       #for testing::
@@ -495,14 +496,21 @@ app_server <- function( input, output, session ) {
   ################################################################################
   # creates a data for downloading. added to accomodate previous data
   download_data <- eventReactive(input$mainpage=="Results",{
-    if(!is.na(irt_final()$last_ability)){
-      d1 = results_data_long() %>% dplyr::mutate_all(as.character)
-      d2 = values$previous %>% dplyr::mutate_all(as.character)
-      d3 = dplyr::bind_rows(d1, d2)
-    } else {
-      d3 = results_data_long()
-    }
-    return(d3)
+    
+        if(!is.na(irt_final()$last_ability)){
+          d1 = results_data_long() %>% dplyr::mutate_all(as.character)
+          d2 = values$previous %>% dplyr::mutate_all(as.character)
+          d3 = dplyr::bind_rows(d1, d2)
+        } else {
+          d3 = results_data_long()
+        }
+    
+    d4 = d3 %>% dplyr::select(item_number, target, key, resp,
+                              order, ability, sem, ci_95,
+                              name, date, notes)
+     
+    return(d4)   
+
   })
   # downloading output
   output$downloadData <- downloadHandler(
@@ -527,19 +535,70 @@ app_server <- function( input, output, session ) {
         h3("Scoring an offline or completed test"),
         p("This will be instructions about scoring an offline test or re-estimating
           ability and stuff after modifying existing test output."),
-        p("We will give the option to download an empty CSV with instructions for
-          how to fill it out here"),
-        p("Then we will have a file upload where this csv can be uploaded"),
         p("We will need to be clear about what the format of the .csv is and 
           have an effective validation for the format of any uploaded .csv files."),
-        p("the validation will need to have clear error messages"),
-        p("Then we will use the get_IRT() functionality to get the estimate"),
-        p("We will navigate the user directly then to the results page with all
-          the usuall stuff")
+        downloadButton("downloadEmpty", "Download Blank Spreadsheet"),
+        fileInput("file2", "Upload offline or re-scored data", accept = ".csv"),
       ),
-      easyClose = TRUE,
-      size = "l"
+      footer = tagList(
+        modalButton("Cancel"),
+        actionButton("score_uploaded_data", "OK")
+      ),
+      easyClose = F,
+      size = "m"
     ))
+  })
+  
+  observeEvent(input$score_uploaded_data,{
+    values$rescore_list <- score_uploaded_data(values$rescore)
+    updateNavbarPage(session, "mainpage",
+                     selected = "Results2")
+  })
+
+  output$plot2 <-
+    renderPlot({
+      req(values$rescore_list)
+      #w$show()
+      values$rescore_list$plot
+  })
+
+  output$results_table2 <-
+    DT::renderDT({
+      req(values$rescore_list)
+      values$rescore_list$data
+  }, rownames = F,
+  options = list(dom = "tp"))
+
+  #  outputs a summary sentence
+  output$results_summary2 <-
+    renderUI({
+      req(values$rescore_list)
+      p(values$rescore_list$text)
+  })
+  
+  # downloading output
+  output$downloadEmpty <- downloadHandler(
+    filename = function() {
+      "pnt-cat-blank.csv"
+    },
+    content = function(file) {
+      write.csv(items %>% 
+                  dplyr::select(item_number, target, key),
+                file, row.names = FALSE)
+    }
+  )
+  
+  # observer for uploading data
+  observeEvent(input$file2,{
+    file <- input$file2
+    ext <- tools::file_ext(file$datapath)
+    # check upload
+    req(file)
+    validate(need(ext == "csv", "Please upload a csv file"))
+    # save upload
+    values$rescore <- read.csv(file$datapath) %>%
+      tidyr::drop_na(key)
+
   })
   ################################## FOOTER MODAL ################################
   # ------------------------------------------------------------------------------
