@@ -7,10 +7,12 @@ slides_tab_div <- function(values){
 tmp_div =  column(width = 12,
        fluidRow(
          
-         if (isTruthy(values$key_val == incorrect_key_response | values$key_val == correct_key_response)){
-           icon("dot-circle", style = "color: grey; position: absolute; right: 10px;")
+         if (isTruthy(values$key_val == incorrect_key_response)){
+           icon("check-circle", style = "position: absolute; right: 1px; color:grey;")
+         } else if (isTruthy(values$key_val == correct_key_response)){
+           icon("check-square", style = "position: absolute; right: 1px; color:grey;")
          } else {
-           icon("circle", style = "color: grey; position: absolute; right: 10px;")
+           #icon("circle", style = "color: grey; position: absolute; right: 5px;")
          }
        ),
        fluidRow(
