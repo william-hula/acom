@@ -30,6 +30,7 @@ app_server <- function( input, output, session ) {
   values$previous <- NULL # previous data if uploaded
   values$num_previous <- 0 # number of previous tests
   values$datetime <- Sys.time() # establishes datetime when app opens for saving
+  values$downloadableData = F # will the download data button appear? starts with no. yes after first response. 
   
   ################################## PREVIOUS DATA ###############################
   # ------------------------------------------------------------------------------
@@ -281,6 +282,9 @@ app_server <- function( input, output, session ) {
       }
       values$key_val = NULL
     } else {
+      # can you download data? yes - will calculate the data to go out. 
+      values$downloadableData = T
+      shinyjs::show("downloadData")
       
       another_item <- if(input$numitems == "SEM"){
         values$min_sem<values$irt_out[[3]]
@@ -366,7 +370,6 @@ app_server <- function( input, output, session ) {
       if (go_to_results){
         updateNavbarPage(session, "mainpage",
                          selected = "Results")
-        shinyjs::show("downloadData")
         shinyjs::show("report")
       }
       values$key_val = NULL
@@ -382,7 +385,7 @@ app_server <- function( input, output, session ) {
   ################################################################################
   # holds the item-level responses. 
   results_data_long <- reactive({
-    req(input$mainpage=="Results")
+    req(isTruthy(values$downloadableData))
     precision = if(input$numitems == "SEM"){
       paste0("95% CI: ", input$ci_95)
     } else {
@@ -480,24 +483,7 @@ app_server <- function( input, output, session ) {
   ################################## DOWNLOAD ####################################  
   # ------------------------------------------------------------------------------
   ################################################################################
-  # creates a data for downloading. added to accomodate previous data
-  download_data <- eventReactive(input$mainpage=="Results",{
-    
-        if(!is.na(irt_final()$last_ability)){
-          d1 = results_data_long() %>% dplyr::mutate_all(as.character)
-          d2 = values$previous %>% dplyr::mutate_all(as.character)
-          d3 = dplyr::bind_rows(d1, d2)
-        } else {
-          d3 = results_data_long()
-        }
-    
-    d4 = d3 %>% dplyr::select(item_number, target, key, resp,
-                              order, ability, sem, ci_95,
-                              name, date, notes)
-     
-    return(d4)   
 
-  })
   # downloading output
   output$downloadData <- downloadHandler(
     filename = function() {
@@ -507,7 +493,7 @@ app_server <- function( input, output, session ) {
       )
     },
     content = function(file) {
-      write.csv(download_data(), file, row.names = FALSE)
+      write.csv(get_data_for_download(dat = results_data_long()), file, row.names = FALSE)
     }
   )
   

@@ -2,6 +2,7 @@
 
 export("%>%")
 export(footer_div)
+export(get_data_for_download)
 export(get_data_string)
 export(get_final_numbers)
 export(get_first_item)

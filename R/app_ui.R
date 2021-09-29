@@ -42,7 +42,7 @@ app_ui <- function(request) {
                               #                title = "shinyCAT",
                               #                icon = "www/cat.png"),
                               tags$audio(id = "audio",
-                                         src = "click.wav",
+                                         src = system.file("app", "www", "click.wav",package = "PNT.CAT"),
                                          type = "audio/wav",
                                          style = "display:none;"),
                               intro_tab_div()
