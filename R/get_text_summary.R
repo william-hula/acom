@@ -56,6 +56,6 @@ get_text_summary <- function(
         
       }
     
-    return(p(summary))
+    return((summary))
   
 }

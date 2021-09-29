@@ -10,10 +10,14 @@ pagetitle <- function(){
         actionButton("enter_key", "enter")
       )
     } else {
-     #title =  "PNT-CAT"
      title = div(
        div("PNT-CAT"),
        div(id = "navbar-right",
+           shinyjs::hidden(
+             downloadButton("report",
+                            "Download Report",
+                            style = "background-color:#f8f9fa; border:0px;")
+           ),
            shinyjs::hidden(
              downloadButton("downloadData",
                             "Download results",

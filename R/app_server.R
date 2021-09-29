@@ -244,24 +244,7 @@ app_server <- function( input, output, session ) {
   # if start over is hit, go to home page
   # start assessment button then resets everything
   observeEvent(input$start_over,{
-    # shinyjs::reset("intro_tab")
-    # values = reactiveValues()
-    # values$item_difficulty <- items #dataframe of potential values
-    # values$i = 0 # this is the counter to track the slide number
-    # values$test_length <- NULL # number of items to test
-    # values$irt_out <- list(0, 0, 1) # will be overwritten if IRT 
-    # values$min_sem <- NULL # sem precision
-    # values$previous <- NULL # previous data if uploaded
-    # values$exclude_previous <- NULL # should we exlcude the previoustest? 
-    # values$num_previous <- 0 # number of previous tests
-    # values$datetime <- Sys.time() # reestablishes datetime
-    # shinyjs::reset("file1")
-    # updateTabsetPanel(session, "glide", "glide1")
-    # updateNavbarPage(session, "mainpage",
-    #                  selected = "Home")
     session$reload()
-    
-    
   })
   ################ THIS IS WHRERE IRT STUFF GETS INCORPORATED ####################
   
@@ -384,6 +367,7 @@ app_server <- function( input, output, session ) {
         updateNavbarPage(session, "mainpage",
                          selected = "Results")
         shinyjs::show("downloadData")
+        shinyjs::show("report")
       }
       values$key_val = NULL
       #for testing::
@@ -482,7 +466,8 @@ app_server <- function( input, output, session ) {
   ################################################################################
   #  outputs a summary sentence
   output$results_summary <- renderUI({
-    summary = get_text_summary(acc = results_data_summary(),
+    summary = p(
+      get_text_summary(acc = results_data_summary(),
                                ability = irt_final()$ability,
                                ci_95 = irt_final()$ci_95,
                                last_ability = irt_final()$last_ability,
@@ -490,6 +475,7 @@ app_server <- function( input, output, session ) {
                                first_ability = irt_final()$first_ability,
                                first_ci_95 = irt_final()$first_ci_95,
                                num_previous = values$num_previous)
+    )
   })
   ################################## DOWNLOAD ####################################  
   # ------------------------------------------------------------------------------
@@ -525,6 +511,46 @@ app_server <- function( input, output, session ) {
     }
   )
   
+########### DOWNLOAD REPORT #############
+  
+  output$report <- downloadHandler(
+    
+    # For PDF output, change this to "report.pdf"
+    filename = "report.pdf",
+    content = function(file) {
+      withProgress(message = 'Rendering, please wait!', {
+        # Copy the report file to a temporary directory before processing it, in
+        # case we don't have write permissions to the current working dir (which
+        # can happen when deployed).
+        tempReport <- system.file("report.Rmd", package = "PNT.CAT")#file.path(tempdir(), "report.Rmd")
+        file.copy("report.Rmd", tempReport, overwrite = TRUE)
+        
+        # Set up parameters to pass to Rmd document
+        params <- list(
+          name = ifelse(nchar(input$name)>0, input$name, "X"),
+          notes = input$notes,
+          values = values,
+          irt_final = irt_final(),
+          text = get_text_summary(acc = results_data_summary(),
+                           ability = irt_final()$ability,
+                           ci_95 = irt_final()$ci_95,
+                           last_ability = irt_final()$last_ability,
+                           last_ci_95 = irt_final()$last_ci_95,
+                           first_ability = irt_final()$first_ability,
+                           first_ci_95 = irt_final()$first_ci_95,
+                           num_previous = values$num_previous))
+        
+        # Knit the document, passing in the `params` list, and eval it in a
+        # child of the global environment (this isolates the code in the document
+        # from the code in this app).
+        rmarkdown::render(tempReport, output_file = file,
+                          params = params,
+                          envir = new.env(parent = globalenv())
+        )
+      })
+    }
+  )
+  
   ################################## SCORE EXISTING TEST MODAL ################################
   # ------------------------------------------------------------------------------
   ################################################################################
@@ -549,8 +575,17 @@ app_server <- function( input, output, session ) {
     ))
   })
   
+  observe({
+    if(is.null(input$file2)){
+      shinyjs::disable("score_uploaded_data")
+    } else {
+      shinyjs::enable("score_uploaded_data")
+    }
+  })
+  
   observeEvent(input$score_uploaded_data,{
     values$rescore_list <- score_uploaded_data(values$rescore)
+    removeModal()
     updateNavbarPage(session, "mainpage",
                      selected = "Results2")
   })
@@ -590,6 +625,7 @@ app_server <- function( input, output, session ) {
   
   # observer for uploading data
   observeEvent(input$file2,{
+    
     file <- input$file2
     ext <- tools::file_ext(file$datapath)
     # check upload

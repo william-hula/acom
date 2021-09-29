@@ -4,7 +4,7 @@
 \alias{get_plot}
 \title{get plot}
 \usage{
-get_plot(values, irt_final)
+get_plot(values, irt_final, basesize = 15)
 }
 \arguments{
 \item{values}{values}

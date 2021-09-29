@@ -6,7 +6,7 @@
 #' @param values values
 #' @param irt_final final irt
 #' @export
-    get_plot <- function(values, irt_final){
+    get_plot <- function(values, irt_final, basesize = 15){
       df <- tibble::tibble(
         ability = seq(-4, 4, .1),
         this_test = dnorm(seq(-4, 4, .1), irt_final$ability, irt_final$ci_95/2),
@@ -32,7 +32,7 @@
         ggplot2::ggplot(ggplot2::aes(x = ability, y = est, fill = time), color = "back") +
         ggplot2::geom_line(size = 1) +
         ggplot2::geom_polygon(alpha = .4) +
-        ggplot2::theme_minimal(base_size = 15) +
+        ggplot2::theme_minimal(base_size = basesize) +
         ggplot2::theme(legend.position = "bottom",
               axis.title.y = ggplot2::element_blank(),
               axis.text.y = ggplot2::element_blank(),
