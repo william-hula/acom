@@ -81,98 +81,6 @@ app_server <- function( input, output, session ) {
     }
   })
   
-  ################################ END TEST ##################################
-  
-  observeEvent(input$end_test,{
-    shinyWidgets::confirmSweetAlert(
-      inputId = "confirm_end_test",
-      session = session,
-      title = "Are you sure you want to stop?",
-      text = "Only items with confirmed responses will be saved. 
-                Ending tests early may reduce accuracy and precision of naming ability estimates.",
-      type = "warning",
-    )
-  })
-  
-  observeEvent(input$confirm_end_test,{
-    if(isTruthy(input$confirm_end_test)){
-      updateNavbarPage(session, "mainpage",
-                       selected = "Results")
-    }
-  })
-  
-  
-  ################################ START PRACTICE ##############################
-  observeEvent(input$start_practice,{
-    
-    # runjs("document.getElementById('audio').play();") # play click
-    shinyjs::runjs(values$sound)
-    values$i = 1 # reset values$i
-    values$n = 130 # reset
-    values$keyval = NULL # keeps track of button press 1 (error), 2 (correct)
-    values$exclude_previous <- input$exclude_previous
-    # only use IRT function if NOT 175 items
-    # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
-    values$IRT = ifelse(input$numitems == "175", FALSE,
-                        ifelse(input$numitems == "walker", FALSE,
-                               TRUE)
-    )
-    # go to practice slides
-    updateNavbarPage(session, "mainpage",
-                     selected = "Practice")
-  })
-  
-  ################################## START ASSESSMENT ############################
-  # start button. sets the i value to 1 corresponding to the first slide
-  # switches to the assessment tab
-  # initialize values in here so that they reset whever someone hits start. 
-  observeEvent(input$start, {
-    
-    values$i = 1
-    
-    
-    if(isTruthy(input$numitems == "walker")){
-      values$item_difficulty <- 
-        values$item_difficulty %>%
-        dplyr::filter(walker == input$walker)
-    }
-    
-    # randomly orders stuff if the random order box is checked. only affects 175
-    if(isTruthy(input$random)){
-      values$item_difficulty <-
-        values$item_difficulty %>%
-        dplyr::mutate(pnt_order = sample(pnt_order)) %>%
-        dplyr::arrange(pnt_order)
-    }
-    
-    values$n = if(isTruthy(values$IRT)){
-      # samples one of four first possible items, unless used previously...
-      get_first_item(all_items = values$item_difficulty,
-                     previous = values$previous,
-                     exclude_previous = values$exclude_previous)
-      
-    } else if (input$numitems == "walker"){
-      values$item_difficulty[values$item_difficulty$walker_order == 1,]$slide_num 
-      
-    } else if (isTruthy(input$random)) {
-      # if random, grab first row in values$item_difficulty,
-      # which is already randomized in code above
-      values$item_difficulty[values$item_difficulty$pnt_order == 1,]$slide_num 
-    } else {
-      14 #otherwise candle
-    }
-    # for testing:
-    if (isTRUE(getOption("shiny.testmode"))) {
-      shinyjs::reset("keys")
-    }
-    values$keyval = NULL # keeps track of button press 1 (error) or 2 (correct)
-    values$irt_out <- list(0, 0, 1)
-    #js$click_sound()
-    shinyjs::runjs("document.getElementById('audio').play();")
-    # got to slides
-    updateNavbarPage(session, "mainpage", selected = "Assessment")
-  })
-  
   ##########################NUM ITEMS AND PRECISION#############################
   # enables or disables precision option if SEM is or isn't selected. 
   # also converts the numeric option to a number
@@ -217,6 +125,108 @@ app_server <- function( input, output, session ) {
     }
   })
   
+  #############################START OVER#########################################
+  # if start over is hit, go to home page
+  # start assessment button then resets everything
+  observeEvent(input$start_over,{
+    session$reload()
+  })
+  
+  ################################ END TEST ##################################
+  
+  observeEvent(input$end_test,{
+    shinyWidgets::confirmSweetAlert(
+      inputId = "confirm_end_test",
+      session = session,
+      title = "Are you sure you want to stop?",
+      text = "Only items with confirmed responses will be saved.",
+      type = "warning",
+    )
+  })
+  
+  observeEvent(input$confirm_end_test,{
+    if(isTruthy(input$confirm_end_test)){
+      updateNavbarPage(session, "mainpage",
+                       selected = "Results")
+    }
+  })
+  
+  
+  ################################ START PRACTICE ##############################
+  observeEvent(input$start_practice,{
+    
+    # runjs("document.getElementById('audio').play();") # play click
+    shinyjs::runjs(values$sound)
+    values$i = 1 # reset values$i
+    values$n = 130 # reset 
+    values$keyval = NULL # keeps track of button press 1 (error), 2 (correct)
+    values$exclude_previous <- input$exclude_previous
+    # only use IRT function if NOT 175 items
+    # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
+    values$IRT = ifelse(input$numitems == "175", FALSE,
+                        ifelse(input$numitems == "walker", FALSE,
+                               TRUE)
+    )
+    # go to practice slides
+    updateNavbarPage(session, "mainpage",
+                     selected = "Practice")
+  })
+  
+  ################################## START ASSESSMENT ############################
+  # start button. sets the i value to 1 corresponding to the first slide
+  # switches to the assessment tab
+  # initialize values in here so that they reset whever someone hits start. 
+  observeEvent(input$start, {
+    
+    values$i = 1
+    
+    
+    if(isTruthy(input$numitems == "walker")){
+      values$item_difficulty <- 
+        values$item_difficulty %>%
+        dplyr::filter(walker == input$walker)
+    }
+    
+    # randomly orders stuff if the random order box is checked. only affects 175
+    if(isTruthy(input$random)){
+      values$item_difficulty <-
+        values$item_difficulty %>%
+        dplyr::mutate(pnt_order = sample(pnt_order)) %>%
+        dplyr::arrange(pnt_order)
+    }
+    
+    values$n = 
+      # regular old CAT 
+      if(isTruthy(values$IRT)){
+      # samples one of four first possible items, unless used previously...
+      get_first_item(all_items = values$item_difficulty,
+                     previous = values$previous,
+                     exclude_previous = values$exclude_previous)
+      # walker first item
+    } else if (input$numitems == "walker"){
+      values$item_difficulty[values$item_difficulty$walker_order == 1,]$slide_num 
+      # random 175 first item
+    } else if (isTruthy(input$random)) {
+      # if random, grab first row in values$item_difficulty,
+      # which is already randomized in code above
+      values$item_difficulty[values$item_difficulty$pnt_order == 1,]$slide_num 
+    } else {
+      14 #otherwise candle
+    }
+    # for testing:
+    if (isTRUE(getOption("shiny.testmode"))) {
+      shinyjs::reset("keys")
+    }
+    # reset keyval
+    values$keyval = NULL # keeps track of button press 1 (error) or 2 (correct)
+    values$irt_out <- list(0, 0, 1) # reset saved data just in case. 
+    #play a sound...not working right now :(
+    shinyjs::runjs("document.getElementById('audio').play();")
+    # got to slides
+    updateNavbarPage(session, "mainpage", selected = "Assessment")
+  })
+  
+  
   # records the sem input
   # THIS IS WONG ALEX PLEASE FIX
   observeEvent(input$ci_95,{
@@ -241,17 +251,12 @@ app_server <- function( input, output, session ) {
       
     }
   })
-  #############################START OVER#########################################
-  # if start over is hit, go to home page
-  # start assessment button then resets everything
-  observeEvent(input$start_over,{
-    session$reload()
-  })
-  ################ THIS IS WHRERE IRT STUFF GETS INCORPORATED ####################
+  
+  ################ THIS IS WHRERE CAT STUFF GETS INCORPORATED ####################
   
   # observe event will take an action if an input changes.
   # here the next button or the enter key
-  # This is where the app will interact with the IRT algorithm
+  # This is where the app will interact with the -CAT-IRT algorithm
   observeEvent(input$enter_key, {
     # should the app show another item?
     # if the stopping choice is SEM,
@@ -268,7 +273,6 @@ app_server <- function( input, output, session ) {
       # don't require a 1 or 2..
       else if(values$i %in% c(1, 2)){
         shinyjs::runjs("document.getElementById('audio').play();")
-        #js$click_sound()
         values$i = ifelse(values$i<13, values$i + 1, values$i)
         # otherwise, (i.e. not a practice slide)
       } else if(is.null(values$key_val)){ 
@@ -342,7 +346,6 @@ app_server <- function( input, output, session ) {
         # if the test goes all the way to 175
         values$n = 
           if(values$IRT){
-            
             if(!is.na(values$irt_out[[2]][[1]])){
               values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
             } else {
@@ -354,7 +357,7 @@ app_server <- function( input, output, session ) {
         # iterate the order
         values$i = values$i + 1
       } 
-      # prints to the console
+      # prints to the console the last 5 items. DELETE FOR RELEASE
       print(tail(values$item_difficulty %>% tidyr::drop_na(response) %>%
                    dplyr::arrange(order), 5))
       # decides whether to cut to the results page or not!
@@ -537,91 +540,7 @@ app_server <- function( input, output, session ) {
     }
   )
   
-  ################################## SCORE EXISTING TEST MODAL ################################
-  # ------------------------------------------------------------------------------
-  ################################################################################
-  # More information modal
-  observeEvent(input$score_test, {
-    showModal(modalDialog(
-      div(
-        h3("Scoring an offline or completed test"),
-        p("This will be instructions about scoring an offline test or re-estimating
-          ability and stuff after modifying existing test output."),
-        p("We will need to be clear about what the format of the .csv is and 
-          have an effective validation for the format of any uploaded .csv files."),
-        downloadButton("downloadEmpty", "Download Blank Spreadsheet"),
-        fileInput("file2", "Upload offline or re-scored data", accept = ".csv"),
-      ),
-      footer = tagList(
-        modalButton("Cancel"),
-        actionButton("score_uploaded_data", "OK")
-      ),
-      easyClose = F,
-      size = "m"
-    ))
-  })
   
-  observe({
-    if(is.null(input$file2)){
-      shinyjs::disable("score_uploaded_data")
-    } else {
-      shinyjs::enable("score_uploaded_data")
-    }
-  })
-  
-  observeEvent(input$score_uploaded_data,{
-    values$rescore_list <- score_uploaded_data(values$rescore)
-    removeModal()
-    updateNavbarPage(session, "mainpage",
-                     selected = "Results2")
-  })
-
-  output$plot2 <-
-    renderPlot({
-      req(values$rescore_list)
-      #w$show()
-      values$rescore_list$plot
-  })
-
-  output$results_table2 <-
-    DT::renderDT({
-      req(values$rescore_list)
-      values$rescore_list$data
-  }, rownames = F,
-  options = list(dom = "tp"))
-
-  #  outputs a summary sentence
-  output$results_summary2 <-
-    renderUI({
-      req(values$rescore_list)
-      p(values$rescore_list$text)
-  })
-  
-  # downloading output
-  output$downloadEmpty <- downloadHandler(
-    filename = function() {
-      "pnt-cat-blank.csv"
-    },
-    content = function(file) {
-      write.csv(items %>% 
-                  dplyr::select(item_number, target, key),
-                file, row.names = FALSE)
-    }
-  )
-  
-  # observer for uploading data
-  observeEvent(input$file2,{
-    
-    file <- input$file2
-    ext <- tools::file_ext(file$datapath)
-    # check upload
-    req(file)
-    validate(need(ext == "csv", "Please upload a csv file"))
-    # save upload
-    values$rescore <- read.csv(file$datapath) %>%
-      tidyr::drop_na(key)
-
-  })
   ################################## FOOTER MODAL ################################
   # ------------------------------------------------------------------------------
   ################################################################################
@@ -683,5 +602,90 @@ app_server <- function( input, output, session ) {
   outputOptions(output, "slides_tab", suspendWhenHidden = FALSE)
   outputOptions(output, "results_table", suspendWhenHidden = FALSE)
   
+  ################################## SCORE EXISTING TEST MODAL #################
+  # ----------------------------------------------------------------------------
+  ##############################################################################
+  # More information modal
+  observeEvent(input$score_test, {
+    showModal(modalDialog(
+      div(
+        h3("Scoring an offline or completed test"),
+        p("This will be instructions about scoring an offline test or re-estimating
+          ability and stuff after modifying existing test output."),
+        p("We will need to be clear about what the format of the .csv is and 
+          have an effective validation for the format of any uploaded .csv files."),
+        downloadButton("downloadEmpty", "Download Blank Spreadsheet"),
+        fileInput("file2", "Upload offline or re-scored data", accept = ".csv"),
+      ),
+      footer = tagList(
+        modalButton("Cancel"),
+        actionButton("score_uploaded_data", "OK")
+      ),
+      easyClose = F,
+      size = "m"
+    ))
+  })
+  
+  observe({
+    if(is.null(input$file2)){
+      shinyjs::disable("score_uploaded_data")
+    } else {
+      shinyjs::enable("score_uploaded_data")
+    }
+  })
+  
+  observeEvent(input$score_uploaded_data,{
+    values$rescore_list <- score_uploaded_data(values$rescore)
+    removeModal()
+    updateNavbarPage(session, "mainpage",
+                     selected = "Results2")
+  })
+  
+  output$plot2 <-
+    renderPlot({
+      req(values$rescore_list)
+      #w$show()
+      values$rescore_list$plot
+    })
+  
+  output$results_table2 <-
+    DT::renderDT({
+      req(values$rescore_list)
+      values$rescore_list$data
+    }, rownames = F,
+    options = list(dom = "tp"))
+  
+  #  outputs a summary sentence
+  output$results_summary2 <-
+    renderUI({
+      req(values$rescore_list)
+      p(values$rescore_list$text)
+    })
+  
+  # downloading output
+  output$downloadEmpty <- downloadHandler(
+    filename = function() {
+      "pnt-cat-blank.csv"
+    },
+    content = function(file) {
+      write.csv(items %>% 
+                  dplyr::select(item_number, target, key),
+                file, row.names = FALSE)
+    }
+  )
+  
+  # observer for uploading data
+  observeEvent(input$file2,{
+    
+    file <- input$file2
+    ext <- tools::file_ext(file$datapath)
+    # check upload
+    req(file)
+    validate(need(ext == "csv", "Please upload a csv file"))
+    # save upload
+    values$rescore <- read.csv(file$datapath) %>%
+      tidyr::drop_na(key)
+    
+  })
   # end of app
 }
