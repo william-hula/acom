@@ -38,9 +38,10 @@
               axis.text.y = ggplot2::element_blank(),
               axis.ticks.y = ggplot2::element_blank()
         ) +
-        ggplot2::labs(fill = "Test", x = "PNT Ability Estimate") +
-        ggplot2::scale_x_continuous(minor_breaks =seq(-4,4,.5), limits = c(-4,4),
-                           breaks = seq(-4,4,.5),
-                           labels = seq(-4,4,.5))
+        ggplot2::labs(fill = "Test", x = "PNT Ability Estimate") #+
+        # This will need to be changed to accomodate new T distribution. 
+        # ggplot2::scale_x_continuous(minor_breaks =seq(-4,4,.5), limits = c(-4,4),
+        #                    breaks = seq(-4,4,.5),
+        #                    labels = seq(-4,4,.5))
       return(p)
     }

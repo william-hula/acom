@@ -40,7 +40,7 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, tes
       
       # dataframe of inputs
       pars = data.frame(a = all_items$discrimination,
-                        b = all_items$itemDifficulty,
+                        b = all_items$itemDifficulty, # CHANGE TO T SCORES 50 +/- 10
                         c = rep(1), #1PL has no guessing parameter ,
                         d = rep(0), #1PL has no innatention parameter,
                         cbGroup = rep(1))
@@ -51,29 +51,33 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, tes
       rownames(bank) <- all_items$target
       x = all_items$response
        # ability estimate using bayes modal:
-       ability = catR::thetaEst(bank, x, method = "EAP", range = c(-5, 5))
+      # 10-6 CHANGING TO T ESTIMATES
+      
+       ability = catR::thetaEst(bank, x, method = "EAP", parInt = c(5, 95, 33), priorPar = c(50,10))
+       print(ability)
        # generates the next item
        # standard error of the mean
-       sem = catR::semTheta(ability, bank, x)
+       # CHANGE FOR T-SCORE HERE
+       sem = catR::semTheta(ability, bank, x, method = "EAP", parInt = c(5, 95, 33), priorPar = c(50,10))
        
        if(IRT){
          # removes eskimo
          completed = c(completed, 49)
          
          next_item = if(length(completed)<174){
-           catR::nextItem(itemBank = bank, theta = ability, out = completed)
+           # CHANGE FOR T SCORE HERE
+           catR::nextItem(itemBank = bank, theta = ability, out = completed,
+                          method = "EAP", range = c(5, 95), priorPar = c(50,10))
          } else {
            NA
          }
        
-         print(next_item$name)
-         
+
          tmp_list = list(
          ability,
          next_item,
          sem
          )
-        
        return(tmp_list)
        
     } else if(test == "walker") {
