@@ -520,7 +520,8 @@ app_server <- function( input, output, session ) {
           notes = input$notes,
           values = values,
           irt_final = irt_final(),
-          text = get_text_summary(acc = results_data_summary(),
+          text = get_text_summary(
+                           acc = results_data_summary(),
                            ability = irt_final()$ability,
                            ci_95 = irt_final()$ci_95,
                            last_ability = irt_final()$last_ability,

@@ -8,15 +8,15 @@
 #' @export
     get_plot <- function(values, irt_final, basesize = 15){
       df <- tibble::tibble(
-        ability = seq(-4, 4, .1),
-        this_test = dnorm(seq(-4, 4, .1), irt_final$ability, irt_final$ci_95/2),
+        ability = seq(5, 95, .5),
+        this_test = dnorm(seq(5, 95, .5), irt_final$ability, irt_final$ci_95/2),
         last_test = if(!is.na(irt_final$last_ability)) {
-          dnorm(seq(-4, 4, .1), irt_final$last_ability, irt_final$last_ci_95/2)
+          dnorm(seqseq(5, 95, .5), irt_final$last_ability, irt_final$last_ci_95/2)
           } else {
             NA
           },
         first_test = if(!is.na(irt_final$first_ability)) {
-          dnorm(seq(-4, 4, .1), mean = 1, sd = .6)
+          NA #dnorm(seqseq(5, 95, .5), mean = 1, sd = .6)
           } else {
             NA
           }
@@ -38,9 +38,10 @@
               axis.text.y = ggplot2::element_blank(),
               axis.ticks.y = ggplot2::element_blank()
         ) +
-        ggplot2::labs(fill = "Test", x = "PNT Ability Estimate") +
-        ggplot2::scale_x_continuous(minor_breaks =seq(-4,4,.5), limits = c(-4,4),
-                           breaks = seq(-4,4,.5),
-                           labels = seq(-4,4,.5))
+        ggplot2::labs(fill = "Test", x = "PNT Ability Estimate") #+
+        # This will need to be changed to accomodate new T distribution. 
+        # ggplot2::scale_x_continuous(minor_breaks =seq(-4,4,.5), limits = c(-4,4),
+        #                    breaks = seq(-4,4,.5),
+        #                    labels = seq(-4,4,.5))
       return(p)
     }
