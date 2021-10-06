@@ -54,9 +54,13 @@ item_key <- items %>%
   dplyr::select(target, slide_num, itemDifficulty, walker, walker_order) %>%
   arrange(target)
 
+### thetas for generating the results histogram:
+
+thetas <- read_csv(here("dev","pnt-old", "data", "thetas_Tscaled_MAPPDn296_R03n39_2021_10_04.csv"))$mean
 
 # Saves the data as an internal data file. 
 # uncomment to update app data. 
+
 # usethis::use_data(internal = T, overwrite = T,
 #                   item_key,
 #                   items,
@@ -65,5 +69,6 @@ item_key <- items %>%
 #                   end_test_key,
 #                   enter,
 #                   response_keys,
-#                   starting_items)
+#                   starting_items, 
+#                   thetas)
 
