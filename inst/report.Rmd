@@ -13,6 +13,8 @@ header-includes:
     - \usepackage{tabu}
     - \usepackage{longtable}
     - \usepackage{float}
+    - \usepackage[default]{sourcesanspro}
+    - \usepackage[T1]{fontenc}
 ---
 
 ```{r global_options, include=FALSE}

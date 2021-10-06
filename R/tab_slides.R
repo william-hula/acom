@@ -12,7 +12,7 @@ tmp_div =  column(width = 12,
          } else if (isTruthy(values$key_val == correct_key_response)){
            icon("check-square", style = "position: absolute; right: 1px; color:grey;")
          } else {
-           #icon("circle", style = "color: grey; position: absolute; right: 5px;")
+           #icon("stop-circle", style = "color: grey; position: absolute; right: 5px;")
          }
        ),
        fluidRow(

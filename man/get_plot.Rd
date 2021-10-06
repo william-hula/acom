@@ -4,7 +4,7 @@
 \alias{get_plot}
 \title{get plot}
 \usage{
-get_plot(values, irt_final, basesize = 15)
+get_plot(values, irt_final, basesize = 18, sample_thetas = thetas)
 }
 \arguments{
 \item{values}{values}

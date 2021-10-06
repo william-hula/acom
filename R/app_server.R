@@ -178,6 +178,7 @@ app_server <- function( input, output, session ) {
   # initialize values in here so that they reset whever someone hits start. 
   observeEvent(input$start, {
     
+    # keeps track of button press 1 (error), 2 (correct)
     values$i = 1
     
     
