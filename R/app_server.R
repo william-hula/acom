@@ -666,6 +666,41 @@ app_server <- function( input, output, session ) {
     }
   )
   
+  # observer for uploading data - including error messages
+  observeEvent(input$file2,{
+    file <- input$file2
+    ext <- tools::file_ext(file$datapath)
+    # check upload
+    req(file)
+    # save upload
+    values$rescore <- read.csv(file$datapath) %>%
+      tidyr::drop_na()
+    # saves teh error messages to be put back into the modal. 
+    values$error <- if(nrow(values$rescore)==0){
+      "Error: Please include at least one scored response"
+    } else if (!all(c("item_number", "target", "response") %in% colnames(values$rescore))){
+      "Error: Column names have been changed"
+    } else if (!all(unique(values$rescore$response) == 1 | unique(values$rescore$response) == 2)){
+      "Error: please only enter 1 for correct and 2 for incorrect in the response column"
+    } else {
+      "no_error"
+    }
+    
+    # depending on the error message, allow progressing or show the error
+    if(values$error == "no_error"){
+      shinyjs::enable("score_uploaded_data")
+      shinyjs::hide("input_file_warning")
+    } else {
+      shinyjs::show("input_file_warning")
+      shinyjs::disable("score_uploaded_data")
+    }
+  })
+  # output of the dynamic error message. 
+  output$upload_error <- renderUI({
+    p(values$error, style="color:red;")
+  })
+  # scores the uploaded data, moves to the results page and shows the start over and 
+  # download report buttons
   observeEvent(input$score_uploaded_data,{
     values$rescore_list <- score_uploaded_data(values$rescore)
     removeModal()
@@ -676,12 +711,14 @@ app_server <- function( input, output, session ) {
     shinyjs::show("rescore_report")
   })
   
+  #outputs the rescored plot
   output$plot2 <-
     renderPlot({
       req(values$rescore_list)
       values$rescore_list$plot
     })
   
+  # outputs the rescored data
   output$results_table2 <-
     DT::renderDT({
       req(values$rescore_list)
@@ -696,52 +733,19 @@ app_server <- function( input, output, session ) {
       p(values$rescore_list$text)
     })
   
-  # observer for uploading data
-  observeEvent(input$file2,{
-    file <- input$file2
-    ext <- tools::file_ext(file$datapath)
-    # check upload
-    req(file)
-    # save upload
-    values$rescore <- read.csv(file$datapath) %>%
-      tidyr::drop_na()
-
-    values$error <- if(nrow(values$rescore)==0){
-      "Error: Please include at least one scored response"
-    } else if (!all(c("item_number", "target", "response") %in% colnames(values$rescore))){
-      "Error: Column names have been changed"
-    } else if (!all(unique(values$rescore$response) == 1 | unique(values$rescore$response) == 2)){
-      "Error: please only enter 1 for correct and 2 for incorrect in the response column"
-    } else {
-      "no_error"
-    }
-    
-    if(values$error == "no_error"){
-      shinyjs::enable("score_uploaded_data")
-      shinyjs::hide("input_file_warning")
-    } else {
-      shinyjs::show("input_file_warning")
-      shinyjs::disable("score_uploaded_data")
-    }
-  })
-  
-  output$upload_error <- renderUI({
-    p(values$error, style="color:red;")
-  })
-  
-  # downloading output
-  output$rescore_downloadData <- downloadHandler(
-    filename = function() {
-      paste("rescored-PNT",
-            as.character(Sys.Date()),
-            ".csv", sep = "_"
-      )
-    },
-    content = function(file) {
-      write.csv(values$rescore_list$data, file, row.names = FALSE)
-    }
-  )
-  
+  # downloading output....not currently used. 
+  # output$rescore_downloadData <- downloadHandler(
+  #   filename = function() {
+  #     paste("rescored-PNT",
+  #           as.character(Sys.Date()),
+  #           ".csv", sep = "_"
+  #     )
+  #   },
+  #   content = function(file) {
+  #     write.csv(values$rescore_list$data, file, row.names = FALSE)
+  #   }
+  # )
+  # download a report for the resscored data. 
   output$rescore_report <- downloadHandler(
     
     # For PDF output, change this to "report.pdf"

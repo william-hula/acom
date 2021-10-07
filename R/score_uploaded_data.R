@@ -83,8 +83,7 @@ score_uploaded_data <- function(uploaded_dat){
                                        y = 0,
                                        xend=ability,
                                        yend = 25), color = "darkred", size = 1.25) +
-    ggplot2::labs(x = "PNT naming ability score",
-                  caption = "Red line reflects current estimate. Shaded area reflects uncertainty in current estiate.\n The average ability for individuals with aphasia is 50, with a standard deviation of 10.") +
+    ggplot2::labs(x = "PNT naming ability score") +
     ggplot2::theme_minimal(base_size = 18) +
     ggplot2::theme(legend.position = "bottom",
                    axis.title.y = ggplot2::element_blank(),
