@@ -47,11 +47,11 @@
       # p = p + ggplot2::geom_histogram(data = tibble::tibble(thetas), ggplot2::aes(x = thetas, y=..density..), alpha = 0.4, inherit.aes = F)
       # 
       # 
-      subset_dat <- function(dat){
-        lower = irt_final$ability-irt_final$ci_95/1.96
-        upper = irt_final$ability+irt_final$ci_95/1.96
-        subset(dat,thetas>lower&thetas<upper)
-      }
+      # subset_dat <- function(dat){
+      #   lower = irt_final$ability-irt_final$ci_95/1.96
+      #   upper = irt_final$ability+irt_final$ci_95/1.96
+      #   subset(dat,thetas>lower&thetas<upper)
+      # }
       
       q = tibble::tibble(thetas) %>%
         ggplot2::ggplot(

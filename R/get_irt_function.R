@@ -54,7 +54,6 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, tes
       # 10-6 CHANGING TO T ESTIMATES
       
        ability = catR::thetaEst(bank, x, method = "EAP", parInt = c(5, 95, 33), priorPar = c(50,10))
-       print(ability)
        # generates the next item
        # standard error of the mean
        # CHANGE FOR T-SCORE HERE

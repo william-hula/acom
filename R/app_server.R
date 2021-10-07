@@ -12,13 +12,6 @@ app_server <- function( input, output, session ) {
   ########################## Initialize reactive values ##########################
   # ------------------------------------------------------------------------------
   ################################################################################
-  #establishes plot loading 
-  w <- waiter::Waiter$new(
-    id = "plot",
-    html = waiter::spin_loader(), 
-    color = "white"
-  )
-  
   # reactiveValues is a list where elements of the list can change
   values = reactiveValues()
   values$item_difficulty <- items #items...see observe #dataframe of potential values
@@ -597,7 +590,6 @@ app_server <- function( input, output, session ) {
   ################################################################################
   # plot
   output$plot <- renderPlot({# Fergadiotis, 2019
-    w$show()
     req(irt_final())
     get_plot(values = values, irt_final = irt_final())
   })
@@ -639,41 +631,54 @@ app_server <- function( input, output, session ) {
     showModal(modalDialog(
       div(
         h3("Scoring an offline or completed test"),
-        p("This will be instructions about scoring an offline test or re-estimating
-          ability and stuff after modifying existing test output."),
-        p("We will need to be clear about what the format of the .csv is and 
-          have an effective validation for the format of any uploaded .csv files."),
+        p("To score an offline or previously completed test, download the blank spreadsheet
+          below."),
+        p("Enter 1 for error/incorrect and 2 for correct in the response column."),
+        p("If other responses are entered or additional changes made to the spreadsheet, 
+          rescoring may not work."),
+        p("You have to upload a .csv file before you can hit ok."),
         downloadButton("downloadEmpty", "Download Blank Spreadsheet"),
         fileInput("file2", "Upload offline or re-scored data", accept = ".csv"),
+        shinyjs::hidden(
+          div(id="input_file_warning", uiOutput("upload_error"))
+        )
       ),
       footer = tagList(
         modalButton("Cancel"),
-        actionButton("score_uploaded_data", "OK")
+        shinyjs::disabled(
+          actionButton("score_uploaded_data", "OK")
+        )
       ),
       easyClose = F,
       size = "m"
     ))
   })
   
-  observe({
-    if(is.null(input$file2)){
-      shinyjs::disable("score_uploaded_data")
-    } else {
-      shinyjs::enable("score_uploaded_data")
+  # downloading empty file
+  output$downloadEmpty <- downloadHandler(
+    filename = function() {
+      "pnt-cat-blank.csv"
+    },
+    content = function(file) {
+      write.csv(items %>% 
+                  dplyr::select(item_number, target, response = key),
+                file, row.names = FALSE)
     }
-  })
+  )
   
   observeEvent(input$score_uploaded_data,{
     values$rescore_list <- score_uploaded_data(values$rescore)
     removeModal()
     updateNavbarPage(session, "mainpage",
                      selected = "Results2")
+    shinyjs::show("start_over")
+    #shinyjs::show("rescore_downloadData")
+    shinyjs::show("rescore_report")
   })
   
   output$plot2 <-
     renderPlot({
       req(values$rescore_list)
-      #w$show()
       values$rescore_list$plot
     })
   
@@ -691,30 +696,83 @@ app_server <- function( input, output, session ) {
       p(values$rescore_list$text)
     })
   
-  # downloading output
-  output$downloadEmpty <- downloadHandler(
-    filename = function() {
-      "pnt-cat-blank.csv"
-    },
-    content = function(file) {
-      write.csv(items %>% 
-                  dplyr::select(item_number, target, key),
-                file, row.names = FALSE)
-    }
-  )
-  
   # observer for uploading data
   observeEvent(input$file2,{
-    
     file <- input$file2
     ext <- tools::file_ext(file$datapath)
     # check upload
     req(file)
-    validate(need(ext == "csv", "Please upload a csv file"))
     # save upload
     values$rescore <- read.csv(file$datapath) %>%
-      tidyr::drop_na(key)
+      tidyr::drop_na()
+
+    values$error <- if(nrow(values$rescore)==0){
+      "Error: Please include at least one scored response"
+    } else if (!all(c("item_number", "target", "response") %in% colnames(values$rescore))){
+      "Error: Column names have been changed"
+    } else if (!all(unique(values$rescore$response) == 1 | unique(values$rescore$response) == 2)){
+      "Error: please only enter 1 for correct and 2 for incorrect in the response column"
+    } else {
+      "no_error"
+    }
     
+    if(values$error == "no_error"){
+      shinyjs::enable("score_uploaded_data")
+      shinyjs::hide("input_file_warning")
+    } else {
+      shinyjs::show("input_file_warning")
+      shinyjs::disable("score_uploaded_data")
+    }
   })
+  
+  output$upload_error <- renderUI({
+    p(values$error, style="color:red;")
+  })
+  
+  # downloading output
+  output$rescore_downloadData <- downloadHandler(
+    filename = function() {
+      paste("rescored-PNT",
+            as.character(Sys.Date()),
+            ".csv", sep = "_"
+      )
+    },
+    content = function(file) {
+      write.csv(values$rescore_list$data, file, row.names = FALSE)
+    }
+  )
+  
+  output$rescore_report <- downloadHandler(
+    
+    # For PDF output, change this to "report.pdf"
+    filename = "rescore_report.pdf",
+    content = function(file) {
+      withProgress(message = 'Rendering, please wait!', {
+        # Copy the report file to a temporary directory before processing it, in
+        # case we don't have write permissions to the current working dir (which
+        # can happen when deployed).
+        tempReport <- system.file("rescore_report.Rmd", package = "pnt")#file.path(tempdir(), "report.Rmd")
+        file.copy("rescore_report.Rmd", tempReport, overwrite = TRUE)
+        
+        # Set up parameters to pass to Rmd document
+        params <- list(
+          values = values$rescore_list,
+          download_time = Sys.time()
+          )
+        
+        # Knit the document, passing in the `params` list, and eval it in a
+        # child of the global environment (this isolates the code in the document
+        # from the code in this app).
+        rmarkdown::render(tempReport, output_file = file,
+                          params = params,
+                          envir = new.env(parent = globalenv())
+        )
+      })
+    }
+  )
+  
+  ################################## END RESCORE MODULE ########################
+  # ----------------------------------------------------------------------------
+  ##############################################################################
   # end of app
 }

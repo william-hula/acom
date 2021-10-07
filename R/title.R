@@ -24,6 +24,16 @@ pagetitle <- function(){
                             style = "background-color:#f8f9fa; border:0px;")
            ),
            shinyjs::hidden(
+             downloadButton("rescore_report",
+                            "Download Report",
+                            style = "background-color:#f8f9fa; border:0px;")
+           ),
+           shinyjs::hidden(
+             downloadButton("rescore_downloadData",
+                            "Download results",
+                            style = "background-color:#f8f9fa; border:0px;")
+           ),
+           shinyjs::hidden(
              actionButton("start_over",
                           "Start Over",
                           icon = icon("undo-alt"),
