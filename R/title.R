@@ -23,16 +23,26 @@ pagetitle <- function(){
                             "Download results",
                             style = "background-color:#f8f9fa; border:0px;")
            ),
-           actionButton("start_over",
-                        "Start Over",
-                        icon = icon("undo-alt"),
-                        style = "background-color:#f8f9fa; border:0px;"),
+           shinyjs::hidden(
+             actionButton("start_over",
+                          "Start Over",
+                          icon = icon("undo-alt"),
+                          style = "background-color:#f8f9fa; border:0px;")
+           ),
+           shinyjs::hidden(
+             actionButton(
+             inputId = "help",
+             label = "Help",
+             icon = icon("question-circle"),
+             style = "background:transparent; border:none;"
+             )
+           ),
            actionButton(
              inputId = "info",
              label = "About",
              icon = icon("info-circle"),
              style = "background:transparent; border:none;"
-           ),
+          ),
            actionButton(
              inputId='source',
              label="",#Source Code",

@@ -116,6 +116,7 @@ intro_tab_div <- function(){
                                    tags$ul(
                                      tags$li("Click Start Practice to get started"),
                                      tags$li("Press 1 for incorrect and 2 for correct"),
+                                     tags$li("A 1 or 2 will appear in the top-right of the screen to show the key entered."),
                                      tags$li("Remember to score the first complete response"),
                                      tags$li("Press Enter to advance the screen"),
                                    ),br(),

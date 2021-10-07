@@ -187,6 +187,8 @@ app_server <- function( input, output, session ) {
                         ifelse(input$numitems == "walker", FALSE,
                                TRUE)
     )
+    shinyjs::show("start_over")
+    shinyjs::show("help")
     # go to practice slides
     updateNavbarPage(session, "mainpage",
                      selected = "Practice")
@@ -572,15 +574,23 @@ app_server <- function( input, output, session ) {
       size = "l"
     ))
   })
-  # readme modal. probabily will be deleted
-  # observeEvent(input$dev, {
-  #   showModal(modalDialog(
-  #     tags$iframe(src="www/README.html", width = "100%",
-  #                 height = "650px", frameBorder = "0"),
-  #     size = "l",
-  #     easyClose = TRUE,
-  #   ))
-  # })
+# Help modal
+  observeEvent(input$help, {
+    showModal(modalDialog(
+      div(
+        h5("Instructions:"),
+        tags$ul(
+          tags$li("Click Start Practice to get started"),
+          tags$li("Press 1 for incorrect and 2 for correct"),
+          tags$li("A 1 or 2 will appear in the top-right of the screen to show the key entered."),
+          tags$li("Remember to score the first complete response"),
+          tags$li("Press Enter to advance the screen"),
+        )
+      ),
+      size = "m",
+      easyClose = TRUE,
+    ))
+  })
   
   ################################## PLOT ######################################## 
   # ------------------------------------------------------------------------------
