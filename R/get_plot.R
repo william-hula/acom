@@ -48,8 +48,8 @@
       # 
       # 
       subset_dat <- function(dat){
-        lower = irt_final$ability-irt_final$ci_95/2
-        upper = irt_final$ability+irt_final$ci_95/2
+        lower = irt_final$ability-irt_final$ci_95/1.96
+        upper = irt_final$ability+irt_final$ci_95/1.96
         subset(dat,thetas>lower&thetas<upper)
       }
       
@@ -60,8 +60,8 @@
         ggplot2::geom_histogram(alpha = 0.4, binwidth = 1) +
         #ggplot2::geom_histogram(alpha = 0.2, fill = "blue3", binwidth = 1, data = subset_dat(tibble::tibble(thetas))) +
         ggplot2::annotate("rect",
-                          xmin = irt_final$ability-irt_final$ci_95/2,
-                          xmax = irt_final$ability+irt_final$ci_95/2,
+                          xmin = irt_final$ability-irt_final$ci_95/1.96,
+                          xmax = irt_final$ability+irt_final$ci_95/1.96,
                           ymin = 0,
                           ymax = 25,
                           alpha = .15,

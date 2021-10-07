@@ -248,11 +248,9 @@ app_server <- function( input, output, session ) {
   })
   
   
-  # records the sem input
-  # THIS IS WONG ALEX PLEASE FIX
+  # records the inputted 95% CI width to SEM
   observeEvent(input$ci_95,{
     values$min_sem <- input$ci_95/1.96
-    print(values$min_sem)
   })
   
   
@@ -417,7 +415,6 @@ app_server <- function( input, output, session ) {
       paste0(input$numitems, " items")
     }
     
-    # ALEX 95 CI???
     tmp = dplyr::bind_rows(values$item_difficulty) %>%
       dplyr::mutate(ci_95 = sem*1.96,
                     precision = precision,
@@ -431,7 +428,6 @@ app_server <- function( input, output, session ) {
     return(tmp)
   })
   
-  # ALEX 95% CI HERE TOO
   # holds the mean accuracy
   results_data_summary <- reactive({
     req(input$mainpage=="Results")

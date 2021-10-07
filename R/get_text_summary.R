@@ -26,7 +26,7 @@ get_text_summary <- function(
         "%. ",
         "The final IRT ability estimate is ",
         round(ability, 2),
-        " [95% CI: ", round(ability - ci_95,2), ", ", round(ability + ci_95,2), "]. ",
+        " [95% CI: ", round(ability - ci_95/1.96,2), ", ", round(ability + ci_95/1.96,2), "]. ",
         "This naming ability estimate is in the ",
         round(pnorm(ability, 50, 10)*100,1), " percentile of naming ability."
         ,sep = "")
@@ -37,7 +37,7 @@ get_text_summary <- function(
           summary,
           "Last assessment, the final IRT ability estimate was ",
           round(last_ability,2),
-          " [95% CI: ", round(ability - last_ci_95,2), ", ", round(ability + last_ci_95,2), "]. ",
+          " [95% CI: ", round(ability - last_ci_95/1.96,2), ", ", round(ability + last_ci_95/1.96,2), "]. ",
           "The naming ability estimate was in the ",
           round(pnorm(last_ability, 50, 10)*100,1), " percentile."
           ,sep = "")
@@ -49,7 +49,7 @@ get_text_summary <- function(
             summary,
             " In the first assessment, the final IRT ability estimate was ",
             round(first_ability,2),
-            " [95% CI: ", round(ability - last_ci_95,2), ", ", round(ability + last_ci_95,2), "]. ",
+            " [95% CI: ", round(ability - last_ci_95/1.96,2), ", ", round(ability + last_ci_95/1.96,2), "]. ",
              "The first naming ability estimate was in the ",
             round(pnorm(first_ability, 50, 10)*100,1), " percentile."
             ,sep = "")
