@@ -27,6 +27,20 @@ pagetitle <- function(){
                         "Start Over",
                         icon = icon("undo-alt"),
                         style = "background-color:#f8f9fa; border:0px;"),
+           actionButton(
+             inputId = "info",
+             label = "About",
+             icon = icon("info-circle"),
+             style = "background:transparent; border:none;"
+           ),
+           actionButton(
+             inputId='source',
+             label="",#Source Code",
+             icon = icon("github"),
+             onclick ="window.open('https://github.com/rbcavanaugh/pnt', '_blank')",
+             style = "background:transparent; border:none;"
+             
+           ),
            style = "position: absolute; right: 5px; top: 8px;")
      )
     }

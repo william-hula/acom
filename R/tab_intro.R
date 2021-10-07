@@ -4,23 +4,36 @@ intro_tab_div <- function(){
   
   column(width = 12,
          fluidRow(
-           column(align = "center", width = 12,
-                  div(
-                    style = "width:50%;",
-                    div(
-                      h5(
-                        "Welcome to the computer adaptive version of the",
-                        tags$a(href = "https://mrri.org/philadelphia-naming-test/",
-                               HTML("Philadelphia&nbsp;Naming&nbsp;Test."),
-                               target = "_blank", style = "text-decoration: underline;cursor: pointer;")
-                      )
-                    )
-                  )
-           )
-         ),br(),
-         fluidRow(
            column(width = 12,
               tabsetPanel(type="hidden", id = "glide",
+                  tabPanelBody(value = "glide0",
+                               fluidRow(
+                                 column(align = "center", width = 12,
+                                        div(
+                                          style = "width:50%;",
+                                          div(
+                                            h5(
+                                              "Welcome to the computer adaptive version of the",
+                                              tags$a(href = "https://mrri.org/philadelphia-naming-test/",
+                                                     HTML("Philadelphia&nbsp;Naming&nbsp;Test."),
+                                                     target = "_blank", style = "text-decoration: underline;cursor: pointer;")
+                                            )
+                                          )
+                                        )
+                                 )
+                               ),br(),
+                               fluidRow(
+                                   column(width = 10, offset = 1,
+                                          includeMarkdown(
+                                                system.file("app/www/intro.md",
+                                                 package = "PNT.CAT")
+                                   ),
+                                   div(align="center",
+                                       actionButton("administer_test", "Administer PNT"),
+                                       actionButton("score_test", "Score offline test")
+                                   ))
+                               )
+                  ),
                   tabPanelBody(value = "glide1",
                            div(align = "center",
                                div(style="display: inline-block; text-align: left;",
@@ -29,8 +42,9 @@ intro_tab_div <- function(){
                                    textInput("notes", "Enter any notes"),
                                    fileInput("file1", "Upload previous results", accept = ".csv"),
                                    div(align="center",
-                                       actionButton("glide_next1", "Next"), br(), br(),
-                                       actionButton("score_test", "Score offline/rescored test (temp location)")
+                                       actionButton("glide_back0", "Back"),
+                                       actionButton("glide_next1", "Next")
+                                       
                                        )
                                    
                                    
@@ -56,10 +70,10 @@ intro_tab_div <- function(){
                                    # sets SEM precision. disabled if SEM not selected in numitems radio buttons
                                    shinyjs::hidden(
                                      sliderInput("ci_95", "Minimum acceptable 95% CI",
-                                                 min = 0.5,
-                                                 max = 1,
-                                                 step = 0.05,
-                                                 value = 0.5)
+                                                 min = 2,
+                                                 max = 10,
+                                                 step = 0.5,
+                                                 value = 4)
                                      ),
                                    # randomize PNT order if doing the full 175 item test?
                                    shinyjs::hidden(
@@ -98,6 +112,7 @@ intro_tab_div <- function(){
                   tabPanelBody(value = "glide3",
                            div(align = "center",
                                div(style="display: inline-block; text-align: left;",
+                                   h5("Instructions:"),
                                    tags$ul(
                                      tags$li("Click Start Practice to get started"),
                                      tags$li("Press 1 for incorrect and 2 for correct"),

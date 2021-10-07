@@ -1,4 +1,4 @@
-PNT-CAT (beta)
+PNT.CAT (beta)
 ================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -12,7 +12,10 @@ Beta-version of computer adaptive philadelphia naming test
 
 There are a number of ways to try out the current version of the app.
 
-1.  via `remotes::install_github()`
+1.  The app is now online at
+    <https://aphasia-apps.shinyapps.io/PNT-CAT/>
+
+2.  The app can be installed locally via `remotes::install_github()`
 
 *Note: It’s likely that installing the package will prompt you to update
 packages on your local machine. This may be necessary if you have much
@@ -32,10 +35,10 @@ Then, run the app using the built in function
 
 ``` r
 library(pnt)
-pnt::runPNT()
+PNT.CAT::run_app()
 ```
 
-2.  via `shiny::runGitHub()`
+3.  via `shiny::runGitHub()`
 
 Necessary packages must be installed first:
 
@@ -53,9 +56,6 @@ shiny::runGitHub("aphasia-apps/pnt")
 
 *Note: If you get any errors about missing a package, install it,
 restart your session, and try again*
-
-3.  Access the website via the URL posted here:
-    <https://aphasia-apps.shinyapps.io/PNT-CAT/>
 
 4.  Clone the repository and run locally.
 

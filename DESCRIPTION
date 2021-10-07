@@ -1,9 +1,25 @@
 Package: PNT.CAT
-Title: Philadelphia Naming Test - Computer Adaptive Test
+Title: A free, open source online web-app for the Computer Adaptive Philadelphia Naming Test. 
 Version: 0.0.0.9000
-Authors@R: person('AUTHOR_FIRST', 'AUTHOR_LAST', email = 'AUTHOR@MAIL.COM', role = c('cre', 'aut'))
-Description: This is a package description.
-License: What license is it under?
+Date: 2021-10-6
+Authors@R: 
+    c(
+    person(given = 'Robert',
+           family = 'Cavanaugh',
+           email = 'rob.cavanaugh@pitt.edu',
+           role = c('cre', 'aut')),
+    person(given = "Alexander",
+           family = "Swiderski",
+           role = "aut"),
+    person(given = "G",
+           family = "F",
+           role = "aut"),
+    person(given = "William D.",
+           family = "Hula",
+           role = "aut")
+    )
+Description: A Shiny web-app for administering and scoring the computer adaptive Philadelphia Naming Test.
+License: AGPL (>= 3)
 Imports: 
     config (>= 0.3.1),
     golem (>= 0.3.1),

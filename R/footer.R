@@ -15,16 +15,16 @@ footer_div <- function(){
            ),
            actionButton(
              inputId = "info",
-             label = "More Information",
+             label = "About this app",
              icon = icon("info-circle"),
              style = "background:transparent; border:none;"
            ),
-           actionButton(
-             inputId = "dev",
-             label = "Development Status",
-             icon = icon("code-branch"),
-             style = "background:transparent; border:none;"
-           ),
+           # actionButton(
+           #   inputId = "dev",
+           #   label = "about",
+           #   icon = icon("code-branch"),
+           #   style = "background:transparent; border:none;"
+           # ),
            uiOutput("test_inputs"),
          )
       )

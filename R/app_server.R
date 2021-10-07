@@ -24,7 +24,7 @@ app_server <- function( input, output, session ) {
   values$item_difficulty <- items #items...see observe #dataframe of potential values
   values$i = 0 # this is the counter to track the slide number
   values$test_length <- NULL # number of items to test
-  values$irt_out <- list(0, 0, 1) # will be overwritten if IRT 
+  values$irt_out <- list(0, 0, 11) # will be overwritten if IRT 
   values$min_sem <- NULL # sem precision
   values$exclude_previous <- NULL
   values$previous <- NULL # previous data if uploaded
@@ -56,6 +56,16 @@ app_server <- function( input, output, session ) {
   ################################################################################
   
   ###########################Intro tab next and back############################
+  
+  # includes a few other actions when moving to the last page. 
+  observeEvent(input$administer_test,{
+    updateTabsetPanel(session, "glide", "glide1")
+  })
+  
+  observeEvent(input$glide_back0,{
+    updateTabsetPanel(session, "glide", "glide0")
+  })
+  
   observeEvent(input$glide_next1,{
     updateTabsetPanel(session, "glide", "glide2")
   })
@@ -150,7 +160,17 @@ app_server <- function( input, output, session ) {
                        selected = "Results")
     }
   })
+  ################################ Displaying key inputs #######################
   
+  output$key_feedback_practice <- renderText({
+    req(values$key_val)
+    values$key_val
+  })
+  
+  output$key_feedback_slides <- renderText({
+    req(values$key_val)
+    values$key_val
+  })
   
   ################################ START PRACTICE ##############################
   observeEvent(input$start_practice,{
@@ -159,7 +179,7 @@ app_server <- function( input, output, session ) {
     shinyjs::runjs(values$sound)
     values$i = 1 # reset values$i
     values$n = 130 # reset 
-    values$keyval = NULL # keeps track of button press 1 (error), 2 (correct)
+    values$key_val = NULL # keeps track of button press 1 (error), 2 (correct)
     values$exclude_previous <- input$exclude_previous
     # only use IRT function if NOT 175 items
     # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
@@ -218,12 +238,12 @@ app_server <- function( input, output, session ) {
     if (isTRUE(getOption("shiny.testmode"))) {
       shinyjs::reset("keys")
     }
-    # reset keyval
-    values$keyval = NULL # keeps track of button press 1 (error) or 2 (correct)
-    values$irt_out <- list(0, 0, 1) # reset saved data just in case. 
+    values$irt_out <- list(0, 0, 11) # reset saved data just in case. 
     #play a sound...not working right now :(
     shinyjs::runjs("document.getElementById('audio').play();")
     # got to slides
+    # reset keyval
+    values$key_val = NULL # keeps track of button press 1 (error) or 2 (correct)
     updateNavbarPage(session, "mainpage", selected = "Assessment")
   })
   
@@ -232,6 +252,7 @@ app_server <- function( input, output, session ) {
   # THIS IS WONG ALEX PLEASE FIX
   observeEvent(input$ci_95,{
     values$min_sem <- input$ci_95/1.96
+    print(values$min_sem)
   })
   
   
@@ -549,21 +570,21 @@ app_server <- function( input, output, session ) {
   # More information modal
   observeEvent(input$info, {
     showModal(modalDialog(
-      tags$iframe(src="www/info.html", width = "100%",
+      tags$iframe(src="www/about.html", width = "100%",
                   height = "650px", frameBorder = "0"),
       easyClose = TRUE,
       size = "l"
     ))
   })
   # readme modal. probabily will be deleted
-  observeEvent(input$dev, {
-    showModal(modalDialog(
-      tags$iframe(src="www/README.html", width = "100%",
-                  height = "650px", frameBorder = "0"),
-      size = "l",
-      easyClose = TRUE,
-    ))
-  })
+  # observeEvent(input$dev, {
+  #   showModal(modalDialog(
+  #     tags$iframe(src="www/README.html", width = "100%",
+  #                 height = "650px", frameBorder = "0"),
+  #     size = "l",
+  #     easyClose = TRUE,
+  #   ))
+  # })
   
   ################################## PLOT ######################################## 
   # ------------------------------------------------------------------------------

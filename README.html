@@ -25,7 +25,7 @@ body {
 
 <body>
 
-<h1 id="pnt-cat-beta">PNT-CAT (beta)</h1>
+<h1 id="pntcat-beta">PNT.CAT (beta)</h1>
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 <!-- badges: start -->
@@ -36,7 +36,8 @@ body {
 <p>Beta-version of computer adaptive philadelphia naming test</p>
 <p>There are a number of ways to try out the current version of the app.</p>
 <ol style="list-style-type: decimal">
-<li>via <code>remotes::install_github()</code></li>
+<li><p>The app is now online at <a href="https://aphasia-apps.shinyapps.io/PNT-CAT/">https://aphasia-apps.shinyapps.io/PNT-CAT/</a></p></li>
+<li><p>The app can be installed locally via <code>remotes::install_github()</code></p></li>
 </ol>
 <p><em>Note: It’s likely that installing the package will prompt you to update packages on your local machine. This may be necessary if you have much older versions of some packages installed (e.g. the {bslib} package). The number of packages to update is large, as the current app uses quite a few {tidyverse} apps which have a number of dependencies. Please raise an issue in github if there are any issues downloading.</em></p>
 <p>First, download the package:</p>
@@ -44,8 +45,8 @@ body {
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;aphasia-apps/pnt&quot;</span>)</span></code></pre></div>
 <p>Then, run the app using the built in function</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pnt)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pnt<span class="sc">::</span><span class="fu">runPNT</span>()</span></code></pre></div>
-<ol start="2" style="list-style-type: decimal">
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>PNT.CAT<span class="sc">::</span><span class="fu">run_app</span>()</span></code></pre></div>
+<ol start="3" style="list-style-type: decimal">
 <li>via <code>shiny::runGitHub()</code></li>
 </ol>
 <p>Necessary packages must be installed first:</p>
@@ -55,9 +56,8 @@ body {
 <p>Then the app can be run straight from Github</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>shiny<span class="sc">::</span><span class="fu">runGitHub</span>(<span class="st">&quot;aphasia-apps/pnt&quot;</span>)</span></code></pre></div>
 <p><em>Note: If you get any errors about missing a package, install it, restart your session, and try again</em></p>
-<ol start="3" style="list-style-type: decimal">
-<li><p>Access the website via the URL posted here: <a href="https://rb-cavanaugh.shinyapps.io/pnt-cat/">https://rb-cavanaugh.shinyapps.io/pnt-cat/</a></p></li>
-<li><p>Clone the repository and run locally.</p></li>
+<ol start="4" style="list-style-type: decimal">
+<li>Clone the repository and run locally.</li>
 </ol>
 <!-- -->
 

@@ -57,14 +57,14 @@
         ggplot2::ggplot(
           ggplot2::aes(x = thetas)
           ) + 
-        ggplot2::geom_histogram(alpha = 0.25, binwidth = 1) +
+        ggplot2::geom_histogram(alpha = 0.4, binwidth = 1) +
         #ggplot2::geom_histogram(alpha = 0.2, fill = "blue3", binwidth = 1, data = subset_dat(tibble::tibble(thetas))) +
         ggplot2::annotate("rect",
                           xmin = irt_final$ability-irt_final$ci_95/2,
                           xmax = irt_final$ability+irt_final$ci_95/2,
                           ymin = 0,
                           ymax = 25,
-                          alpha = .1,
+                          alpha = .15,
                           fill = "blue3") +
         ggplot2::geom_segment(ggplot2::aes(x=irt_final$ability,
                                            y = 0,
