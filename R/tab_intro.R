@@ -26,7 +26,7 @@ intro_tab_div <- function(){
                                    column(width = 10, offset = 1,
                                           includeMarkdown(
                                                 system.file("app/www/intro.md",
-                                                 package = "PNT.CAT")
+                                                 package = "pnt")
                                    ),
                                    div(align="center",
                                        actionButton("administer_test", "Administer PNT"),

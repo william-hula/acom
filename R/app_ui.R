@@ -42,7 +42,7 @@ app_ui <- function(request) {
                               #                title = "shinyCAT",
                               #                icon = "www/cat.png"),
                               tags$audio(id = "audio",
-                                         src = system.file("app", "www", "click.wav",package = "PNT.CAT"),
+                                         src = system.file("app", "www", "click.wav",package = "pnt"),
                                          type = "audio/wav",
                                          style = "display:none;"),
                               intro_tab_div()
@@ -106,7 +106,7 @@ golem_add_external_resources <- function(){
     favicon(),
     bundle_resources(
       path = app_sys('app/www'),
-      app_title = 'PNT.CAT'
+      app_title = 'pnt'
     )
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert() 

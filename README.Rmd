@@ -1,5 +1,5 @@
 ---
-title: PNT.CAT (beta)
+title: "PNT-CAT: A free, open-source web-app for administering the computer adative Philadelphia Naming Test"
 output:
   github_document:
     keep_html: true
@@ -35,7 +35,7 @@ Then, run the app using the built in function
 
 ```{r, eval = F}
 library(pnt)
-PNT.CAT::run_app()
+pnt::run_app()
 ```
 
 3. via `shiny::runGitHub()`

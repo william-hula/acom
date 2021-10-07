@@ -529,7 +529,7 @@ app_server <- function( input, output, session ) {
         # Copy the report file to a temporary directory before processing it, in
         # case we don't have write permissions to the current working dir (which
         # can happen when deployed).
-        tempReport <- system.file("report.Rmd", package = "PNT.CAT")#file.path(tempdir(), "report.Rmd")
+        tempReport <- system.file("report.Rmd", package = "pnt")#file.path(tempdir(), "report.Rmd")
         file.copy("report.Rmd", tempReport, overwrite = TRUE)
         
         # Set up parameters to pass to Rmd document

@@ -15,7 +15,6 @@ practice_tab_div <- function(values){
              column(width = 12, align = "center",
                     # system.file add to filepath. 
                     tags$img(src = paste0("slides/Slide", values$i, ".jpeg"),
-                               #system.file(paste0("app/www/slides/Slide", values$i, ".jpeg"), package = "PNT.CAT"),
                       style = "height:80vh;"),
                     # start button, at the end of the practice slides
                     if(values$i == 13){

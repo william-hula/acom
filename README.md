@@ -1,4 +1,5 @@
-PNT.CAT (beta)
+PNT-CAT: A free, open-source web-app for administering the computer
+adative Philadelphia Naming Test
 ================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -35,7 +36,7 @@ Then, run the app using the built in function
 
 ``` r
 library(pnt)
-PNT.CAT::run_app()
+pnt::run_app()
 ```
 
 3.  via `shiny::runGitHub()`
