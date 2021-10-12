@@ -70,19 +70,21 @@ score_uploaded_data <- function(uploaded_dat){
     ggplot2::ggplot(
       ggplot2::aes(x = thetas)
     ) + 
-    ggplot2::geom_histogram(alpha = 0.4, binwidth = 1) +
+    #ggplot2::geom_histogram(alpha = 0.4, binwidth = 1) +
+    ggplot2::geom_density(alpha = 0.4, fill = "lightgrey", adjust = 1.5) +
     #ggplot2::geom_histogram(alpha = 0.2, fill = "blue3", binwidth = 1, data = subset_dat(tibble::tibble(thetas))) +
     ggplot2::annotate("rect",
                       xmin = ability-ci_95/1.96,
                       xmax = ability+ci_95/1.96,
                       ymin = 0,
-                      ymax = 25,
+                      ymax = 0.05,#25,
                       alpha = .15,
                       fill = "blue3") +
     ggplot2::geom_segment(ggplot2::aes(x=ability,
                                        y = 0,
                                        xend=ability,
-                                       yend = 25), color = "darkred", size = 1.25) +
+                                       yend = 0.05),#25),
+                          color = "darkred", size = 1.25) +
     ggplot2::labs(x = "PNT naming ability score") +
     ggplot2::theme_minimal(base_size = 18) +
     ggplot2::theme(legend.position = "bottom",

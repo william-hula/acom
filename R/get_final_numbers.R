@@ -12,23 +12,13 @@ get_final_numbers <- function(out,
     sem = out[[3]],
     ci_95 = out[[3]]*1.96,
     last_ability = NA,
-    last_ci_95 = NA,
-    first_ability = NA,
-    first_ci_95 = NA
+    last_ci_95 = NA
   )
   
   if(!is.null(previous)){
-    if(num_previous==1){
-      df$last_ability = previous[previous$ci_95==min(previous$ci_95),]$ability
-      df$last_ci_95 = min(previous$ci_95)
-    } else if (num_previous == 2){
-      prev_dat = previous %>% dplyr::filter(date == max(date))
-      df$last_ability = prev_dat[prev_dat$ci_95==min(prev_dat$ci_95),]$ability
-      df$last_ci_95 = min(prev_dat$ci_95)
-      first_dat = previous %>% dplyr::filter(date == min(date))
-      df$first_ability = first_dat[first_dat$ci_95==min(first_dat$ci_95),]$ability
-      df$first_ci_95 = min(first_dat$ci_95)
+      df$last_ability = previous[previous$order==max(previous$order, na.rm = T),]$ability
+      df$last_ci_95 = previous[previous$order==max(previous$order, na.rm = T),]$ci_95
     }
-  }
+
   return(df)
 }
