@@ -37,10 +37,20 @@ app_server <- function( input, output, session ) {
     req(file)
     validate(need(ext == "csv", "Please upload a csv file"))
     # save upload
-    values$previous <- read.csv(file$datapath) %>%
-      tidyr::drop_na(key)
-    # assign number of previous values
-    values$num_previous <- length(unique(values$previous$date))
+    values$previous <- read.csv(file$datapath) 
+    
+    if ("key" %in% colnames(values$previous)) {
+      values$previous <- values$previous %>%
+        tidyr::drop_na(key)
+      # assign number of previous values
+      values$num_previous <- length(unique(values$previous$date))
+    } else {
+      showNotification("Error: Incompatible file uploaded; please upload another", type = "error")
+      values$previous <- NULL
+      shinyjs::reset("file1")
+    }
+   
+    
     
   })
   
@@ -215,6 +225,7 @@ app_server <- function( input, output, session ) {
       # regular old CAT 
       if(isTruthy(values$IRT)){
       # samples one of four first possible items, unless used previously...
+      # returns the first item number
       get_first_item(all_items = values$item_difficulty,
                      previous = values$previous,
                      exclude_previous = values$exclude_previous)
@@ -510,7 +521,10 @@ app_server <- function( input, output, session ) {
       )
     },
     content = function(file) {
-      write.csv(get_data_for_download(dat = results_data_long()), file, row.names = FALSE)
+      write.csv(get_data_for_download(dat = results_data_long(),
+                                      in_progress = input$mainpage,
+                                      current_item = values$irt_out[[2]]$name,
+                                      IRT = values$IRT), file, row.names = FALSE)
     }
   )
   
