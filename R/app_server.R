@@ -304,6 +304,11 @@ app_server <- function( input, output, session ) {
       } else if(is.null(values$key_val)){ 
         # require a key press
         showNotification("Enter a score", type = "error")
+        # Remove tank from practice items
+      } else if (values$i == 5){
+        shinyjs::runjs("document.getElementById('audio').play();")
+        #js$click_sound()
+        values$i = values$i + 2
         # as long as there's a response or it's an insturction slide...
       } else {
         shinyjs::runjs("document.getElementById('audio').play();")
