@@ -9,7 +9,6 @@ irt_function(
   IRT = T,
   exclude_previous = F,
   previous,
-  test = NA,
   exclude_eskimo = T
 )
 }
@@ -21,8 +20,6 @@ irt_function(
 \item{exclude_previous}{like name}
 
 \item{previous}{prev if}
-
-\item{test}{test}
 }
 \description{
 irt magic function

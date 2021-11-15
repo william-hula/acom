@@ -25,11 +25,6 @@ app_ui <- function(request) {
       
       navbarPage(title = pagetitle(),
                  id = "mainpage",
-                 # footer = tags$div(
-                 #   id = "footer_id",
-                 #   class = "footer",
-                 #   footer_div()
-                 # ),
                  theme = minimal_theme(),
                  
                  ############################ Instructions ############################## 
@@ -76,7 +71,7 @@ app_ui <- function(request) {
       ),
       
       # adjusting for footer. 
-      br(), br(), br(), br(), br(), 
+      # br(), br(), br(), br(), br(), 
       #end of UI   
     )
   )

@@ -4,7 +4,7 @@
 \alias{get_data_for_download}
 \title{gets data for download.}
 \usage{
-get_data_for_download(dat, in_progress, current_item, IRT = T)
+get_data_for_download(values, in_progress)
 }
 \arguments{
 \item{dat}{}

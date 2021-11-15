@@ -8,6 +8,7 @@
 #' @export
     get_plot <- function(values, irt_final, basesize = 18, sample_thetas = thetas){
       
+      
       thetas = c(thetas, 80, 20)
       q = tibble::tibble(thetas) %>%
         ggplot2::ggplot(
@@ -78,7 +79,7 @@
       }
       # This will need to be changed to accomodate new T distribution. 
        
-      
+
       
       
       

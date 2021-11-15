@@ -11,9 +11,8 @@
 #' @param IRT irt yes no
 #' @param exclude_previous like name
 #' @param previous prev if
-#' @param test test
 #' @export
-irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, test = NA, exclude_eskimo = T){
+irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exclude_eskimo = T){
 
       # this is for the out argument. 
       # creates a vector of the items that have already been completed
@@ -27,12 +26,7 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, tes
       # don't re-use previous items
       if(exclude_previous){
         previously_completed = previous %>%
-          # this section limits ignoring to only the previous test
-                                dplyr::group_by(date) %>%
-                                dplyr::mutate(num = cur_group_id()) %>%
-                                dplyr::filter(num == max(num)) %>%
         # selects only done items and grabs them.
-                                tidyr::drop_na(response) %>%
                                 dplyr::pull(item_number)
           
         completed = c(completed, previously_completed)
@@ -78,23 +72,6 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, tes
          sem
          )
        return(tmp_list)
-       
-    } else if(test == "walker") {
-      # randomize? if true, then use random order column
-      next_slide_num <- all_items %>%
-        dplyr::mutate(next_item = ifelse(!is.na(response), walker_order+1, NA)) %>%
-        dplyr::filter(walker_order == max(next_item, na.rm = T)) 
-      
-      tmp_list = list(
-        ability,
-        list(
-          NA,
-          slide_num_out = ifelse(nrow(next_slide_num) < 1, 190, next_slide_num$slide_num)
-        ),
-        sem
-      )
-      
-      return(tmp_list)
       
     } else { # this is the full PNT
         if(exclude_eskimo){

@@ -13,17 +13,14 @@ get_first_item <- function(all_items, previous, exclude_previous = F){
     # if we want to sample the four anyway
     # first_item = sample(choices, 1)
     # return(first_item)
+    print("ok")
     return(130)
 
   } else {
-    
 
-    completed = previous %>%
-      group_by(date) %>%
-      mutate(num = cur_group_id()) %>%
-      filter(num == max(num)) %>%
-      select(-num) %>%
-      drop_na(response)
+    completed = previous #%>%
+     # tidyr::drop_na(response)
+    print(completed)
     
     all_items$response[match(completed$item_number, all_items$item_number)] <- completed$response
     # dataframe of inputs
@@ -34,18 +31,18 @@ get_first_item <- function(all_items, previous, exclude_previous = F){
                       cbGroup = rep(1))
     
     # breaks it down into what gets fed into the 1PL IRT
-    prov = breakBank(pars) 
+    prov = catR::breakBank(pars) 
     bank = prov$itemPar
     rownames(bank) <- all_items$target
     x = all_items$response
     
     
     # ability estimate using bayes modal:
-    ability = thetaEst(bank, x, method = "EAP", range = c(-5, 5))
-    first_item = nextItem(itemBank = bank, theta = ability, out = completed$item_number)
+    ability = catR::thetaEst(bank, x, method = "EAP", range = c(-5, 5))
+    first_item = catR::nextItem(itemBank = bank, theta = ability, out = completed$item_number)
     
     first_slide_num = all_items[all_items$target==first_item$name,]$slide_num
-
+    
     return(first_slide_num)
   }
   

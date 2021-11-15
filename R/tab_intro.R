@@ -6,7 +6,35 @@ intro_tab_div <- function(){
          fluidRow(
            column(width = 12,
               tabsetPanel(type="hidden", id = "glide",
-                  tabPanelBody(value = "glide0",
+                # PAGE 1 #########################################################
+                tabPanelBody(value = "welcome_page", # glide0
+                             fluidRow(
+                               column(align = "center", width = 12,
+                                      div(
+                                        style = "width:50%;",
+                                        div(
+                                          h5(
+                                            "Welcome to the computer adaptive version of the",
+                                            tags$a(href = "https://mrri.org/philadelphia-naming-test/",
+                                                   HTML("Philadelphia&nbsp;Naming&nbsp;Test."),
+                                                   target = "_blank", style = "text-decoration: underline;cursor: pointer;")
+                                          )
+                                        )
+                                      )
+                               )
+                             ),br(),
+                             fluidRow(
+                               column(width = 10, offset = 1,
+                                      includeMarkdown(
+                                        system.file("app/www/intro.md",
+                                                    package = "pnt")
+                                      ),
+                                      div(align="center",
+                                          actionButton("welcome_next", "Get Started"),
+                                      ))
+                             )
+                ),
+                  tabPanelBody(value = "intro_page", # glide0
                                fluidRow(
                                  column(align = "center", width = 12,
                                         div(
@@ -25,91 +53,107 @@ intro_tab_div <- function(){
                                fluidRow(
                                    column(width = 10, offset = 1,
                                           includeMarkdown(
-                                                system.file("app/www/intro.md",
+                                                system.file("app/www/intro2.md",
                                                  package = "pnt")
                                    ),
                                    div(align="center",
-                                       actionButton("administer_test", "Administer PNT"),
+                                       actionButton('back_intro', "Back"),
+                                       actionButton("administer_test", "Administer new PNT"),
+                                       actionButton("administer_retest", "Re-administer PNT"),
                                        actionButton("score_test", "Score offline test")
                                    ))
                                )
                   ),
-                  tabPanelBody(value = "glide1",
-                           div(align = "center",
-                               div(style="display: inline-block; text-align: left;",
-                                   h5("Input participant information"), br(),
-                                   textInput("name", "Enter a Name"),
-                                   textInput("notes", "Enter any notes"),
-                                   fileInput("file1", "Upload previous results", accept = ".csv"),
-                                   div(align="center",
-                                       actionButton("glide_back0", "Back"),
-                                       actionButton("glide_next1", "Next")
-                                       
-                                       )
-                                   
-                                   
-                               )
-                           )
+                # PAGE 2 ############################################################################
+                  tabPanelBody(value = "new_pnt_page",#glide 1
+                        fluidRow(
+                          column(width = 6, offset = 3, align = "center",
+                                      div(style="display: inline-block; text-align: left;",
+                                           h5("Administer new PNT"), br(),
+                                           textInput("name", "Enter a Name"),
+                                           textInput("notes", "Enter any notes"),
+                                           ### Use this to set how many items to run.
+                                           radioButtons(inputId = "numitems",
+                                                        label = "Select PNT Test Administration",
+                                                        choices = c(#"10-item PNT-CAT (testing only)" = "10",
+                                                                    "30-item Computer Adaptive PNT" = "30",
+                                                                    "175-item Computer Adaptive PNT" = "175_cat",
+                                                                    "175-item Standard PNT" = "175_standard"), 
+                                                        selected = "30",
+                                                        inline = F),
+                                           shinyjs::hidden(
+                                             checkboxInput("eskimo",
+                                                           'Exclude item "Eskimo"',
+                                                           value = T)
+                                           ),
+                                           div(align = "center",
+                                               actionButton("back_test", "Back"),
+                                               actionButton("next_test", "Next")
+                                           )
+                                         )
+                                   # )
+                                 )
+                        )
+                           
                   ),
-                  tabPanelBody(value = "glide2",
-                           div(align = "center",
-                               div(style="display: inline-block; text-align: left;",
-                                   h5("Choose test options"), br(),
-                                   ### Use this to set how many items to run.
-                                   radioButtons(inputId = "numitems",
-                                                label = "Number of items (10 is for testing)",
-                                                choices = c("10-item PNT-CAT" = "10",
-                                                            "30-item PNT-CAT" = "30",
-                                                            "60-item PNT-CAT" = "60",
-                                                            "100-item PNT-CAT" = "100",
-                                                            "Variable length PNT-CAT" = "SEM",
-                                                            "175-item full PNT" = "175",
-                                                            "30-item short-form PNT" = "walker"), #Precision" = "SEM"),
-                                                selected = "10",
-                                                inline = F),
-                                   # sets SEM precision. disabled if SEM not selected in numitems radio buttons
-                                   shinyjs::hidden(
-                                     sliderInput("ci_95", "Minimum acceptable 95% CI",
-                                                 min = 2,
-                                                 max = 10,
-                                                 step = 0.5,
-                                                 value = 4)
-                                     ),
-                                   # randomize PNT order if doing the full 175 item test?
-                                   shinyjs::hidden(
-                                     checkboxInput("random",
-                                                   "Random Order (175 only)",
-                                                   value = F)
-                                   ),
-                                   shinyjs::hidden(
-                                     checkboxInput("exclude_previous",
-                                                   "Exclude items from the previous test?",
-                                                   value = F)
-                                   ),
-                                   shinyjs::hidden(
-                                     radioButtons("walker",
-                                                   "Choose 30-item short form",
-                                                  choices = c("A", "B"),
-                                                  selected = "A"
-                                                    )
-                                   ),
-                                   shinyjs::hidden(
-                                     checkboxInput("eskimo",
-                                                  'Exclude item "Eskimo"',
-                                                  value = T
-                                     )
-                                   ),
-                                   checkboxInput("sound",
-                                                 "Mute sound",
-                                                 value = F),
-                                   div(align = "center",
-                                       actionButton("glide_back1", "Back"),
-                                       actionButton("glide_next2", "Next")
-                                   )
+                  tabPanelBody(value = "retest_pnt_page",
+                               fluidRow(
+                                 column(width = 6, offset = 3, align = "center",
+                                        # div(align = "center",
+                                        div(style="display: inline-block; text-align: left;",
+                                            h5("Readminister PNT"), br(),
+                                            
+                                            fileInput("file1", "Upload previous results", accept = ".csv"),
+                                            textInput("notes_retest", "Enter any notes"),
+                                            ### Use this to set how many items to run.
+                                            radioButtons(inputId = "numitems_retest",
+                                                         label = "Select PNT Re-Administration",
+                                                         choices = c(#"10-item PNT-CAT (testing only)" = "10",
+                                                                     "30-item Computer Adaptive PNT" = "30",
+                                                                     "Variable length Computer Adaptive PNT" = "SEM"),
+                                                         selected = "30",
+                                                         inline = F),
+                                            # should only be available for the 30 item
+                                            shinyjs::hidden(
+                                              checkboxInput("exclude_previous",
+                                                            "Exclude items from the previous test?",
+                                                            value = T)
+                                            ),
+                                            div(align = "center",
+                                                actionButton("back_retest", "Back"),
+                                                shinyjs::disabled(actionButton("next_retest", "Next"))
+                                            )
+                                        )
+                                        # )
+                                 )
                                )
-                           )
                   ),
-                  tabPanelBody(value = "glide3",
+                tabPanelBody(value = "score_offline_page",
+                   fluidRow(
+                     column(width = 6, offset = 3, align = "center",
+                            # div(align = "center",
+                            div(style="display: inline-block; text-align: left;",
+                                h3("Scoring an offline or completed test"),
+                                p("To score an offline or previously completed test, download the blank spreadsheet below."),
+                                p("Enter 1 for error/incorrect and 2 for correct in the response column."),
+                                p("If other responses are entered or additional changes made to the spreadsheet, 
+                                rescoring may not work."),
+                                p("You have to upload a .csv file before you can hit ok."),
+                                downloadButton("downloadEmpty", "Download Blank Spreadsheet"),
+                                fileInput("file2", "Upload offline or re-scored data", accept = ".csv"),
+                                shinyjs::hidden(
+                                  div(id="input_file_warning", uiOutput("upload_error"))
+                                ),
+                                div(align = "center",
+                                    actionButton("back_offline", "Back"),
+                                    actionButton("score_uploaded_data", "OK")
+                                )
+                                
+                             )
+                     )
+                   )
+                ),
+                  tabPanelBody(value = "instructions_page",
                            div(align = "center",
                                div(style="display: inline-block; text-align: left;",
                                    h5("Instructions:"),
@@ -122,7 +166,7 @@ intro_tab_div <- function(){
                                    ),br(),
                                    # start!
                                    div(align = "center",
-                                       actionButton("glide_back2", "Back"),
+                                       actionButton("back_to_test_or_retest", "Back"),
                                        actionButton("start_practice",
                                                     "Start Practice")
                                    )

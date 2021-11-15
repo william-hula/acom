@@ -24,10 +24,14 @@ app_server <- function( input, output, session ) {
   values$num_previous <- 0 # number of previous tests
   values$datetime <- Sys.time() # establishes datetime when app opens for saving
   values$downloadableData = F # will the download data button appear? starts with no. yes after first response. 
+  values$sound = "document.getElementById('audio').play();"
   
   ################################## PREVIOUS DATA ###############################
   # ------------------------------------------------------------------------------
   ################################################################################ 
+  
+  
+  # need to add a lot more resturctions hre...
   
   # observer for uploading data
   observeEvent(input$file1,{
@@ -41,9 +45,12 @@ app_server <- function( input, output, session ) {
     
     if ("key" %in% colnames(values$previous)) {
       values$previous <- values$previous %>%
-        tidyr::drop_na(key)
+        tidyr::drop_na(key) %>%
+        dplyr::mutate(response = ifelse(key == 2, 0, 1)) # correct is 0, incorrect is 1.
       # assign number of previous values
-      values$num_previous <- length(unique(values$previous$date))
+      # values$num_previous <- length(unique(values$previous$date))
+      values$min_sem <- min(values$previous$sem, na.rm = T)
+      shinyjs::enable("next_retest")
     } else {
       showNotification("Error: Incompatible file uploaded; please upload another", type = "error")
       values$previous <- NULL
@@ -60,81 +67,94 @@ app_server <- function( input, output, session ) {
   
   ###########################Intro tab next and back############################
   
-  # includes a few other actions when moving to the last page. 
+  # INTRO FLOW
+  observeEvent(input$welcome_next,{
+    values$new_test = T
+    updateTabsetPanel(session, "glide", "intro_page")
+  })
+  
+  observeEvent(input$back_intro,{
+    updateTabsetPanel(session, "glide", "welcome_page")
+  })
+  
+  # TEST FLOW
   observeEvent(input$administer_test,{
-    updateTabsetPanel(session, "glide", "glide1")
+    values$new_test = T
+    updateTabsetPanel(session, "glide", "new_pnt_page")
   })
   
-  observeEvent(input$glide_back0,{
-    updateTabsetPanel(session, "glide", "glide0")
+  observeEvent(input$back_test,{
+    updateTabsetPanel(session, "glide", "intro_page")
   })
   
-  observeEvent(input$glide_next1,{
-    updateTabsetPanel(session, "glide", "glide2")
+  # RETEST FLOW
+  observeEvent(input$administer_retest,{
+    values$new_test = F
+    updateTabsetPanel(session, "glide", "retest_pnt_page")
   })
   
-  observeEvent(input$glide_back1,{
-    updateTabsetPanel(session, "glide", "glide1")
+  observeEvent(input$back_retest,{
+    updateTabsetPanel(session, "glide", "intro_page")
   })
   
-  observeEvent(input$glide_next2,{
-    updateTabsetPanel(session, "glide", "glide3")
+  # OFFLINE FLOW
+  observeEvent(input$score_test,{
+    values$new_test = F
+    updateTabsetPanel(session, "glide", "score_offline_page")
   })
   
-  observeEvent(input$glide_back2,{
-    updateTabsetPanel(session, "glide", "glide2")
+  observeEvent(input$back_offline,{
+    updateTabsetPanel(session, "glide", "intro_page")
   })
-  ################################ SOUND ON ##### ##############################
   
-  observeEvent(input$sound,{
-    if(!isTruthy(input$sound)){
-      values$sound = "document.getElementById('audio').play();"
+  observeEvent(input$next_test,{
+    updateTabsetPanel(session, "glide", "instructions_page")
+  })
+  
+  observeEvent(input$next_retest,{
+    updateTabsetPanel(session, "glide", "instructions_page")
+  })
+  
+  observeEvent(input$back_to_test_or_retest,{
+    if(isTruthy(values$new_test)){
+      updateTabsetPanel(session, "glide", "new_pnt_page")
     } else {
-      values$sound = ""
+      updateTabsetPanel(session, "glide", "retest_pnt_page")
     }
   })
+  
   
   ##########################NUM ITEMS AND PRECISION#############################
   # enables or disables precision option if SEM is or isn't selected. 
   # also converts the numeric option to a number
   # saves either to values$test_length
   observe({
-    if(input$numitems == "SEM"){
-      # precision condition
-      values$test_length <- "95_ci"
-      shinyjs::show("ci_95")
-      shinyjs::hide("random")
-      shinyjs::hide("walker")
-      shinyjs::hide("eskimo")
-      if(values$num_previous>0){
-        shinyjs::show("exclude_previous")
-      }
-    } else if(input$numitems == "walker") {
-      # walker short form
-      values$test_length <- 30
-      shinyjs::hide("ci_95")
-      shinyjs::show("walker")
-      shinyjs::hide("random")
-      shinyjs::hide("exclude_previous")
-      shinyjs::hide("eskimo")
-    } else if(input$numitems == "175"){
-      # full pnt
-      values$test_length <- ifelse(input$eskimo, 174, 175)
-      shinyjs::show("random")
-      shinyjs::hide("ci_95")
-      shinyjs::hide("walker")
-      shinyjs::hide("exclude_previous")
-      shinyjs::show("eskimo")
+    if(isTruthy(values$new_test)){
+       if(input$numitems == "175_standard"){
+          # full pnt
+          values$test_length <- ifelse(input$eskimo, 174, 175)
+          shinyjs::show("eskimo")
+        } else if(input$numitems == "175_cat"){
+          # full pnt
+          values$test_length <- 174
+          shinyjs::hide("eskimo")
+        } else if(input$numitems == "30"){
+          # fixed length IRT
+          values$test_length <- 30
+          shinyjs::hide("eskimo")
+        }
     } else {
-      # fixed length IRT
-      values$test_length <- as.numeric(input$numitems)
-      shinyjs::hide("ci_95")
-      shinyjs::hide("walker")
-      shinyjs::hide("random")
-      shinyjs::hide("eskimo")
-      if(values$num_previous>0){
+      if(input$numitems_retest == "SEM"){
+        values$test_length <- "SEM"
+      } else if(input$numitems == "30"){
+        # fixed length IRT
+        values$test_length <- 30
         shinyjs::show("exclude_previous")
+        
       }
+      
+      
+      
     }
   })
   
@@ -183,13 +203,16 @@ app_server <- function( input, output, session ) {
     values$i = 1 # reset values$i
     values$n = 130 # reset 
     values$key_val = NULL # keeps track of button press 1 (error), 2 (correct)
-    values$exclude_previous <- input$exclude_previous
+    values$exclude_previous <- ifelse(values$new_test, F, input$exclude_previous) # only informs second tests
     # only use IRT function if NOT 175 items
+    values$name = input$name
+    values$notes = input$notes
+    values$notes_retest = input$notes_retest
+    
+    
     # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
-    values$IRT = ifelse(input$numitems == "175", FALSE,
-                        ifelse(input$numitems == "walker", FALSE,
-                               TRUE)
-    )
+    values$IRT = ifelse(input$numitems == "175_standard", FALSE, TRUE)
+
     shinyjs::show("start_over")
     shinyjs::show("help")
     # go to practice slides
@@ -206,21 +229,6 @@ app_server <- function( input, output, session ) {
     # keeps track of button press 1 (error), 2 (correct)
     values$i = 1
     
-    
-    if(isTruthy(input$numitems == "walker")){
-      values$item_difficulty <- 
-        values$item_difficulty %>%
-        dplyr::filter(walker == input$walker)
-    }
-    
-    # randomly orders stuff if the random order box is checked. only affects 175
-    if(isTruthy(input$random)){
-      values$item_difficulty <-
-        values$item_difficulty %>%
-        dplyr::mutate(pnt_order = sample(pnt_order)) %>%
-        dplyr::arrange(pnt_order)
-    }
-    
     values$n = 
       # regular old CAT 
       if(isTruthy(values$IRT)){
@@ -229,16 +237,9 @@ app_server <- function( input, output, session ) {
       get_first_item(all_items = values$item_difficulty,
                      previous = values$previous,
                      exclude_previous = values$exclude_previous)
-      # walker first item
-    } else if (input$numitems == "walker"){
-      values$item_difficulty[values$item_difficulty$walker_order == 1,]$slide_num 
-      # random 175 first item
-    } else if (isTruthy(input$random)) {
-      # if random, grab first row in values$item_difficulty,
-      # which is already randomized in code above
-      values$item_difficulty[values$item_difficulty$pnt_order == 1,]$slide_num 
+
     } else {
-      14 #otherwise candle
+      14 #otherwise candle for standard PNT
     }
     # for testing:
     if (isTRUE(getOption("shiny.testmode"))) {
@@ -251,12 +252,6 @@ app_server <- function( input, output, session ) {
     # reset keyval
     values$key_val = NULL # keeps track of button press 1 (error) or 2 (correct)
     updateNavbarPage(session, "mainpage", selected = "Assessment")
-  })
-  
-  
-  # records the inputted 95% CI width to SEM
-  observeEvent(input$ci_95,{
-    values$min_sem <- input$ci_95/1.96
   })
   
   
@@ -274,7 +269,6 @@ app_server <- function( input, output, session ) {
     } else {
       keys::unpauseKey()
       shinyjs::hide("footer_id")
-      
     }
   })
   
@@ -317,11 +311,12 @@ app_server <- function( input, output, session ) {
       }
       values$key_val = NULL
     } else {
+      ########### main testing area###############
       # can you download data? yes - will calculate the data to go out. 
       values$downloadableData = T
       shinyjs::show("downloadData")
       
-      another_item <- if(input$numitems == "SEM"){
+      another_item <- if(values$test_length == "SEM"){
         values$min_sem<values$irt_out[[3]]
       } else {
         values$i<=values$test_length
@@ -336,6 +331,7 @@ app_server <- function( input, output, session ) {
         # difficulty, discrimination etc...
         # 1 is incorrect (1) and 2 is correct (0).
         # IRT model reverses 1 and 0...
+        
         values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <-
           ifelse(values$key_val == incorrect_key_response, 1,
                  ifelse(values$key_val == correct_key_response, 0, "NR"))
@@ -350,7 +346,7 @@ app_server <- function( input, output, session ) {
                                       IRT = values$IRT,
                                       exclude_previous = values$exclude_previous,
                                       previous = values$previous,
-                                      test = input$numitems,
+                                      #test = input$numitems,
                                       exclude_eskimo = input$eskimo
         )
         # save info to the item_difficulty data_frame
@@ -395,13 +391,30 @@ app_server <- function( input, output, session ) {
       # returns TRUE or FALSE
       go_to_results <- if(is.na(values$n)){
         TRUE
-      } else if(input$numitems == "SEM"){
+      } else if(values$test_length == "SEM"){
         values$min_sem>values$irt_out[[3]]
       } else {
         values$i>values$test_length
       }
       # go to results if indicated
       if (go_to_results){
+        
+        
+        values$results_data_summary <- 
+          dplyr::bind_rows(values$item_difficulty) %>%
+            # have to switch 0s and 1s because IRT is dumb. 
+            tidyr::drop_na() %>%
+            dplyr::mutate(response = as.numeric(ifelse(response == 0, 1, 0)),
+                          ci_95 = sem*1.96) %>%
+            dplyr::summarize(accuracy = mean(response)) %>%
+            dplyr::pull(accuracy)
+        
+        values$irt_final <- 
+          get_final_numbers(out = values$irt_out,
+                            previous = values$previous,
+                            num_previous = values$num_previous)
+        
+        
         updateNavbarPage(session, "mainpage",
                          selected = "Results")
         shinyjs::show("report")
@@ -415,75 +428,31 @@ app_server <- function( input, output, session ) {
     }
     # don't run this on start up. 
   }, ignoreInit = T)
-  ################################## REACTIVE DATA ############################### 
-  # ------------------------------------------------------------------------------
-  ################################################################################
-  # holds the item-level responses. 
-  results_data_long <- reactive({
-    req(isTruthy(values$downloadableData))
-    precision = if(input$numitems == "SEM"){
-      paste0("95% CI: ", input$ci_95)
-    } else {
-      paste0(input$numitems, " items")
-    }
-    
-    tmp = dplyr::bind_rows(values$item_difficulty) %>%
-      dplyr::mutate(ci_95 = sem*1.96,
-                    precision = precision,
-                    name = input$name,
-                    date = values$datetime,
-                    notes = NA
-      ) %>%
-      dplyr::arrange(order)
-    
-    tmp$notes[[1]] = input$notes
-    return(tmp)
-  })
-  
-  # holds the mean accuracy
-  results_data_summary <- reactive({
-    req(input$mainpage=="Results")
-    dplyr::bind_rows(values$item_difficulty) %>%
-      # have to switch 0s and 1s because IRT is dumb. 
-      tidyr::drop_na() %>%
-      dplyr::mutate(response = as.numeric(ifelse(response == 0, 1, 0)),
-                    ci_95 = sem*1.96) %>%
-      dplyr::summarize(accuracy = mean(response)) %>%
-      dplyr::pull(accuracy)
-  })
-  
-  # tracks final irt data.
-  irt_final <- reactive({
-    req(input$mainpage=="Results")
-    get_final_numbers(out = values$irt_out,
-                      previous = values$previous,
-                      num_previous = values$num_previous)
-    
-  })
-  
   
   ################################## EXPORT TEST DATA ############################
   # ------------------------------------------------------------------------------
   ################################################################################
   # get data into strings for exporting...test only
   observeEvent(input$mainpage=="Results",{
-    values$out_words <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+    values$results_data_long = get_results_data_long(values)
+    
+    values$out_words <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
                                 dplyr::pull(target), collapse = "_")
-    values$out_nums <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+    values$out_nums <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
                                dplyr::pull(response), collapse = "_")
-    values$out_ability <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+    values$out_ability <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
                                   dplyr::pull(ability), collapse = "_")
-    values$out_sem <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+    values$out_sem <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
                               dplyr::pull(sem), collapse = "_")
-    values$item_dif <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+    values$item_dif <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
                                dplyr::pull(itemDifficulty), collapse = "_")
-    values$disc <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+    values$disc <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
                            dplyr::pull(discrimination), collapse = "_")
-    values$key <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+    values$key <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
                           dplyr::pull(key), collapse = "_")
-    values$order <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+    values$order <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
                             dplyr::pull(order), collapse = "_")
-    values$item_number <- paste(results_data_long() %>% tidyr::drop_na(response) %>%
+    values$item_number <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
                                   dplyr::pull(item_number), collapse = "_")
   })
   # This makes the above data available after running unit test.
@@ -503,13 +472,13 @@ app_server <- function( input, output, session ) {
   #  outputs a summary sentence
   output$results_summary <- renderUI({
     summary = p(
-      get_text_summary(acc = results_data_summary(),
-                               ability = irt_final()$ability,
-                               ci_95 = irt_final()$ci_95,
-                               last_ability = irt_final()$last_ability,
-                               last_ci_95 = irt_final()$last_ci_95,
-                               first_ability = irt_final()$first_ability,
-                               first_ci_95 = irt_final()$first_ci_95,
+      get_text_summary(acc = values$results_data_summary,
+                               ability = values$irt_final$ability,
+                               ci_95 = values$irt_final$ci_95,
+                               last_ability = values$irt_final$last_ability,
+                               last_ci_95 = values$irt_final$last_ci_95,
+                               first_ability = values$irt_final$first_ability,
+                               first_ci_95 = values$irt_final$first_ci_95,
                                num_previous = values$num_previous)
     )
   })
@@ -526,10 +495,11 @@ app_server <- function( input, output, session ) {
       )
     },
     content = function(file) {
-      write.csv(get_data_for_download(dat = results_data_long(),
-                                      in_progress = input$mainpage,
-                                      current_item = values$irt_out[[2]]$name,
-                                      IRT = values$IRT), file, row.names = FALSE)
+      write.csv(get_data_for_download(values = values,
+                                      in_progress = input$mainpage#,
+                                      #current_item = values$irt_out[[2]]$name,
+                                      #IRT = values$IRT
+                                      ), file, row.names = FALSE)
     }
   )
   
@@ -552,15 +522,15 @@ app_server <- function( input, output, session ) {
           name = ifelse(nchar(input$name)>0, input$name, "X"),
           notes = input$notes,
           values = values,
-          irt_final = irt_final(),
+          irt_final = values$irt_final,
           text = get_text_summary(
-                           acc = results_data_summary(),
-                           ability = irt_final()$ability,
-                           ci_95 = irt_final()$ci_95,
-                           last_ability = irt_final()$last_ability,
-                           last_ci_95 = irt_final()$last_ci_95,
-                           first_ability = irt_final()$first_ability,
-                           first_ci_95 = irt_final()$first_ci_95,
+                           acc = values$results_data_summary,
+                           ability = values$irt_final$ability,
+                           ci_95 = values$irt_final$ci_95,
+                           last_ability = values$irt_final$last_ability,
+                           last_ci_95 = values$irt_final$last_ci_95,
+                           first_ability = values$irt_final$first_ability,
+                           first_ci_95 = values$irt_final$first_ci_95,
                            num_previous = values$num_previous))
         
         # Knit the document, passing in the `params` list, and eval it in a
@@ -610,8 +580,22 @@ app_server <- function( input, output, session ) {
   ################################################################################
   # plot
   output$plot <- renderPlot({# Fergadiotis, 2019
-    req(irt_final())
-    get_plot(values = values, irt_final = irt_final())
+    req(values$irt_final)
+    get_plot(values = values, irt_final = values$irt_final)
+  })
+  
+  output$plot_caption <- renderUI({
+    
+    req(values$irt_final)
+    
+    if(is.na(values$irt_final$last_ability)){
+      
+      tags$em("The red dashed line reflects current estimate and the shaded area reflects uncertainty in current estiate.\n The average ability for individuals with aphasia is 50, with a standard deviation of 10.")
+      
+    } else {
+      
+      tags$em("The red dashed line reflects current estimate and the blue dashed line reflects the estimate from the previous test. Shaded areas reflects uncertainty in the estiates.\n The average ability for individuals with aphasia is 50, with a standard deviation of 10.")
+    }
   })
   
   ################################## TABLE #######################################
@@ -619,7 +603,8 @@ app_server <- function( input, output, session ) {
   ################################################################################
   # outputs a table of the item level responses
   output$results_table <- DT::renderDT({
-    results_data_long() %>%
+    req(values$results_data_long)
+    values$results_data_long %>%
       tidyr::drop_na(response) %>%
       dplyr::select(order, target, resp, key, itemDifficulty, ability, sem)
   }, rownames = F,
@@ -646,34 +631,8 @@ app_server <- function( input, output, session ) {
   ################################## SCORE EXISTING TEST MODAL #################
   # ----------------------------------------------------------------------------
   ##############################################################################
-  # More information modal
-  observeEvent(input$score_test, {
-    showModal(modalDialog(
-      div(
-        h3("Scoring an offline or completed test"),
-        p("To score an offline or previously completed test, download the blank spreadsheet
-          below."),
-        p("Enter 1 for error/incorrect and 2 for correct in the response column."),
-        p("If other responses are entered or additional changes made to the spreadsheet, 
-          rescoring may not work."),
-        p("You have to upload a .csv file before you can hit ok."),
-        downloadButton("downloadEmpty", "Download Blank Spreadsheet"),
-        fileInput("file2", "Upload offline or re-scored data", accept = ".csv"),
-        shinyjs::hidden(
-          div(id="input_file_warning", uiOutput("upload_error"))
-        )
-      ),
-      footer = tagList(
-        modalButton("Cancel"),
-        shinyjs::disabled(
-          actionButton("score_uploaded_data", "OK")
-        )
-      ),
-      easyClose = F,
-      size = "m"
-    ))
-  })
   
+  # 
   # downloading empty file
   output$downloadEmpty <- downloadHandler(
     filename = function() {
@@ -723,7 +682,6 @@ app_server <- function( input, output, session ) {
   # download report buttons
   observeEvent(input$score_uploaded_data,{
     values$rescore_list <- score_uploaded_data(values$rescore)
-    removeModal()
     updateNavbarPage(session, "mainpage",
                      selected = "Results2")
     shinyjs::show("start_over")
