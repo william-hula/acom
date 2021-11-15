@@ -581,7 +581,7 @@ app_server <- function( input, output, session ) {
   # plot
   output$plot <- renderPlot({# Fergadiotis, 2019
     req(values$irt_final)
-    get_plot(values = values, irt_final = values$irt_final)
+    get_plot(irt_final = values$irt_final)
   })
   
   output$plot_caption <- renderUI({
@@ -590,11 +590,11 @@ app_server <- function( input, output, session ) {
     
     if(is.na(values$irt_final$last_ability)){
       
-      tags$em("The red dashed line reflects current estimate and the shaded area reflects uncertainty in current estiate.\n The average ability for individuals with aphasia is 50, with a standard deviation of 10.")
+      tags$em("The blue dashed line reflects current estimate and the shaded area reflects uncertainty in current estiate.\n The average ability for individuals with aphasia is 50, with a standard deviation of 10.")
       
     } else {
       
-      tags$em("The red dashed line reflects current estimate and the blue dashed line reflects the estimate from the previous test. Shaded areas reflects uncertainty in the estiates.\n The average ability for individuals with aphasia is 50, with a standard deviation of 10.")
+      tags$em("The blue dashed line reflects current estimate and the red dashed line reflects the estimate from the previous test. Shaded areas reflects uncertainty in the estiates.\n The average ability for individuals with aphasia is 50, with a standard deviation of 10.")
     }
   })
   
@@ -653,7 +653,7 @@ app_server <- function( input, output, session ) {
     req(file)
     # save upload
     values$rescore <- read.csv(file$datapath) %>%
-      tidyr::drop_na()
+      tidyr::drop_na(response)
     # saves teh error messages to be put back into the modal. 
     values$error <- if(nrow(values$rescore)==0){
       "Error: Please include at least one scored response"
@@ -693,7 +693,8 @@ app_server <- function( input, output, session ) {
   output$plot2 <-
     renderPlot({
       req(values$rescore_list)
-      values$rescore_list$plot
+      #values$rescore_list$plot
+      get_plot(irt_final = values$rescore_list$irt_final)
     })
   
   # outputs the rescored data

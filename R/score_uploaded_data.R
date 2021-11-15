@@ -36,9 +36,16 @@ score_uploaded_data <- function(uploaded_dat){
     
   out_list <- list()
   
-  out_list$final_ability = ability
-  out_list$final_sem = sem
-  out_list$final_95_ci = ci_95
+  out_list$irt_final = tibble::tibble(
+    ability = ability,
+    sem = sem,
+    ci_95 = ci_95,
+    last_ability = NA
+  )
+  
+  # out_list$final_ability = ability
+  # out_list$final_sem = sem
+  # out_list$final_95_ci = ci_95
   out_list$final_accuracy = accuracy
   out_list$date_scored = Sys.Date()
   out_list$data = dat
@@ -57,51 +64,7 @@ score_uploaded_data <- function(uploaded_dat){
       round(pnorm(ability, 50, 10)*100,1), " percentile of naming ability."
       ,sep = "")
   
-  ###### PLOT ########
   
-  # 
-  # subset_dat <- function(dat){
-  #   lower = irt_final$ability-irt_final$ci_95/1.96
-  #   upper = irt_final$ability+irt_final$ci_95/1.96
-  #   subset(dat,thetas>lower&thetas<upper)
-  # }
-  
-  out_list$plot <- tibble::tibble(thetas) %>%
-    ggplot2::ggplot(
-      ggplot2::aes(x = thetas)
-    ) + 
-    #ggplot2::geom_histogram(alpha = 0.4, binwidth = 1) +
-    ggplot2::geom_density(alpha = 0.4, fill = "lightgrey", adjust = 1.5) +
-    #ggplot2::geom_histogram(alpha = 0.2, fill = "blue3", binwidth = 1, data = subset_dat(tibble::tibble(thetas))) +
-    ggplot2::annotate("rect",
-                      xmin = ability-ci_95/1.96,
-                      xmax = ability+ci_95/1.96,
-                      ymin = 0,
-                      ymax = 0.05,#25,
-                      alpha = .15,
-                      fill = "blue3") +
-    ggplot2::geom_segment(ggplot2::aes(x=ability,
-                                       y = 0,
-                                       xend=ability,
-                                       yend = 0.05),#25),
-                          color = "darkred", size = 1.25) +
-    ggplot2::labs(x = "PNT naming ability score") +
-    ggplot2::theme_minimal(base_size = 18) +
-    ggplot2::theme(legend.position = "bottom",
-                   axis.title.y = ggplot2::element_blank(),
-                   axis.text.y = ggplot2::element_blank(),
-                   axis.ticks.y = ggplot2::element_blank()
-    ) +
-    ggplot2::scale_x_continuous(
-      minor_breaks =seq(10,90,5),
-      limits = c(10, 90),
-      breaks = seq(10,90,10),
-      labels = seq(10,90,10)
-    ) +
-    ggplot2::scale_y_continuous(
-      minor_breaks = NULL#,
-      #breaks = NULL
-    )
 
   return(out_list)
   

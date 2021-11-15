@@ -3,10 +3,9 @@
 
 #' get plot
 #'
-#' @param values values
 #' @param irt_final final irt
 #' @export
-    get_plot <- function(values, irt_final, basesize = 18, sample_thetas = thetas){
+    get_plot <- function(irt_final, basesize = 18, sample_thetas = thetas){
       
       
       thetas = c(thetas, 80, 20)

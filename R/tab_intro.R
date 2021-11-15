@@ -146,7 +146,7 @@ intro_tab_div <- function(){
                                 ),
                                 div(align = "center",
                                     actionButton("back_offline", "Back"),
-                                    actionButton("score_uploaded_data", "OK")
+                                    shinyjs::disabled(actionButton("score_uploaded_data", "OK"))
                                 )
                                 
                              )
