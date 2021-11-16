@@ -47,12 +47,12 @@ pagetitle <- function(){
              style = "background:transparent; border:none;"
              )
            ),
-           actionButton(
-             inputId = "info",
-             label = "About",
-             icon = icon("info-circle"),
-             style = "background:transparent; border:none;"
-          ),
+          #  actionButton(
+          #    inputId = "info",
+          #    label = "About",
+          #    icon = icon("info-circle"),
+          #    style = "background:transparent; border:none;"
+          # ),
            actionButton(
              inputId='source',
              label="",#Source Code",

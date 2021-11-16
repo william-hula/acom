@@ -14,10 +14,10 @@ intro_tab_div <- function(){
                                         style = "width:50%;",
                                         div(
                                           h5(
-                                            "Welcome to the computer adaptive version of the",
-                                            tags$a(href = "https://mrri.org/philadelphia-naming-test/",
-                                                   HTML("Philadelphia&nbsp;Naming&nbsp;Test."),
-                                                   target = "_blank", style = "text-decoration: underline;cursor: pointer;")
+                                            "Welcome to the computer adaptive version of the \n Philadelphia Naming Test"#,
+                                            # tags$a(href = "https://mrri.org/philadelphia-naming-test/",
+                                            #        HTML("Philadelphia&nbsp;Naming&nbsp;Test."),
+                                            #        target = "_blank", style = "text-decoration: underline;cursor: pointer;")
                                           )
                                         )
                                       )
@@ -26,7 +26,7 @@ intro_tab_div <- function(){
                              fluidRow(
                                column(width = 10, offset = 1,
                                       includeMarkdown(
-                                        system.file("app/www/intro.md",
+                                        system.file("app/www/new_intro.md",
                                                     package = "pnt")
                                       ),
                                       div(align="center",
@@ -41,10 +41,10 @@ intro_tab_div <- function(){
                                           style = "width:50%;",
                                           div(
                                             h5(
-                                              "Welcome to the computer adaptive version of the",
-                                              tags$a(href = "https://mrri.org/philadelphia-naming-test/",
-                                                     HTML("Philadelphia&nbsp;Naming&nbsp;Test."),
-                                                     target = "_blank", style = "text-decoration: underline;cursor: pointer;")
+                                              "Welcome to the computer adaptive version of the \n Philadelphia Naming Test"#,
+                                              # tags$a(href = "https://mrri.org/philadelphia-naming-test/",
+                                              #        HTML("Philadelphia&nbsp;Naming&nbsp;Test."),
+                                              #        target = "_blank", style = "text-decoration: underline;cursor: pointer;")
                                             )
                                           )
                                         )
@@ -53,7 +53,7 @@ intro_tab_div <- function(){
                                fluidRow(
                                    column(width = 10, offset = 1,
                                           includeMarkdown(
-                                                system.file("app/www/intro2.md",
+                                                system.file("app/www/new_intro2.md",
                                                  package = "pnt")
                                    ),
                                    div(align="center",
@@ -154,17 +154,24 @@ intro_tab_div <- function(){
                    )
                 ),
                   tabPanelBody(value = "instructions_page",
-                           div(align = "center",
-                               div(style="display: inline-block; text-align: left;",
-                                   h5("Instructions:"),
-                                   tags$ul(
-                                     tags$li("Click Start Practice to get started"),
-                                     tags$li("Press 1 for incorrect and 2 for correct"),
-                                     tags$li("A 1 or 2 will appear in the top-right of the screen to show the key entered."),
-                                     tags$li("Remember to score the first complete response"),
-                                     tags$li("Press Enter to advance the screen"),
-                                   ),br(),
+                           # div(align = "center",
+                           #     div(style="display: inline-block; text-align: left;",
+                           #         h5("Instructions:"),
+                           #         tags$ul(
+                           #           tags$li("Click Start Practice to get started"),
+                           #           tags$li("Press 1 for incorrect and 2 for correct"),
+                           #           tags$li("A 1 or 2 will appear in the top-right of the screen to show the key entered."),
+                           #           tags$li("Remember to score the first complete response"),
+                           #           tags$li("Press Enter to advance the screen"),
+                           #         ),br(),
                                    # start!
+                           fluidRow(
+                             column(width = 10, offset = 1,
+                                    h3("Administration Instructions"),
+                                    includeMarkdown(
+                                      system.file("app/www/instructions.md",
+                                                  package = "pnt")
+                                    ),
                                    div(align = "center",
                                        actionButton("back_to_test_or_retest", "Back"),
                                        actionButton("start_practice",
