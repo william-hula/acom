@@ -172,7 +172,7 @@ app_server <- function( input, output, session ) {
       inputId = "confirm_end_test",
       session = session,
       title = "Are you sure you want to stop?",
-      text = "Only items with confirmed responses will be saved.",
+      text = "Only items with confirmed responses will be saved. If you would like to continue the test later, please download the current results before ending the test.",
       type = "warning",
     )
   })
@@ -237,87 +237,6 @@ app_server <- function( input, output, session ) {
   
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  # observer for uploading data
-  observeEvent(input$incomplete_test,{
-    file <- input$incomplete_test
-    ext <- tools::file_ext(file$datapath)
-    # check upload
-    req(file)
-    validate(need(ext == "csv", "Please upload a csv file"))
-    # save upload
-    values$item_difficulty <- read.csv(file$datapath) %>% dplyr::arrange(item_number)
-    #print(head(values$item_difficulty))
-    if ("key" %in% colnames(values$item_difficulty)) {
-      shinyjs::enable("continue_test")
-    } else {
-      showNotification("Error: Incompatible file uploaded; please upload another", type = "error")
-      values$item_difficulty <- items
-      shinyjs::reset("incomplete_test")
-    }
-  })
-  
-  observeEvent(input$continue_test,{
-
-    ### start practice stuff  ############################################
-    values$key_val = NULL # keeps track of button press 1 (error), 2 (correct)
-    values$exclude_previous <- ifelse(values$new_test, F, input$exclude_previous) # only informs second tests
-    # only use IRT function if NOT 175 items
-    values$name = input$name
-    values$notes = input$notes
-    values$notes_retest = input$notes_retest
-    # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
-    values$IRT = ifelse(input$numitems == "175_standard", FALSE, TRUE)
-    shinyjs::show("start_over")
-    shinyjs::show("help")
-    
-    #### start stuff ############################################
-    # how many items are done already?
-    values$i = sum(!is.na(values$item_difficulty$response))
-    #print(values$i)
-    values$irt_out = irt_function(all_items = values$item_difficulty,
-                                  IRT = values$IRT,
-                                  exclude_previous = values$exclude_previous,
-                                  previous = values$previous,
-                                  #test = input$numitems,
-                                  exclude_eskimo = input$eskimo
-    )
-    #print(values$irt_out)
-    values$n = 
-      if(values$IRT){
-        if(!is.na(values$irt_out[[2]][[1]])){
-          values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
-         # print(values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num)
-        } else {
-          190
-        }
-      } else {
-        values$irt_out[[2]][[2]]
-      } 
-    # for testing:
-    # if (isTRUE(getOption("shiny.testmode"))) {
-    #   shinyjs::reset("keys")
-    # }
-    values$irt_out <- list(0, 0, 11) # reset saved data just in case. 
-    #play a sound...not working right now :(
-    shinyjs::runjs("document.getElementById('audio').play();")
-    # got to slides
-    # reset keyval
-    values$key_val = NULL # keeps track of button press 1 (error) or 2 (correct)
-    updateNavbarPage(session, "mainpage", selected = "Assessment")
-    
-    
-
-  })
-  # 
   ################################## START ASSESSMENT ############################
   # start button. sets the i value to 1 corresponding to the first slide
   # switches to the assessment tab
@@ -703,6 +622,83 @@ app_server <- function( input, output, session ) {
   })
   outputOptions(output, "slides_tab", suspendWhenHidden = FALSE)
   outputOptions(output, "results_table", suspendWhenHidden = FALSE)
+  
+  
+  # observer for uploading data
+  observeEvent(input$incomplete_test,{
+    file <- input$incomplete_test
+    ext <- tools::file_ext(file$datapath)
+    # check upload
+    req(file)
+    validate(need(ext == "csv", "Please upload a csv file"))
+    # save upload
+    values$item_difficulty <- read.csv(file$datapath) %>% dplyr::arrange(item_number)
+    #print(head(values$item_difficulty))
+    if ("key" %in% colnames(values$item_difficulty)) {
+      shinyjs::enable("continue_test")
+    } else {
+      showNotification("Error: Incompatible file uploaded; please upload another", type = "error")
+      values$item_difficulty <- items
+      shinyjs::reset("incomplete_test")
+    }
+  })
+  
+  ################################## Continue paused test #################
+  # ----------------------------------------------------------------------------
+  ##############################################################################
+  
+  observeEvent(input$continue_test,{
+    
+    ### start practice stuff  ############################################
+    values$key_val = NULL # keeps track of button press 1 (error), 2 (correct)
+    values$exclude_previous <- ifelse(values$new_test, F, input$exclude_previous) # only informs second tests
+    # only use IRT function if NOT 175 items
+    values$name = input$name
+    values$notes = input$notes
+    values$notes_retest = input$notes_retest
+    # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
+    values$IRT = ifelse(input$numitems == "175_standard", FALSE, TRUE)
+    shinyjs::show("start_over")
+    shinyjs::show("help")
+    
+    #### start stuff ############################################
+    # how many items are done already?
+    values$i = sum(!is.na(values$item_difficulty$response))
+    #print(values$i)
+    values$irt_out = irt_function(all_items = values$item_difficulty,
+                                  IRT = values$IRT,
+                                  exclude_previous = values$exclude_previous,
+                                  previous = values$previous,
+                                  #test = input$numitems,
+                                  exclude_eskimo = input$eskimo
+    )
+    #print(values$irt_out)
+    values$n = 
+      if(values$IRT){
+        if(!is.na(values$irt_out[[2]][[1]])){
+          values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
+          # print(values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num)
+        } else {
+          190
+        }
+      } else {
+        values$irt_out[[2]][[2]]
+      } 
+    # for testing:
+    # if (isTRUE(getOption("shiny.testmode"))) {
+    #   shinyjs::reset("keys")
+    # }
+    values$irt_out <- list(0, 0, 11) # reset saved data just in case. 
+    #play a sound...not working right now :(
+    shinyjs::runjs("document.getElementById('audio').play();")
+    # got to slides
+    # reset keyval
+    values$key_val = NULL # keeps track of button press 1 (error) or 2 (correct)
+    updateNavbarPage(session, "mainpage", selected = "Assessment")
+    
+    
+    
+  })
   
   ################################## SCORE EXISTING TEST MODAL #################
   # ----------------------------------------------------------------------------
