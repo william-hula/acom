@@ -21,8 +21,6 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
         tidyr::drop_na(response) %>%
         dplyr::pull(item_number)
 
-      #print(completed)
-
       # don't re-use previous items
       if(exclude_previous){
         previously_completed = previous %>%
@@ -63,7 +61,6 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
          } else {
            NA
          }
-       #print(next_item)
 
          tmp_list = list(
          ability,

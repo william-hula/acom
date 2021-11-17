@@ -10,3 +10,7 @@
 ^dev$
 ^README\.Rmd$
 ^app\.R$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^vignettes/articles$
