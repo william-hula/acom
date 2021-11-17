@@ -172,8 +172,10 @@ intro_tab_div <- function(){
                                       system.file("app/www/instructions.md",
                                                   package = "pnt")
                                     ),
+                                    fileInput("incomplete_test", "Upload incomplete test csv"),
                                    div(align = "center",
                                        actionButton("back_to_test_or_retest", "Back"),
+                                       shinyjs::disabled(actionButton("continue_test", "Resume incomplete test")),
                                        actionButton("start_practice",
                                                     "Start Practice")
                                    )

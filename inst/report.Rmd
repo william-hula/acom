@@ -8,6 +8,7 @@ params:
   values: NA
   irt_final: NA
   text: NA
+  caption: NA
 header-includes:
     - \usepackage{booktabs}
     - \usepackage{tabu}
@@ -35,12 +36,14 @@ This test was completed by `r params$name` and scored on `r format(params$values
 
 ```{r, echo=F, fig.height=3, fig.width=5, warning = F, fig.align='center'}
 
-plot <- get_plot(params$values, params$irt_final, basesize = 10)
+plot <- get_plot(params$irt_final, basesize = 10)
 shiny::setProgress(0.4)
 plot
 shiny::setProgress(0.7)
 
 ```
+
+`r params$caption`
 
 ### Administration notes 
 

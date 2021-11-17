@@ -30,8 +30,8 @@ get_data_for_download <- function(values, in_progress){#, current_item, IRT = T
   
   tmp <- get_results_data_long(values)
   
-dat_out <- tmp %>% dplyr::select(item_number, target, key, resp, 
-                          order, ability, sem, ci_95,
+dat_out <- tmp %>% dplyr::select(item_number, target, key, resp, response, discrimination, itemDifficulty, slide_num,
+                          order, ability, sem, ci_95, 
                           name, date, notes)
 
 if(in_progress == "Assessment" & isTruthy(IRT)){

@@ -13,15 +13,13 @@ get_first_item <- function(all_items, previous, exclude_previous = F){
     # if we want to sample the four anyway
     # first_item = sample(choices, 1)
     # return(first_item)
-    print("ok")
     return(130)
 
   } else {
 
     completed = previous #%>%
      # tidyr::drop_na(response)
-    print(completed)
-    
+
     all_items$response[match(completed$item_number, all_items$item_number)] <- completed$response
     # dataframe of inputs
     pars = data.frame(a = all_items$discrimination,

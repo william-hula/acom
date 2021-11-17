@@ -4,33 +4,24 @@
 \alias{get_text_summary}
 \title{get text summary}
 \usage{
-get_text_summary(
-  acc,
-  ability,
-  ci_95,
-  last_ability,
-  last_ci_95,
-  first_ability,
-  first_ci_95,
-  num_previous
-)
+get_text_summary(ability, sem, last_ability, last_sem, num_previous)
 }
 \arguments{
-\item{acc}{acc}
-
 \item{ability}{ability}
 
-\item{ci_95}{ci95}
-
 \item{last_ability}{last abil}
+
+\item{num_previous}{num prev}
+
+\item{acc}{acc}
+
+\item{ci_95}{ci95}
 
 \item{last_ci_95}{last ci95}
 
 \item{first_ability}{last first}
 
 \item{first_ci_95}{first ci}
-
-\item{num_previous}{num prev}
 }
 \description{
 get text summary

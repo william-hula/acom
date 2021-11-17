@@ -21,8 +21,8 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
         tidyr::drop_na(response) %>%
         dplyr::pull(item_number)
 
-      
-      
+      #print(completed)
+
       # don't re-use previous items
       if(exclude_previous){
         previously_completed = previous %>%
@@ -38,7 +38,6 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
                         c = rep(1), #1PL has no guessing parameter ,
                         d = rep(0), #1PL has no innatention parameter,
                         cbGroup = rep(1))
-      
       # breaks it down into what gets fed into the 1PL IRT
       prov = catR::breakBank(pars)
       bank = prov$itemPar
@@ -46,7 +45,7 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
       x = all_items$response
        # ability estimate using bayes modal:
       # 10-6 CHANGING TO T ESTIMATES
-      
+
        ability = catR::thetaEst(bank, x, method = "EAP", parInt = c(5, 95, 33), priorPar = c(50,10))
        # generates the next item
        # standard error of the mean
@@ -64,7 +63,7 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
          } else {
            NA
          }
-       
+       #print(next_item)
 
          tmp_list = list(
          ability,

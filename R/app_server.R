@@ -48,7 +48,7 @@ app_server <- function( input, output, session ) {
         tidyr::drop_na(key) %>%
         dplyr::mutate(response = ifelse(key == 2, 0, 1)) # correct is 0, incorrect is 1.
       # assign number of previous values
-      # values$num_previous <- length(unique(values$previous$date))
+      values$num_previous <- 1
       values$min_sem <- min(values$previous$sem, na.rm = T)
       shinyjs::enable("next_retest")
     } else {
@@ -179,6 +179,21 @@ app_server <- function( input, output, session ) {
   
   observeEvent(input$confirm_end_test,{
     if(isTruthy(input$confirm_end_test)){
+      values$results_data_summary <- 
+        dplyr::bind_rows(values$item_difficulty) %>%
+        # have to switch 0s and 1s because IRT is dumb. 
+        tidyr::drop_na() %>%
+        dplyr::mutate(response = as.numeric(ifelse(response == 0, 1, 0)),
+                      ci_95 = sem*1.96) %>%
+        dplyr::summarize(accuracy = mean(response)) %>%
+        dplyr::pull(accuracy)
+      
+      values$irt_final <- 
+        get_final_numbers(out = values$irt_out,
+                          previous = values$previous,
+                          num_previous = values$num_previous)
+      shinyjs::show("report")
+      shinyjs::hide("help")
       updateNavbarPage(session, "mainpage",
                        selected = "Results")
     }
@@ -220,6 +235,89 @@ app_server <- function( input, output, session ) {
                      selected = "Practice")
   })
   
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  # observer for uploading data
+  observeEvent(input$incomplete_test,{
+    file <- input$incomplete_test
+    ext <- tools::file_ext(file$datapath)
+    # check upload
+    req(file)
+    validate(need(ext == "csv", "Please upload a csv file"))
+    # save upload
+    values$item_difficulty <- read.csv(file$datapath) %>% dplyr::arrange(item_number)
+    #print(head(values$item_difficulty))
+    if ("key" %in% colnames(values$item_difficulty)) {
+      shinyjs::enable("continue_test")
+    } else {
+      showNotification("Error: Incompatible file uploaded; please upload another", type = "error")
+      values$item_difficulty <- items
+      shinyjs::reset("incomplete_test")
+    }
+  })
+  
+  observeEvent(input$continue_test,{
+
+    ### start practice stuff  ############################################
+    values$key_val = NULL # keeps track of button press 1 (error), 2 (correct)
+    values$exclude_previous <- ifelse(values$new_test, F, input$exclude_previous) # only informs second tests
+    # only use IRT function if NOT 175 items
+    values$name = input$name
+    values$notes = input$notes
+    values$notes_retest = input$notes_retest
+    # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
+    values$IRT = ifelse(input$numitems == "175_standard", FALSE, TRUE)
+    shinyjs::show("start_over")
+    shinyjs::show("help")
+    
+    #### start stuff ############################################
+    # how many items are done already?
+    values$i = sum(!is.na(values$item_difficulty$response))
+    #print(values$i)
+    values$irt_out = irt_function(all_items = values$item_difficulty,
+                                  IRT = values$IRT,
+                                  exclude_previous = values$exclude_previous,
+                                  previous = values$previous,
+                                  #test = input$numitems,
+                                  exclude_eskimo = input$eskimo
+    )
+    #print(values$irt_out)
+    values$n = 
+      if(values$IRT){
+        if(!is.na(values$irt_out[[2]][[1]])){
+          values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
+         # print(values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num)
+        } else {
+          190
+        }
+      } else {
+        values$irt_out[[2]][[2]]
+      } 
+    # for testing:
+    # if (isTRUE(getOption("shiny.testmode"))) {
+    #   shinyjs::reset("keys")
+    # }
+    values$irt_out <- list(0, 0, 11) # reset saved data just in case. 
+    #play a sound...not working right now :(
+    shinyjs::runjs("document.getElementById('audio').play();")
+    # got to slides
+    # reset keyval
+    values$key_val = NULL # keeps track of button press 1 (error) or 2 (correct)
+    updateNavbarPage(session, "mainpage", selected = "Assessment")
+    
+    
+
+  })
+  # 
   ################################## START ASSESSMENT ############################
   # start button. sets the i value to 1 corresponding to the first slide
   # switches to the assessment tab
@@ -350,24 +448,16 @@ app_server <- function( input, output, session ) {
                                       exclude_eskimo = input$eskimo
         )
         # save info to the item_difficulty data_frame
-        values$item_difficulty[values$item_difficulty$slide_num == values$n,][9:13] <-
-          tibble::tibble(
-            # what trial was the item presented
-            order = values$i,
-            # what was the key press
-            key = values$key_val,
-            # 1 is incorrect (1) and 2 is correct (0).
-            # IRT model reverses 1 and 0...
-            resp = ifelse(values$key_val == incorrect_key_response,
-                          "incorrect",
-                          ifelse(values$key_val == correct_key_response,
-                                 "correct", "NR")
-            ),
-            # NEW ability estimate after model restimation
-            ability = round(values$irt_out[[1]],3),
-            # NEW sem 
-            sem = round(values$irt_out[[3]], 3)
-          )
+        values$item_difficulty[values$item_difficulty$slide_num == values$n,]$order = values$i
+        values$item_difficulty[values$item_difficulty$slide_num == values$n,]$key = values$key_val
+        values$item_difficulty[values$item_difficulty$slide_num == values$n,]$resp = ifelse(values$key_val == incorrect_key_response,
+                                                                                            "incorrect",
+                                                                                            ifelse(values$key_val == correct_key_response,
+                                                                                                   "correct", "NR")
+        )
+        values$item_difficulty[values$item_difficulty$slide_num == values$n,]$ability = round(values$irt_out[[1]],4)
+        values$item_difficulty[values$item_difficulty$slide_num == values$n,]$sem = round(values$irt_out[[3]],4)
+
         # pick the next slide using the output of the irt
         # conditional fixes a bug for the last item
         # if the test goes all the way to 175
@@ -472,14 +562,11 @@ app_server <- function( input, output, session ) {
   #  outputs a summary sentence
   output$results_summary <- renderUI({
     summary = p(
-      get_text_summary(acc = values$results_data_summary,
-                               ability = values$irt_final$ability,
-                               ci_95 = values$irt_final$ci_95,
-                               last_ability = values$irt_final$last_ability,
-                               last_ci_95 = values$irt_final$last_ci_95,
-                               first_ability = values$irt_final$first_ability,
-                               first_ci_95 = values$irt_final$first_ci_95,
-                               num_previous = values$num_previous)
+      get_text_summary(ability = values$irt_final$ability,
+                       sem = values$irt_final$sem,
+                       last_ability = values$irt_final$last_ability,
+                       last_sem = values$irt_final$last_sem,
+                       num_previous = values$num_previous)
     )
   })
   ################################## DOWNLOAD ####################################  
@@ -523,15 +610,13 @@ app_server <- function( input, output, session ) {
           notes = input$notes,
           values = values,
           irt_final = values$irt_final,
-          text = get_text_summary(
-                           acc = values$results_data_summary,
-                           ability = values$irt_final$ability,
-                           ci_95 = values$irt_final$ci_95,
-                           last_ability = values$irt_final$last_ability,
-                           last_ci_95 = values$irt_final$last_ci_95,
-                           first_ability = values$irt_final$first_ability,
-                           first_ci_95 = values$irt_final$first_ci_95,
-                           num_previous = values$num_previous))
+          text = get_text_summary(ability = values$irt_final$ability,
+                                  sem = values$irt_final$sem,
+                                  last_ability = values$irt_final$last_ability,
+                                  last_sem = values$irt_final$last_sem,
+                                  num_previous = values$num_previous),
+          caption = get_caption(values)
+        )
         
         # Knit the document, passing in the `params` list, and eval it in a
         # child of the global environment (this isolates the code in the document
@@ -585,17 +670,8 @@ app_server <- function( input, output, session ) {
   })
   
   output$plot_caption <- renderUI({
-    
     req(values$irt_final)
-    
-    if(is.na(values$irt_final$last_ability)){
-      
-      tags$em("The blue dashed line reflects current estimate and the shaded area reflects uncertainty in current estiate.\n The average ability for individuals with aphasia is 50, with a standard deviation of 10.")
-      
-    } else {
-      
-      tags$em("The blue dashed line reflects current estimate and the red dashed line reflects the estimate from the previous test. Shaded areas reflects uncertainty in the estiates.\n The average ability for individuals with aphasia is 50, with a standard deviation of 10.")
-    }
+    get_caption(values)
   })
   
   ################################## TABLE #######################################
@@ -640,7 +716,7 @@ app_server <- function( input, output, session ) {
     },
     content = function(file) {
       write.csv(items %>% 
-                  dplyr::select(item_number, target, response = key),
+                  dplyr::select(item_number, target, key),
                 file, row.names = FALSE)
     }
   )
@@ -653,13 +729,13 @@ app_server <- function( input, output, session ) {
     req(file)
     # save upload
     values$rescore <- read.csv(file$datapath) %>%
-      tidyr::drop_na(response)
+      tidyr::drop_na(key)
     # saves teh error messages to be put back into the modal. 
     values$error <- if(nrow(values$rescore)==0){
       "Error: Please include at least one scored response"
-    } else if (!all(c("item_number", "target", "response") %in% colnames(values$rescore))){
+    } else if (!all(c("item_number", "target", "key") %in% colnames(values$rescore))){
       "Error: Column names have been changed"
-    } else if (!all(unique(values$rescore$response) == 1 | unique(values$rescore$response) == 2)){
+    } else if (!all(unique(values$rescore$key) == 1 | unique(values$rescore$key) == 2)){
       "Error: please only enter 1 for correct and 2 for incorrect in the response column"
     } else {
       "no_error"
@@ -740,6 +816,12 @@ app_server <- function( input, output, session ) {
         # Set up parameters to pass to Rmd document
         params <- list(
           values = values$rescore_list,
+          irt_final = values$rescore_list$irt_final,
+          text = get_text_summary(ability = values$rescore_list$irt_final$ability,
+                                  sem = values$rescore_list$irt_final$sem,
+                                  last_ability = NA,
+                                  last_sem = NA,
+                                  num_previous = values$num_previous),
           download_time = Sys.time()
           )
         

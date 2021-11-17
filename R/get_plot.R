@@ -20,8 +20,8 @@
                                   #data = subset_dat(tibble::tibble(thetas))) +
       
       q_dat <- ggplot2::ggplot_build(q)
-      x1 <- min(which(q_dat$data[[1]]$x >=irt_final$ability-(irt_final$ci_95/2)))
-      x2 <- max(which(q_dat$data[[1]]$x <=irt_final$ability+(irt_final$ci_95/2)))
+      x1 <- min(which(q_dat$data[[1]]$x >=irt_final$ability-(irt_final$sem*1.96)))
+      x2 <- max(which(q_dat$data[[1]]$x <=irt_final$ability+(irt_final$sem*1.96)))
       y_dens = q_dat$data[[1]] %>% 
         dplyr::filter(abs(x-irt_final$ability) == min(abs(x - irt_final$ability))) %>%
         dplyr::pull(y)
@@ -57,8 +57,8 @@
       
       if(!is.na(irt_final$last_ability)){
         
-        x1b <- min(which(q_dat$data[[1]]$x >=irt_final$last_ability-(irt_final$last_ci_95/2)))
-        x2b <- max(which(q_dat$data[[1]]$x <=irt_final$last_ability+(irt_final$last_ci_95/2)))
+        x1b <- min(which(q_dat$data[[1]]$x >=irt_final$last_ability-(irt_final$last_sem*1.96)))
+        x2b <- max(which(q_dat$data[[1]]$x <=irt_final$last_ability+(irt_final$last_sem*1.96)))
         y_densb = q_dat$data[[1]] %>% 
           dplyr::filter(abs(x-irt_final$last_ability) == min(abs(x - irt_final$last_ability))) %>%
           dplyr::pull(y)

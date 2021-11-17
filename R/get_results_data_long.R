@@ -16,6 +16,7 @@ get_results_data_long <- function(values){
     paste0(values$test_length, " items")
   }
   
+  print(head(dplyr::bind_rows(values$item_difficulty)))
   tmp = dplyr::bind_rows(values$item_difficulty) %>%
     dplyr::mutate(ci_95 = sem*1.96,
                   precision = precision,

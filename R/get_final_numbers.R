@@ -12,11 +12,13 @@ get_final_numbers <- function(out,
     sem = out[[3]],
     ci_95 = out[[3]]*1.96,
     last_ability = NA,
+    last_sem = NA,
     last_ci_95 = NA
   )
   
   if(!is.null(previous)){
       df$last_ability = previous[previous$order==max(previous$order, na.rm = T),]$ability
+      df$last_sem = previous[previous$order==max(previous$order, na.rm = T),]$sem
       df$last_ci_95 = previous[previous$order==max(previous$order, na.rm = T),]$ci_95
     }
 

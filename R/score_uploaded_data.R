@@ -5,7 +5,7 @@
 score_uploaded_data <- function(uploaded_dat){
   to_join <- items %>% dplyr::select(target, itemDifficulty, discrimination)
   dat <- uploaded_dat %>%
-    dplyr::rename(key = response) %>%
+    #dplyr::rename(key = response) %>%
     dplyr::left_join(to_join, by = "target") %>%
     dplyr::mutate(resp = ifelse(key == 1, "incorrect",
                                 ifelse(key == 2, 
@@ -52,19 +52,13 @@ score_uploaded_data <- function(uploaded_dat){
   
   ####### TEXT ######
   
-  out_list$text <- 
-    paste(
-      "The total accuracy for this test was ",
-      round(accuracy*100, 1),
-      "%. ",
-      "The final IRT ability estimate is ",
-      round(ability, 2),
-      " [95% CI: ", round(ability - ci_95,2), ", ", round(ability + ci_95,2), "]. ",
-      "This naming ability estimate is in the ",
-      round(pnorm(ability, 50, 10)*100,1), " percentile of naming ability."
-      ,sep = "")
-  
-  
+  out_list$text <- get_text_summary(
+    ability = ability,
+    sem = sem,
+    last_ability = NA,
+    last_sem = NA,
+    num_previous = 0
+  )
 
   return(out_list)
   
