@@ -1,5 +1,5 @@
 
-# PNT-CAT
+# pnt: Computer adaptive forms of the Philadelphia Naming Test
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
