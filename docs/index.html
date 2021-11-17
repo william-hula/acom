@@ -44,6 +44,9 @@
   </a>
 </li>
 <li>
+  <a href="articles/articles/pnt.html">Get started</a>
+</li>
+<li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -93,64 +96,24 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <!-- badges: start -->
 
-<p>This web-app implements the computer adaptive version of the Philadelphia Naming Test (<a href="http://aphasiology.pitt.edu/215/1/24-09.pdf">Roach et al., 1996</a>) for clinical use. The 30-item computer adaptive Philadelphia Naming Test (PNT-CAT) can estimate the naming ability of people with aphasia with high reliability to the full 175-item PNT (<a href="https://pubs.asha.org/doi/full/10.1044/2018_JSLHR-L-18-0344">Fergadiotis, Hula, Swiderski, Lei, and Kellough, 2018</a>). Rather than delivering all 175 items in order, The PNT-CAT chooses the next item based on how well an individual names previous items. Computer adaptive testing is based on item-response theory; see <a href="https://www.thieme-connect.com/products/ejournals/abstract/10.1055/s-0041-1727252">Fergadiotis, Casilio, Hula, and Swiderski, 2021</a> and <a href="https://aswiderski.shinyapps.io/IRTapp/" class="uri">https://aswiderski.shinyapps.io/IRTapp/</a> for a primer on item-response theory and naming in aphasia.</p>
-<p>This web-app allows Speech-Language Pathologists to:</p>
+<p>This application allows clinician users to administer adaptive (PNT-CAT) and static versions of the Philadelphia Naming Test (<a href="http://aphasiology.pitt.edu/215/1/24-09.pdf">Roach et al., 1996</a>) and generate output that provides scores on a common T-score metric, where the expected mean and standard deviation of persons with aphasia are 50 and 10, respectively.</p>
+<p>Specifically, the web-app allows clinicians to:</p>
 <ol>
-<li>Administer a 30-item PNT-CAT, 175-item PNT-CAT, 175-item Standard PNT.</li>
-<li>Re-administer a 30-item PNT-CAT or variable-length PNT-CAT to assess change in naming ability</li>
-<li>Upload a scores from an offline PNT to get an ability estimate.</li>
+<li>Administer a 30-item PNT-CAT, 175-item PNT-CAT, two 30-item PNT short-forms, 175-item Standard PNT.</li>
+<li>Re-administer a 30-item PNT-CAT, variable-length PNT-CAT, or alternate PNT short-form to assess change in naming ability</li>
+<li>Upload a scores from an offline PNT to obtain a naming ability estimate and associated credible interval.</li>
 </ol>
 <p>For each option, users have the option of downloading performance data and a pdf-report of the results.</p>
-<p>Feedback and pull requests are welcome and encouraged. Please note that the app does not store any data beyond a single user-session.</p>
+<p>Users of this application should first familiarize themselves with the administration and scoring procedures for the PNT (<a href="https://mrri.org/philadelphia-naming-test/" class="uri">https://mrri.org/philadelphia-naming-test/</a>), with a focus on the rules for determining the first complete attempt and for identifying correct responses. The application uses only dichotomous correct/incorrect scoring, which can be applied online with sufficient accuracy by trained users. However, because the rules for determining the first complete attempt, and, to a lesser extent, correct responses can be challenging to apply in some cases, we recommend audio recording administrations for offline review. Also of note, while the standard PNT administration rules allow examinees up to 30 seconds to respond to each item, consistent with Walker and Schwartz (2012), the validation studies for the present PNT-CAT short forms (Fergadiotis et al., 2019; Hula et al., 2020) allowed only 10 seconds.</p>
+<p>Users may also wish to review the prinicples of item-response theory and computer adaptive testing. 1. <a href="https://www.thieme-connect.com/products/ejournals/abstract/10.1055/s-0041-1727252">Fergadiotis, Casilio, Hula, and Swiderski, 2021</a></p>
+<ol>
+<li>The four articles available at: <a href="https://aphasia-apps.github.io/pnt/" class="uri">https://aphasia-apps.github.io/pnt/</a>
+</li>
+<li><a href="https://aswiderski.shinyapps.io/IRTapp/" class="uri">https://aswiderski.shinyapps.io/IRTapp/</a></li>
+</ol>
+<p>Feedback and pull requests for the application are encouraged. Please note that the app does not store any data beyond a single user-session.</p>
 <p>The development of this testing application was funded by National Institute on Deafness and Other Communication Disorders Awards R03DC014556 (PI: Fergadiotis) and R01DC018813 (MPIs: Fergadiotis &amp; Hula), VA Rehabilitation Research &amp; Development Career Development Award C7476W (PI: Hula), and the VA Pittsburgh Healthcare System Geriatric Research, Education, and Clinical Center. We would also like to acknowledge the support and assistance of Myrna Schwartz, Dan Mirman, Adelyn Brecher, Erica Middleton, Patrick Doyle, Malcolm McNeil, Christine Matthews, Angela Grzybowski, Brooke Swoyer, Maria Fenner, Michelle Gravier, Alyssa Autenreith, Emily Boss, Haley Dresang, Lauren Weerts, Hattie Olson, Kasey Graue, Chia-Ming Lei, Joann Silkes, Diane Kendall, the staff of the VA Pittsburgh Healthcare System Audiology and Speech Pathology Program.</p>
 <p>To cite this app, please use: Robert Cavanaugh, Alexander Swiderski, G F and William D. Hula (2021). PNT.CAT: Philadelphia Naming Test - Computer Adaptive Test. R package version 0.0.0.9000. <a href="https://github.com/aphaisa-apps/pnt" class="uri">https://github.com/aphaisa-apps/pnt</a></p>
-<div id="usage" class="section level2">
-<h2 class="hasAnchor">
-<a href="#usage" class="anchor"></a>Usage</h2>
-<p>The app is now online at <a href="https://aphasia-apps.shinyapps.io/PNT-CAT/" class="uri">https://aphasia-apps.shinyapps.io/PNT-CAT/</a></p>
-</div>
-<div id="local-installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#local-installation" class="anchor"></a>Local Installation</h2>
-<p>The app can be installed locally via <code><a href="https://remotes.r-lib.org/reference/install_github.html">remotes::install_github()</a></code></p>
-<p><em>Note: It’s likely that installing the package will prompt you to update packages on your local machine. This may be necessary if you have much older versions of some packages installed (e.g. the {bslib} package). The number of packages to update is large, as the current app uses quite a few {tidyverse} apps which have a number of dependencies. Please raise an issue in github if there are any issues downloading.</em></p>
-<ol>
-<li>Download the package:</li>
-</ol>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"aphasia-apps/pnt"</span><span class="op">)</span></code></pre></div>
-<ol>
-<li>Run the app using the built in function</li>
-</ol>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://aphasia-apps.github.io/pnt/">pnt</a></span><span class="op">)</span>
-<span class="fu">pnt</span><span class="fu">::</span><span class="fu"><a href="reference/run_app.html">run_app</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-</div>
-<div id="remote-access-to-the-app" class="section level2">
-<h2 class="hasAnchor">
-<a href="#remote-access-to-the-app" class="anchor"></a>Remote access to the app</h2>
-<p>The app can also be accessed via <code><a href="https://rdrr.io/pkg/shiny/man/runUrl.html">shiny::runGitHub()</a></code></p>
-<ol>
-<li>Necessary packages must be installed first:</li>
-</ol>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"here"</span>, <span class="st">"shiny"</span>, <span class="st">"tibble"</span>, <span class="st">"dplyr"</span>, <span class="st">"tidyr"</span>, <span class="st">"ggplot2"</span>,
-                   <span class="st">"shinyWidgets"</span>, <span class="st">"htmltools"</span>, <span class="st">"keys"</span>, <span class="st">"DT"</span>, <span class="st">"shinyjs"</span>, <span class="st">"catR"</span>,
-                   <span class="st">"bslib"</span>, <span class="st">"bayestestR"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<ol>
-<li>The app can be run straight from Github</li>
-</ol>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runUrl.html">runGitHub</a></span><span class="op">(</span><span class="st">"aphasia-apps/pnt"</span><span class="op">)</span></code></pre></div>
-<p><em>Note: If you get any errors about missing a package, install it, restart your session, and try again</em></p>
-</div>
-<div id="clone-the-repository" class="section level2">
-<h2 class="hasAnchor">
-<a href="#clone-the-repository" class="anchor"></a>Clone the repository</h2>
-<p>If desired, the repository can be cloned, and run locally:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>git clone https<span class="sc">:</span><span class="er">//</span>github.com<span class="sc">/</span>aphasia<span class="sc">-</span>apps<span class="sc">/</span>pnt.git</span></code></pre></div>
-</div>
 </div>
   </div>
 

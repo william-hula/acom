@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IRT in the Clinic • pnt</title>
+<title>Using the pnt shiny application • pnt</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../../bootstrap-toc.css">
 <script src="../../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../../pkgdown.css" rel="stylesheet">
-<script src="../../pkgdown.js"></script><meta property="og:title" content="IRT in the Clinic">
+<script src="../../pkgdown.js"></script><meta property="og:title" content="Using the pnt shiny application">
 <meta property="og:description" content="pnt">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -88,31 +88,74 @@
 
       
 
-      </header><script src="IRT-in-the-Clinic_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
+      </header><script src="pnt_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>IRT in the Clinic</h1>
+      <h1 data-toc-skip>Using the pnt shiny application</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/aphaisa-apps/pnt/blob/master/vignettes/articles/IRT-in-the-Clinic.Rmd"><code>vignettes/articles/IRT-in-the-Clinic.Rmd</code></a></small>
-      <div class="hidden name"><code>IRT-in-the-Clinic.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/aphaisa-apps/pnt/blob/master/vignettes/articles/pnt.Rmd"><code>vignettes/articles/pnt.Rmd</code></a></small>
+      <div class="hidden name"><code>pnt.Rmd</code></div>
 
     </div>
 
     
     
-<div id="some-advantages-of-using-irt-in-clinical-assessment" class="section level3">
-<h3 class="hasAnchor">
-<a href="#some-advantages-of-using-irt-in-clinical-assessment" class="anchor"></a>Some Advantages of Using IRT in Clinical Assessment</h3>
-<p>One major advantage of IRT scaling is that it permits clinicians to administer different subsets of items to different individuals or to the same individual on different occasions and obtain scores that are on the same scale and thus directly comparable. Direct comparison of percent correct or number correct scores across different tests or item subsets is not possible because the total number correct and its linear transformations do not take into account the relative difficulty of the items. For example, although a total correct score of 70 on the PNT and a total correct score of 24 on the Boston Naming Test (BNT; Kaplan et al., 2001) both correspond to 40% correct, they do not reflect the same level of anomia severity because the BNT items are, on average more difficult than the items contained in the PNT. The 1-PL IRT model places items and persons on a common scale and the scores derived from that scale do not depend on the particular items administered, assuming adequate model fit and application to the appropriate clinical population (i.e., stroke survivors with aphasia). As explained below, this facilitates adaptive testing and assessment with alternative test forms that do not repeat specific item content and thus avoid some kinds of test practice effects.</p>
-<p>A second advantage of IRT modelling is that it provides individualized estimates of the measurement error associated with each score estimate, referred to as the standard error or standard error of measurement. The standard error of measurement, can be used to determine the extent to which the difference between two individual score estimates exceed measurement error and are thus likely to represent real underlying difference. In the present application, the amount of measurement error associated with a given score estimate is determined primarily by two factors: (1) the number of items administered and (2) the degree to which the difficulty of the administered items is targeted to the ability of the person being tested. All other things equal, administering more items will decrease measurement error and increase the precision of a score estimate. Regarding item-person targeting, it is intuitively apparent that if a group of persons with severe aphasia are given a test composed entirely of easy-to-name items, such as ‘cat’, ‘ear’, ‘bed’, ‘hat’, and ‘tree’, their scores will vary meaningfully and it will be possible to rank order them in terms of the number they name correctly. On the other hand, if that same group of individuals with severe aphasia were given a test composed of difficult-to-name items, such as ‘microscope’, ‘stethoscope’, ‘pyramid’, ‘binoculars’, and ‘volcano’, they would likely all receive the same minimum score and rank ordering them in terms of number correct would not be possible. Conceptually, when item difficulty and person ability are closely matched, the predicted response is close to 0.5, it is uncertain whether the item will be named correctly, and thus the observed response provides more useful information. When item difficulty and person ability are further apart, the expected score approaches 0 or 1, a more confident prediction about whether the item will be named correctly can be made, and the observed response provides correspondingly less new information.</p>
-<p>A third major advantage of IRT modeling is that it can be used to support computer adaptive test (CAT) administration. The primary advantage of adaptive testing is that it minimizes the loss of measurement precision associated with shortening a test, especially for individuals with particularly high or particularly low ability. For the current PNT application, CAT will provide the most benefit relative to a static short form for individuals with especially mild or severe anomia. The adaptive versions of the PNT begin with an item of average difficulty (e.g., ‘pumpkin’) and select each new item to target the current naming score estimate based on the responses collected up to that point.</p>
+<p>There are a number of ways to use the pnt-cat application:</p>
+<div id="online" class="section level2">
+<h2 class="hasAnchor">
+<a href="#online" class="anchor"></a>1. Online</h2>
+<p>The app is now online at <a href="https://aphasia-apps.shinyapps.io/PNT-CAT/" class="uri">https://aphasia-apps.shinyapps.io/PNT-CAT/</a></p>
+</div>
+<div id="local-installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#local-installation" class="anchor"></a>2. Local Installation</h2>
+<p>The app can be installed locally via <code><a href="https://remotes.r-lib.org/reference/install_github.html">remotes::install_github()</a></code></p>
+<p><em>Note: It’s likely that installing the package will prompt you to update packages on your local machine. This may be necessary if you have much older versions of some packages installed (e.g. the {bslib} package). The number of packages to update is large, as the current app uses quite a few {tidyverse} apps which have a number of dependencies. Please raise an issue in github if there are any issues downloading.</em></p>
+<ol style="list-style-type: decimal">
+<li>Download the package:</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"aphasia-apps/pnt"</span><span class="op">)</span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>Run the app using the built in function</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://aphasia-apps.github.io/pnt/">pnt</a></span><span class="op">)</span>
+<span class="fu">pnt</span><span class="fu">::</span><span class="fu"><a href="../../reference/run_app.html">run_app</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="remote-access-to-the-app" class="section level2">
+<h2 class="hasAnchor">
+<a href="#remote-access-to-the-app" class="anchor"></a>3. Remote access to the app</h2>
+<p>The app can also be accessed via <code><a href="https://rdrr.io/pkg/shiny/man/runUrl.html">shiny::runGitHub()</a></code></p>
+<ol style="list-style-type: decimal">
+<li>Necessary packages must be installed first:</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"here"</span>, <span class="st">"shiny"</span>, <span class="st">"tibble"</span>, <span class="st">"dplyr"</span>, <span class="st">"tidyr"</span>, <span class="st">"ggplot2"</span>,
+                   <span class="st">"shinyWidgets"</span>, <span class="st">"htmltools"</span>, <span class="st">"keys"</span>, <span class="st">"DT"</span>, <span class="st">"shinyjs"</span>, <span class="st">"catR"</span>,
+                   <span class="st">"bslib"</span>, <span class="st">"bayestestR"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>The app can be run straight from Github</li>
+</ol>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/shiny/man/runUrl.html">runGitHub</a></span><span class="op">(</span><span class="st">"aphasia-apps/pnt"</span><span class="op">)</span></code></pre></div>
+<p><em>Note: If you get any errors about missing a package, install it, restart your session, and try again</em></p>
+</div>
+<div id="clone-the-repository" class="section level2">
+<h2 class="hasAnchor">
+<a href="#clone-the-repository" class="anchor"></a>4 .Clone the repository</h2>
+<p>If desired, the repository can be cloned, and run locally:</p>
+<pre><code>git clone https://github.com/aphasia-apps/pnt.git</code></pre>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 
