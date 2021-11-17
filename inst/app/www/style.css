@@ -45,3 +45,7 @@ img {
   margin-right: 5px;
   z-index: 1000;
 }
+
+li > ul {
+  padding-bottom: 0.5em;
+}

@@ -6,6 +6,7 @@
 - Press 1 for incorrect and 2 for correct
 - A 1 or 2 will appear in the top-right of the screen to show the key entered.
 - Remember to score the first complete response
+- Also of note, while the standard PNT administration rules allow examinees up to 30 seconds to respond to each item, consistent with Walker and Schwartz (2012), the validation studies for the present PNT-CAT short forms (Fergadiotis et al., 2019; Hula et al., 2020) allowed only 10 seconds.
 - Press Enter to advance to the next item
 - You can download results after the first (non-practice) item has been scored in case you want to end the test early. 
 - Press the escape key to end the test at anytime

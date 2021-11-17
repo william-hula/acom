@@ -13,8 +13,8 @@ intro_tab_div <- function(){
                                       div(
                                         style = "width:50%;",
                                         div(
-                                          h5(
-                                            "Welcome to the computer adaptive version of the \n Philadelphia Naming Test"#,
+                                          h4(
+                                            "Welcome to the computer adaptive version of the Philadelphia Naming Test"#,
                                             # tags$a(href = "https://mrri.org/philadelphia-naming-test/",
                                             #        HTML("Philadelphia&nbsp;Naming&nbsp;Test."),
                                             #        target = "_blank", style = "text-decoration: underline;cursor: pointer;")
@@ -28,7 +28,7 @@ intro_tab_div <- function(){
                                       includeMarkdown(
                                         system.file("app/www/new_intro.md",
                                                     package = "pnt")
-                                      ),
+                                      ), br(),
                                       div(align="center",
                                           actionButton("welcome_next", "Get Started"),
                                       ))
@@ -40,8 +40,8 @@ intro_tab_div <- function(){
                                         div(
                                           style = "width:50%;",
                                           div(
-                                            h5(
-                                              "Welcome to the computer adaptive version of the \n Philadelphia Naming Test"#,
+                                            h4(
+                                              "Administration Options:"#,
                                               # tags$a(href = "https://mrri.org/philadelphia-naming-test/",
                                               #        HTML("Philadelphia&nbsp;Naming&nbsp;Test."),
                                               #        target = "_blank", style = "text-decoration: underline;cursor: pointer;")
@@ -55,12 +55,12 @@ intro_tab_div <- function(){
                                           includeMarkdown(
                                                 system.file("app/www/new_intro2.md",
                                                  package = "pnt")
-                                   ),
+                                   ),br(),
                                    div(align="center",
                                        actionButton('back_intro', "Back"),
                                        actionButton("administer_test", "Administer new PNT"),
                                        actionButton("administer_retest", "Re-administer PNT"),
-                                       actionButton("score_test", "Score offline test")
+                                       actionButton("score_test", "Rescore PNT / Score offline test")
                                    ))
                                )
                   ),

@@ -1,15 +1,14 @@
-This web-app implements the computer adaptive version of the Philadelphia Naming Test ([Roach et al., 1996](http://aphasiology.pitt.edu/215/1/24-09.pdf)) for clinical use. The 30-item computer adaptive Philadelphia Naming Test (PNT-CAT) can estimate the naming ability of people with aphasia with high reliability to the full 175-item PNT ([Fergadiotis, Hula, Swiderski, Lei, and Kellough, 2018](https://pubs.asha.org/doi/full/10.1044/2018_JSLHR-L-18-0344)). Rather than delivering all 175 items in order, The PNT-CAT chooses the next item based on how well an individual names previous items. For more information about.... https://aphasia-apps.github.io/pnt/ for more information on Computer Adaptive Testing and Item Response Theory as it relates to the PNT. 
+This application allows clinician users to administer adaptive (PNT-CAT) and static versions of the Philadelphia Naming Test (<a href="http://aphasiology.pitt.edu/215/1/24-09.pdf)" target="_blank">Roach et al., 1996</a> and generate output that provides scores on a common T-score metric, where the expected mean and standard deviation of persons with aphasia are 50 and 10, respectively. 
 
-This web-app allows Speech-Language Pathologists to:
+Users of this application should first familiarize themselves with the <a href="https://mrri.org/philadelphia-naming-test/" target="_blank">administration and scoring procedures for the PNT</a>, with a focus on the rules for determining the first complete attempt and for identifying correct responses. The application uses only dichotomous correct/incorrect scoring, which can be applied online with sufficient accuracy by trained users. However, because the rules for determining the first complete attempt, and, to a lesser extent, correct responses can be challenging to apply in some cases, we recommend audio recording administrations for offline review. 
 
-1. Administer a 30-item PNT-CAT, 175-item PNT-CAT, 175-item Standard PNT. 
-2. Re-administer a 30-item PNT-CAT or variable-length PNT-CAT to assess change in naming ability
-3. Upload a scores from an offline PNT to get an ability estimate. 
+Users should also review the <a href="https://aphasia-apps.github.io/pnt/articles/articles/PNT-Versions.html" target="_blank">different versions of the PNT available and their psychometric properties.</a>. 
 
-For each option, users have the option of downloading performance data and a pdf-report of the results.
+For users looking for a deeper dive into principles of item-response theory and computer adaptive testing in aphasia, we recommend:
 
-The code is open source and can be accessed on [Github](https://github.com/aphasia-apps/pnt). The web-app can also be installed locally and used without an internet connection. Refer to the github.com page for instructions for installation. Feedback and pull requests are welcome and encouraged. Please note that the app does not store any data beyond a single user-session. 
+  - <a href="https://www.thieme-connect.com/products/ejournals/abstract/10.1055/s-0041-1727252" target="_blank">Fergadiotis, Casilio, Hula, and Swiderski, 2021</a>
+  - The four articles available <a href="https://aphasia-apps.github.io/pnt" target="_blank">**here**</a>
+  - <a href="https://aswiderski.shinyapps.io/IRTapp/ " target="_blank">https://aswiderski.shinyapps.io/IRTapp/</a>
 
 The development of this testing application was funded by National Institute on Deafness and Other Communication Disorders Awards R03DC014556 (PI: Fergadiotis) and R01DC018813 (MPIs: Fergadiotis & Hula), VA Rehabilitation Research & Development Career Development Award C7476W (PI: Hula), and the VA Pittsburgh Healthcare System Geriatric Research, Education, and Clinical Center. We would also like to acknowledge the support and assistance of Myrna Schwartz, Dan Mirman, Adelyn Brecher, Erica Middleton, Patrick Doyle, Malcolm McNeil, Christine Matthews, Angela Grzybowski, Brooke Swoyer, Maria Fenner, Michelle Gravier, Alyssa Autenreith, Emily Boss, Haley Dresang, Lauren Weerts, Hattie Olson, Kasey Graue, Chia-Ming Lei, Joann Silkes, Diane Kendall, the staff of the VA Pittsburgh Healthcare System Audiology and Speech Pathology Program.
 
-To cite this app, please use: Robert Cavanaugh, Alexander Swiderski, G F and William D. Hula (2021). PNT.CAT: Philadelphia Naming Test - Computer Adaptive Test. R package version 0.0.0.9000. https://github.com/aphaisa-apps/pnt
