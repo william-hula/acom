@@ -25,4 +25,4 @@ To cite this app, please use: Robert Cavanaugh, Alexander Swiderski, G F and Wil
 
 Feedback and pull requests for the application are encouraged. 
 
-[Click here to get started]()
+[**Click here to get started**](https://aphasia-apps.github.io/pnt/articles/articles/pnt.html)

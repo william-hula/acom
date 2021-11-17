@@ -49,4 +49,5 @@ Adaptive Test. R package version 0.0.0.9000.
 
 Feedback and pull requests for the application are encouraged.
 
-[Click here to get started]()
+[**Click here to get
+started**](https://aphasia-apps.github.io/pnt/articles/articles/pnt.html)

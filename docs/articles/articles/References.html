@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About Item Response Theory • pnt</title>
+<title>References • pnt</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../../bootstrap-toc.css">
 <script src="../../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../../pkgdown.css" rel="stylesheet">
-<script src="../../pkgdown.js"></script><meta property="og:title" content="About Item Response Theory">
+<script src="../../pkgdown.js"></script><meta property="og:title" content="References">
 <meta property="og:description" content="pnt">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -91,34 +91,30 @@
 
       
 
-      </header><script src="About-Item-Response-Theory_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
+      </header><script src="References_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>About Item Response Theory</h1>
+      <h1 data-toc-skip>References</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/aphaisa-apps/pnt/blob/master/vignettes/articles/About-Item-Response-Theory.Rmd"><code>vignettes/articles/About-Item-Response-Theory.Rmd</code></a></small>
-      <div class="hidden name"><code>About-Item-Response-Theory.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/aphaisa-apps/pnt/blob/master/vignettes/articles/References.Rmd"><code>vignettes/articles/References.Rmd</code></a></small>
+      <div class="hidden name"><code>References.Rmd</code></div>
 
     </div>
 
     
     
-<div id="background-on-item-response-theory-the-1-parameter-logistic-model-and-the-pnt-cat" class="section level3">
-<h3 class="hasAnchor">
-<a href="#background-on-item-response-theory-the-1-parameter-logistic-model-and-the-pnt-cat" class="anchor"></a>Background on Item Response Theory, the 1-Parameter Logistic Model, and the PNT-CAT</h3>
-<p>The adaptive testing algorithm and the scoring metric for all versions of the PNT included in this application are based on a 1-parameter logistic item response theory (1-PL IRT) model of the PNT (Fergadiotis et al., 2015). An IRT model places items and persons on a common latent trait scale and, given calibrated estimates of item difficulty and person ability, provides predictions for the expected response to each item by each person. Alternatively, given a set of item difficulty estimates and a string of associated responses from an individual, the 1-PL IRT model provides a score estimate and an associated standard error of measurement. Following the convention of the IRT literature, the item difficulty and person ability estimates in this application have been scaled such that when they are equal, the expected response is 0.5, meaning that if 100 individuals with ability = 50 are administered an item of difficulty = 50, there will be approximately 50 correct and 50 incorrect responses. Likewise, if a person with ability = 50 is given 100 items all with difficulty = 50, they will be expected to respond correctly to half. As person ability increases relative to item difficulty, the expected score increases above 0.5, and as person ability decreases relative to item difficulty, the expected score decreases below 0.5, reaching an asymptote as the expectation approaches 0 or 1.</p>
-<ul>
-<li>Interested readers are referred to Baylor and colleagues (2011) for a general introduction to item response theory for speech-language pathologists</li>
-<li>Alex Swiderski’s GitHub page [link] provides a graphical presentation of the 1-PL IRT model for the PNT and some key concepts in IRT.</li>
-<li>See Fergadiotis, Casilio, Hula, and Swiderski (2021) for an overview of the research program on which this PNT-CAT testing application is based.</li>
-<li>Initial fitting and evaluation of the 1-PL model to the PNT in a frequentist statistical framework was reported by Fergadiotis, Kellough, and Hula (2015), using a sample of 251 persons with aphasia from the Moss Aphasia Psycholinguistics Project Database (MAPPD; Mirman et al., 2010).</li>
-<li>Initial development and simulation testing of the PNT-CAT versions using the same data set from the MAPPD was reported in Hula, Kellough, &amp; Fergadiotis (2015).</li>
-<li>Empirical comparison of the PNT-CAT30 to the full PNT was reported in Fergadiotis, Hula, Swiderski, Lei, and Kellough (2019)</li>
-<li>Empirical comparison of the PNT-CAT30 and PNT-CATVL was described in Hula, Fergadiotis, Swiderski, Silkes, &amp; Kellough (2020).</li>
-<li>A refitting of the PNT to the 1-PL model in a Bayesian statistical framework, based on larger data set from the MAPPD was reported by Huston (2021), and the current item difficulty estimates are taken from this work.</li>
-</ul>
-</div>
+<p>Baylor, C., Hula, W. D., Donovan, N. J., Doyle, P. J., Kendall, D., &amp; Yorkston, K. (2011). An introduction to item response theory and Rasch models for speech-language pathologists. American Journal of Speech-Language Pathology, 20(3), 243–259.</p>
+<p>Fergadiotis, G., Casilio, M., Hula, W. D., &amp; Swiderski, A. M. (2021). Computer adaptive testing for the assessment of anomia severity. Seminars in Speech and Language.</p>
+<p>Fergadiotis, G., Hula, W. D., Swiderski, A. M., Lei, C.-M., &amp; Kellough, S. (2019). Enhancing the efficiency of confrontation naming assessment for aphasia using computer adaptive testing. Journal of Speech, Language, and Hearing Research, 62(6), 1724–1738.</p>
+<p>Fergadiotis, G., Kellough, S., &amp; Hula, W. D. (2015). Item response theory modeling of the Philadelphia Naming Test. Journal of Speech, Language, and Hearing Research, 58(3), 865–877.</p>
+<p>Hula, W. D., Fergadiotis, G., Swiderski, A. M., Silkes, J. P., &amp; Kellough, S. (2020). Empirical Evaluation of Computer-Adaptive Alternate Short Forms for the Assessment of Anomia Severity. Journal of Speech, Language, and Hearing Research, 63(1), 163–172.</p>
+<p>Hula, W. D., Kellough, S., &amp; Fergadiotis, G. (2015). Development and simulation testing of a computerized adaptive version of the Philadelphia naming test. Journal of Speech, Language, and Hearing Research, 1–13. <a href="https://doi.org/10.1044/2015_JSLHR-L-14-0297" class="uri">https://doi.org/10.1044/2015_JSLHR-L-14-0297</a></p>
+<p>Huston, H. (2021). Bayesian item response theory modelling [Maser’s thesis]. Portland State University.</p>
+<p>Kaplan, E., Goodlgass, H., &amp; Weintraub, S. (2001). Boston Naming Test (2nd ed.). Lippincott Williams &amp; Wilkins.</p>
+<p>Mirman, D., Strauss, T. J., Brecher, A., Walker, G. M., Sobel, P., Dell, G. S., &amp; Schwartz, M. F. (2010). A large, searchable, web-based database of aphasic performance on picture naming and other tests of cognitive function. Cognitive Neuropsychology, 27(6), 495–504.</p>
+<p>Walker, G. M., Hickok, G., &amp; Fridriksson, J. (2018). A cognitive psychometric model for assessment of picture naming abilities in aphasia. Psychological Assessment, 809–826.</p>
+<p>Walker, G. M., &amp; Schwartz, M. F. (2012). Short-Form Philadelphia Naming Test: Rationale and Empirical Evaluation. American Journal of Speech-Language Pathology, 21(2), S140–S153.</p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
