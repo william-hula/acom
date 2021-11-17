@@ -21,7 +21,7 @@ For each option, users have the option of downloading performance data and a pdf
 
 Feedback and pull requests are welcome and encouraged. Please note that the app does not store any data beyond a single user-session. 
 
-Research supporting this application has been funded by the National Institutes of Health - National Institute for Deafness and other Communication Disorders (NIH-NIDCD) awarded to William Hula and Gerasimos Fergadiotis. The app was built and designed by Rob Cavanaugh, Alex Swiderski, Gerasimos Fergadiotis, and William Hula. 
+The development of this testing application was funded by National Institute on Deafness and Other Communication Disorders Awards R03DC014556 (PI: Fergadiotis) and R01DC018813 (MPIs: Fergadiotis & Hula), VA Rehabilitation Research & Development Career Development Award C7476W (PI: Hula), and the VA Pittsburgh Healthcare System Geriatric Research, Education, and Clinical Center. We would also like to acknowledge the support and assistance of Myrna Schwartz, Dan Mirman, Adelyn Brecher, Erica Middleton, Patrick Doyle, Malcolm McNeil, Christine Matthews, Angela Grzybowski, Brooke Swoyer, Maria Fenner, Michelle Gravier, Alyssa Autenreith, Emily Boss, Haley Dresang, Lauren Weerts, Hattie Olson, Kasey Graue, Chia-Ming Lei, Joann Silkes, Diane Kendall, the staff of the VA Pittsburgh Healthcare System Audiology and Speech Pathology Program.
 
 To cite this app, please use: Robert Cavanaugh, Alexander Swiderski, G F and William D. Hula (2021). PNT.CAT: Philadelphia Naming Test - Computer Adaptive Test. R package version 0.0.0.9000. https://github.com/aphaisa-apps/pnt
 
