@@ -13,9 +13,14 @@ get_data_for_download <- function(values, in_progress){#, current_item, IRT = T
   
   tmp <- get_results_data_long(values)
   
+  test = ifelse(grepl("walker", values$selected_test), paste0(values$selected_test, "_", values$walker_form), values$selected_test)
+  
 dat_out <- tmp %>% dplyr::select(item_number, target, key, resp, response, discrimination, itemDifficulty, slide_num,
                           order, ability, sem, ci_95, 
-                          name, date, notes)
+                          name, date, notes) %>%
+                    dplyr::mutate(test = test, .before = name)
+
+
 
 if(in_progress == "Assessment" & isTruthy(IRT)){
     dat_out$notes[2] = "Test ended before completed"

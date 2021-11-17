@@ -132,29 +132,37 @@ app_server <- function( input, output, session ) {
     if(isTruthy(values$new_test)){
        if(input$numitems == "175_standard"){
           # full pnt
-          values$test_length <- ifelse(input$eskimo, 174, 175)
+          values$test_length = ifelse(input$eskimo, 174, 175)
           shinyjs::show("eskimo")
+          shinyjs::hide("walker")
         } else if(input$numitems == "175_cat"){
           # full pnt
-          values$test_length <- 174
+          values$test_length = 174
           shinyjs::hide("eskimo")
-        } else if(input$numitems == "30"){
+          shinyjs::hide("walker")
+        } else if(input$numitems == "30_cat"){
           # fixed length IRT
-          values$test_length <- 30
+          values$test_length = 30
+          shinyjs::hide("eskimo")
+          shinyjs::hide("walker")
+        } else { #if(input$num_items == "30_walker")
+          shinyjs::show("walker")
           shinyjs::hide("eskimo")
         }
     } else {
       if(input$numitems_retest == "SEM"){
         values$test_length <- "SEM"
-      } else if(input$numitems == "30"){
-        # fixed length IRT
-        values$test_length <- 30
         shinyjs::show("exclude_previous")
-        
+        shinyjs::hide("walker_retest")
+      } else if(input$numitems_retest == "30_cat"){
+        # fixed length IRT
+        values$test_length = 30
+        shinyjs::show("exclude_previous")
+        shinyjs::hide("walker_retest")
+      } else { #if(input$numitems_retest == "30_walker")
+        shinyjs::show("walker_retest")
+        shinyjs::hide("exclude_previous")
       }
-      
-      
-      
     }
   })
   
@@ -225,9 +233,45 @@ app_server <- function( input, output, session ) {
     values$notes_retest = input$notes_retest
     
     
-    # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
-    values$IRT = ifelse(input$numitems == "175_standard", FALSE, TRUE)
 
+    if(isTruthy(values$new_test)){
+      # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
+      # computer adaptive if the string cat is in the num items inputs
+      values$selected_test = input$numitems
+      values$IRT = ifelse(grepl( "cat", input$numitems), TRUE, FALSE)
+      print(input$numitems)
+      print(values$IRT)
+      # walker is true if the string walker is in the num items inputs
+      values$walker = ifelse(grepl("walker", input$numitems), TRUE, FALSE)
+      values$walker_form = input$walker
+      print(input$numitems)
+      print(values$walker)
+      if(isTruthy(values$walker)){
+        values$item_difficulty <- 
+          values$item_difficulty %>%
+          dplyr::filter(walker == input$walker)
+        print(head(values$item_difficulty))
+      }
+      
+    } else {
+      # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
+      # computer adaptive if the string cat is in the num items inputs
+      values$selected_test = input$numitems_retest
+      values$IRT = ifelse(grepl(input$numitems_retest, "cat"), TRUE, FALSE)
+      print(values$IRT)
+      # walker is true if the string walker is in the num items inputs
+      values$walker = ifelse(grepl(input$numitems_retest, "walker"), TRUE, FALSE)
+      values$walker_form = input$walker_retest
+      print(values$walker)
+      if(isTruthy(values$walker)){
+        values$item_difficulty <- 
+          values$item_difficulty %>%
+          dplyr::filter(walker == input$walker_retest)
+        print(head(values$item_difficulty))
+      }
+      
+    }
+    
     shinyjs::show("start_over")
     shinyjs::show("help")
     # go to practice slides
@@ -254,7 +298,9 @@ app_server <- function( input, output, session ) {
       get_first_item(all_items = values$item_difficulty,
                      previous = values$previous,
                      exclude_previous = values$exclude_previous)
-
+        
+     } else if (isTruthy(values$walker)){ # walker first item
+        values$item_difficulty[values$item_difficulty$walker_order == 1,]$slide_num 
     } else {
       14 #otherwise candle for standard PNT
     }
@@ -364,7 +410,8 @@ app_server <- function( input, output, session ) {
                                       exclude_previous = values$exclude_previous,
                                       previous = values$previous,
                                       #test = input$numitems,
-                                      exclude_eskimo = input$eskimo
+                                      exclude_eskimo = input$eskimo,
+                                      walker = values$walker
         )
         # save info to the item_difficulty data_frame
         values$item_difficulty[values$item_difficulty$slide_num == values$n,]$order = values$i
@@ -725,7 +772,8 @@ app_server <- function( input, output, session ) {
     req(file)
     # save upload
     values$rescore <- read.csv(file$datapath) %>%
-      tidyr::drop_na(key)
+      tidyr::drop_na(key) %>%
+      dplyr::select(item_number, target, key)
     # saves teh error messages to be put back into the modal. 
     values$error <- if(nrow(values$rescore)==0){
       "Error: Please include at least one scored response"

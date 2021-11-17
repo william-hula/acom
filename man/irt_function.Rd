@@ -9,7 +9,8 @@ irt_function(
   IRT = T,
   exclude_previous = F,
   previous,
-  exclude_eskimo = T
+  exclude_eskimo = T,
+  walker = F
 )
 }
 \arguments{

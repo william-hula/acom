@@ -12,7 +12,7 @@
 #' @param exclude_previous like name
 #' @param previous prev if
 #' @export
-irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exclude_eskimo = T){
+irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exclude_eskimo = T, walker = F){
 
       # this is for the out argument. 
       # creates a vector of the items that have already been completed
@@ -68,7 +68,23 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
          sem
          )
        return(tmp_list)
-      
+         
+       } else if(walker) {
+         # randomize? if true, then use random order column
+         next_slide_num <- all_items %>%
+           dplyr::mutate(next_item = ifelse(!is.na(response), walker_order+1, NA)) %>%
+           dplyr::filter(walker_order == max(next_item, na.rm = T)) 
+         
+         tmp_list = list(
+           ability,
+           list(
+             NA,
+             slide_num_out = ifelse(nrow(next_slide_num) < 1, 190, next_slide_num$slide_num)
+           ),
+           sem
+         )
+         
+         return(tmp_list)
     } else { # this is the full PNT
         if(exclude_eskimo){
           

@@ -75,17 +75,25 @@ intro_tab_div <- function(){
                                            ### Use this to set how many items to run.
                                            radioButtons(inputId = "numitems",
                                                         label = "Select PNT Test Administration",
-                                                        choices = c(#"10-item PNT-CAT (testing only)" = "10",
-                                                                    "30-item Computer Adaptive PNT" = "30",
+                                                        choices = c(
+                                                                    "30-item Computer Adaptive PNT" = "30_cat",
                                                                     "175-item Computer Adaptive PNT" = "175_cat",
+                                                                    "30-item PNT Short form (Walker)" = "30_walker",
                                                                     "175-item Standard PNT" = "175_standard"), 
-                                                        selected = "30",
+                                                        selected = "30_cat",
                                                         inline = F),
                                            shinyjs::hidden(
                                              checkboxInput("eskimo",
                                                            'Exclude item "Eskimo"',
                                                            value = T)
                                            ),
+                                          shinyjs::hidden(
+                                            radioButtons("walker",
+                                                         "Choose 30-item short form",
+                                                         choices = c("A", "B"),
+                                                         selected = "A"
+                                            )
+                                          ),
                                            div(align = "center",
                                                actionButton("back_test", "Back"),
                                                actionButton("next_test", "Next")
@@ -108,16 +116,23 @@ intro_tab_div <- function(){
                                             ### Use this to set how many items to run.
                                             radioButtons(inputId = "numitems_retest",
                                                          label = "Select PNT Re-Administration",
-                                                         choices = c(#"10-item PNT-CAT (testing only)" = "10",
-                                                                     "30-item Computer Adaptive PNT" = "30",
+                                                         choices = c("30-item Computer Adaptive PNT" = "30_cat",
+                                                                     "30-item PNT Short form (Walker)" = "30_walker",
                                                                      "Variable length Computer Adaptive PNT" = "SEM"),
-                                                         selected = "30",
+                                                         selected = "30_cat",
                                                          inline = F),
                                             # should only be available for the 30 item
                                             shinyjs::hidden(
                                               checkboxInput("exclude_previous",
                                                             "Exclude items from the previous test?",
                                                             value = T)
+                                            ),
+                                            shinyjs::hidden(
+                                              radioButtons("walker_retest",
+                                                           "Choose 30-item short form",
+                                                           choices = c("A", "B"),
+                                                           selected = "A"
+                                              )
                                             ),
                                             div(align = "center",
                                                 actionButton("back_retest", "Back"),
@@ -154,17 +169,7 @@ intro_tab_div <- function(){
                    )
                 ),
                   tabPanelBody(value = "instructions_page",
-                           # div(align = "center",
-                           #     div(style="display: inline-block; text-align: left;",
-                           #         h5("Instructions:"),
-                           #         tags$ul(
-                           #           tags$li("Click Start Practice to get started"),
-                           #           tags$li("Press 1 for incorrect and 2 for correct"),
-                           #           tags$li("A 1 or 2 will appear in the top-right of the screen to show the key entered."),
-                           #           tags$li("Remember to score the first complete response"),
-                           #           tags$li("Press Enter to advance the screen"),
-                           #         ),br(),
-                                   # start!
+
                            fluidRow(
                              column(width = 10, offset = 1,
                                     h3("Administration Instructions"),
