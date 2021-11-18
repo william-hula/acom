@@ -42,12 +42,11 @@ Weerts, Hattie Olson, Kasey Graue, Chia-Ming Lei, Joann Silkes, Diane
 Kendall, the staff of the VA Pittsburgh Healthcare System Audiology and
 Speech Pathology Program.
 
-To cite package ‘pnt’ in publications use:
+To cite in publications use:
 
-Robert Cavanaugh, Alexander Swiderski, Gerasimos Fergadiotis and William
-D. Hula (2021). pnt: Computer adaptive forms of the Philadelphia Naming
-Test. <https://aphasia-apps.github.io/pnt/>,
-<https://github.com/aphasia-apps/pnt>.
+Cavanaugh, R., Swiderski, A.M., Fergadiotis, G. & Hula, W.D. (2020).
+pnt: Computer adaptive forms of the Philadelphia Naming Test. Version
+0.0.0.9 Available from <https://github.com/aphasia-apps/pnt>.
 
 Feedback and pull requests for the application are encouraged.
 

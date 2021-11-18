@@ -1,0 +1,7 @@
+bibentry(bibtype = "misc",
+         title = "pnt: Computer adaptive forms of the Philadelphia Naming Test. Version 0.0.0.9",
+         author=c(person("Robert", "Cavanaugh"), person("Alexander M.", "Swiderski"), person("Gerasimos", "Fergadiotis"), person("William D.", "Hula")),
+         year = 2021,
+         url = "https://github.com/aphasia-apps/pnt",
+         	textVersion = paste("Cavanaugh, R., Swiderski, A.M., Fergadiotis, G. & Hula,  W.D. (2020). pnt: Computer adaptive forms of the Philadelphia Naming Test. Version 0.0.0.9", "Available from https://github.com/aphasia-apps/pnt.",  sep=" "),
+          mheader = "To cite in publications use:")
