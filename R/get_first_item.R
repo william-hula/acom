@@ -17,8 +17,7 @@ get_first_item <- function(all_items, previous, exclude_previous = F){
 
   } else {
 
-    completed = previous #%>%
-     # tidyr::drop_na(response)
+    completed = previous
 
     all_items$response[match(completed$item_number, all_items$item_number)] <- completed$response
     # dataframe of inputs
@@ -48,14 +47,3 @@ get_first_item <- function(all_items, previous, exclude_previous = F){
 }
 
 
-
-# } else {
-
-# first_item <- 
-#   tibble(choices = choices) %>%
-#   filter(choices %!in% previous_dat$slide_num) %>%
-#   slice_sample(n = 1) %>%
-#   pull(choices)
-# 
-# print(first_item)
-# return(first_item)

@@ -44,9 +44,11 @@ app_server <- function( input, output, session ) {
     values$previous <- read.csv(file$datapath) 
     
     if ("key" %in% colnames(values$previous)) {
-      values$previous <- values$previous %>%
-        tidyr::drop_na(key) %>%
-        dplyr::mutate(response = ifelse(key == 2, 0, 1)) # correct is 0, incorrect is 1.
+      # values$previous <- values$previous %>%
+      #   tidyr::drop_na(key) %>%
+      #   dplyr::mutate(response = ifelse(key == 2, 0, 1)) # correct is 0, incorrect is 1.
+      values$previous = values$previous[!is.na(values$previous$key),]
+      values$previous$response = ifelse(values$previous$key == 2, 0, 1)
       # assign number of previous values
       values$num_previous <- 1
       values$min_sem <- min(values$previous$sem, na.rm = T)
@@ -187,14 +189,6 @@ app_server <- function( input, output, session ) {
   
   observeEvent(input$confirm_end_test,{
     if(isTruthy(input$confirm_end_test)){
-      values$results_data_summary <- 
-        dplyr::bind_rows(values$item_difficulty) %>%
-        # have to switch 0s and 1s because IRT is dumb. 
-        tidyr::drop_na() %>%
-        dplyr::mutate(response = as.numeric(ifelse(response == 0, 1, 0)),
-                      ci_95 = sem*1.96) %>%
-        dplyr::summarize(accuracy = mean(response)) %>%
-        dplyr::pull(accuracy)
       
       values$irt_final <- 
         get_final_numbers(out = values$irt_out,
@@ -239,18 +233,11 @@ app_server <- function( input, output, session ) {
       # computer adaptive if the string cat is in the num items inputs
       values$selected_test = input$numitems
       values$IRT = ifelse(grepl( "cat", input$numitems), TRUE, FALSE)
-      print(input$numitems)
-      print(values$IRT)
       # walker is true if the string walker is in the num items inputs
       values$walker = ifelse(grepl("walker", input$numitems), TRUE, FALSE)
       values$walker_form = input$walker
-      print(input$numitems)
-      print(values$walker)
       if(isTruthy(values$walker)){
-        values$item_difficulty <- 
-          values$item_difficulty %>%
-          dplyr::filter(walker == input$walker)
-        print(head(values$item_difficulty))
+        values$item_difficulty = subset(values$item_difficulty, walker == input$walker)
       }
       
     } else {
@@ -262,12 +249,8 @@ app_server <- function( input, output, session ) {
       # walker is true if the string walker is in the num items inputs
       values$walker = ifelse(grepl(input$numitems_retest, "walker"), TRUE, FALSE)
       values$walker_form = input$walker_retest
-      print(values$walker)
       if(isTruthy(values$walker)){
-        values$item_difficulty <- 
-          values$item_difficulty %>%
-          dplyr::filter(walker == input$walker_retest)
-        print(head(values$item_difficulty))
+        values$item_difficulty = subset(values$item_difficulty, walker == input$walker_retest)
       }
       
     }
@@ -455,16 +438,6 @@ app_server <- function( input, output, session ) {
       # go to results if indicated
       if (go_to_results){
         
-        
-        values$results_data_summary <- 
-          dplyr::bind_rows(values$item_difficulty) %>%
-            # have to switch 0s and 1s because IRT is dumb. 
-            tidyr::drop_na() %>%
-            dplyr::mutate(response = as.numeric(ifelse(response == 0, 1, 0)),
-                          ci_95 = sem*1.96) %>%
-            dplyr::summarize(accuracy = mean(response)) %>%
-            dplyr::pull(accuracy)
-        
         values$irt_final <- 
           get_final_numbers(out = values$irt_out,
                             previous = values$previous,
@@ -492,25 +465,18 @@ app_server <- function( input, output, session ) {
   observeEvent(input$mainpage=="Results",{
     values$results_data_long = get_results_data_long(values)
     
-    values$out_words <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
-                                dplyr::pull(target), collapse = "_")
-    values$out_nums <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
-                               dplyr::pull(response), collapse = "_")
-    values$out_ability <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
-                                  dplyr::pull(ability), collapse = "_")
-    values$out_sem <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
-                              dplyr::pull(sem), collapse = "_")
-    values$item_dif <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
-                               dplyr::pull(itemDifficulty), collapse = "_")
-    values$disc <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
-                           dplyr::pull(discrimination), collapse = "_")
-    values$key <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
-                          dplyr::pull(key), collapse = "_")
-    values$order <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
-                            dplyr::pull(order), collapse = "_")
-    values$item_number <- paste(values$results_data_long %>% tidyr::drop_na(response) %>%
-                                  dplyr::pull(item_number), collapse = "_")
+    values$out_words <- pull_column(values$results_data_long, target)
+    values$out_nums <- pull_column(values$results_data_long, response)
+    values$out_ability <- pull_column(values$results_data_long, ability)
+    values$out_sem <- pull_column(values$results_data_long,sem)
+    values$item_dif <- pull_column(values$results_data_long, itemDifficulty)
+    values$disc <- pull_column(values$results_data_long,discrimination)
+    values$key <- pull_column(values$results_data_long, key)
+    values$order <- pull_column(values$results_data_long, order)
+    values$item_number <- pull_column(values$results_data_long, item_number)
+    
   })
+  
   # This makes the above data available after running unit test.
   exportTestValues(abil = values$out_ability,
                    sem = values$out_sem,
@@ -646,9 +612,12 @@ app_server <- function( input, output, session ) {
   # outputs a table of the item level responses
   output$results_table <- DT::renderDT({
     req(values$results_data_long)
-    values$results_data_long %>%
-      tidyr::drop_na(response) %>%
-      dplyr::select(order, target, resp, key, itemDifficulty, ability, sem)
+    out <- values$results_data_long[!is.na(values$results_data_long$response),c("order", "target", "resp", "key", "itemDifficulty", "ability", "sem")]
+    return(out)
+    # values$results_data_long %>%
+    #   tidyr::drop_na(response) %>%
+    #   dplyr::select(order, target, resp, key, itemDifficulty, ability, sem)
+    
   }, rownames = F,
   options = list(dom = "tp"))
   
@@ -679,7 +648,9 @@ app_server <- function( input, output, session ) {
     req(file)
     validate(need(ext == "csv", "Please upload a csv file"))
     # save upload
-    values$item_difficulty <- read.csv(file$datapath) %>% dplyr::arrange(item_number)
+    values$item_difficulty <- read.csv(file$datapath)# %>% dplyr::arrange(item_number)
+    values$item_difficulty <- values$item_difficulty[order(values$item_difficulty$item_number), , drop = FALSE]
+    
     #print(head(values$item_difficulty))
     if ("key" %in% colnames(values$item_difficulty)) {
       shinyjs::enable("continue_test")
@@ -758,9 +729,9 @@ app_server <- function( input, output, session ) {
       "pnt-cat-blank.csv"
     },
     content = function(file) {
-      write.csv(items %>% 
-                  dplyr::select(item_number, target, key),
-                file, row.names = FALSE)
+      write.csv(items[c("item_number", "target", "key")],
+                file,
+                row.names = FALSE)
     }
   )
   
@@ -771,9 +742,13 @@ app_server <- function( input, output, session ) {
     # check upload
     req(file)
     # save upload
-    values$rescore <- read.csv(file$datapath) %>%
-      tidyr::drop_na(key) %>%
-      dplyr::select(item_number, target, key)
+    values$rescore <- read.csv(file$datapath) 
+    values$rescore <- values$rescore[!is.na(values$rescore$key), c("item_number", "target", "key")]
+    # 
+    # 
+    # values$rescore <- read.csv(file$datapath) %>%
+    #   tidyr::drop_na(key) %>%
+    #   dplyr::select(item_number, target, key)
     # saves teh error messages to be put back into the modal. 
     values$error <- if(nrow(values$rescore)==0){
       "Error: Please include at least one scored response"
@@ -832,18 +807,6 @@ app_server <- function( input, output, session ) {
       p(values$rescore_list$text)
     })
   
-  # downloading output....not currently used. 
-  # output$rescore_downloadData <- downloadHandler(
-  #   filename = function() {
-  #     paste("rescored-PNT",
-  #           as.character(Sys.Date()),
-  #           ".csv", sep = "_"
-  #     )
-  #   },
-  #   content = function(file) {
-  #     write.csv(values$rescore_list$data, file, row.names = FALSE)
-  #   }
-  # )
   # download a report for the resscored data. 
   output$rescore_report <- downloadHandler(
     

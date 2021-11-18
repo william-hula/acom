@@ -7,7 +7,7 @@
 get_final_numbers <- function(out,
                               previous,
                               num_previous){
-  df = tibble::tibble(
+  df = data.frame(
     ability = out[[1]],
     sem = out[[3]],
     ci_95 = out[[3]]*1.96,

@@ -3,17 +3,26 @@
 #' @return list of stuff needed for uploaded data
 #' @export
 score_uploaded_data <- function(uploaded_dat){
-  to_join <- items %>% dplyr::select(target, itemDifficulty, discrimination)
-  dat <- uploaded_dat %>%
-    #dplyr::rename(key = response) %>%
-    dplyr::left_join(to_join, by = "target") %>%
-    dplyr::mutate(resp = ifelse(key == 1, "incorrect",
-                                ifelse(key == 2, 
-                                       "correct", NA)),
-                  response = ifelse(key == 1, 1,
-                                    ifelse(key == 2, 
-                                           0, NA))
-    )
+  to_join <- items[,c("target", "itemDifficulty", "discrimination")] 
+  
+  dat <- merge(uploaded_dat, to_join, by = "target")
+  dat$resp = ifelse(dat$key == 1, "incorrect",
+                    ifelse(dat$key == 2, 
+                           "correct", NA))
+  dat$response = ifelse(dat$key == 1, 1,
+                        ifelse(dat$key == 2, 
+                               0, NA))
+  
+  # dat <- uploaded_dat %>%
+  #   #dplyr::rename(key = response) %>%
+  #   dplyr::left_join(to_join, by = "target") %>%
+  #   dplyr::mutate(resp = ifelse(key == 1, "incorrect",
+  #                               ifelse(key == 2, 
+  #                                      "correct", NA)),
+  #                 response = ifelse(key == 1, 1,
+  #                                   ifelse(key == 2, 
+  #                                          0, NA))
+  #   )
   
   pars = data.frame(a = dat$discrimination,
                     b = dat$itemDifficulty,
