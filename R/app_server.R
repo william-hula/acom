@@ -39,14 +39,11 @@ app_server <- function( input, output, session ) {
     ext <- tools::file_ext(file$datapath)
     # check upload
     req(file)
-    validate(need(ext == "csv", "Please upload a csv file"))
     # save upload
     values$previous <- read.csv(file$datapath) 
     
-    if ("key" %in% colnames(values$previous)) {
-      # values$previous <- values$previous %>%
-      #   tidyr::drop_na(key) %>%
-      #   dplyr::mutate(response = ifelse(key == 2, 0, 1)) # correct is 0, incorrect is 1.
+    if (all(c("key", "sem", "ability", "order", "test", "resp", "response", "item_number") %in% colnames(values$previous))) {
+
       values$previous = values$previous[!is.na(values$previous$key),]
       values$previous$response = ifelse(values$previous$key == 2, 0, 1)
       # assign number of previous values
@@ -219,6 +216,7 @@ app_server <- function( input, output, session ) {
         div(
           h5("Are you sure you want to end the test?"),br(),
           p("Make sure you have pressed 1 or 2 for the current item if you would like this response to be saved."),
+          p("Note that at least 30 items must be administered to obtain reliable naming ability estimates."),
           p("Taking a break and want to download results in the mean time? you can also download the results below.")
           
         ),
@@ -504,7 +502,6 @@ app_server <- function( input, output, session ) {
                             previous = values$previous,
                             num_previous = values$num_previous)
         
-        
         updateNavbarPage(session, "mainpage",
                          selected = "Results")
         shinyjs::show("report")
@@ -554,12 +551,16 @@ app_server <- function( input, output, session ) {
   ################################################################################
   #  outputs a summary sentence
   output$results_summary <- renderUI({
+    sty = "color:black;"
+    if(sum(!is.na(values$item_difficulty$response))<30){sty="color:darkred;"}
     summary = p(
       get_text_summary(ability = values$irt_final$ability,
                        sem = values$irt_final$sem,
                        last_ability = values$irt_final$last_ability,
                        last_sem = values$irt_final$last_sem,
-                       num_previous = values$num_previous)
+                       num_previous = values$num_previous,
+                       values = values),
+      style = sty
     )
   })
   ################################## DOWNLOAD ####################################  
@@ -605,7 +606,8 @@ app_server <- function( input, output, session ) {
                                   sem = values$irt_final$sem,
                                   last_ability = values$irt_final$last_ability,
                                   last_sem = values$irt_final$last_sem,
-                                  num_previous = values$num_previous),
+                                  num_previous = values$num_previous,
+                                  values = values),
           caption = get_caption(values)
         )
         
@@ -621,27 +623,6 @@ app_server <- function( input, output, session ) {
   )
   
   
-  ################################## FOOTER MODAL ################################
-  # ------------------------------------------------------------------------------
-  ################################################################################
-  
-# Help modal
-  # observeEvent(input$help, {
-  #   showModal(modalDialog(
-  #     div(
-  #       h5("Instructions:"),
-  #       tags$ul(
-  #         tags$li("Click Start Practice to get started"),
-  #         tags$li("Press 1 for incorrect and 2 for correct"),
-  #         tags$li("A 1 or 2 will appear in the top-right of the screen to show the key entered."),
-  #         tags$li("Remember to score the first complete response"),
-  #         tags$li("Press Enter to advance the screen"),
-  #       )
-  #     ),
-  #     size = "m",
-  #     easyClose = TRUE,
-  #   ))
-  # })
   
   ################################## PLOT ######################################## 
   # ------------------------------------------------------------------------------
@@ -649,7 +630,7 @@ app_server <- function( input, output, session ) {
   # plot
   output$plot <- renderPlot({# Fergadiotis, 2019
     req(values$irt_final)
-    get_plot(irt_final = values$irt_final)
+    get_plot(irt_final = values$irt_final, values = values)
   })
   
   output$plot_caption <- renderUI({
@@ -698,7 +679,7 @@ app_server <- function( input, output, session ) {
   observeEvent(input$continue_test,{
       showModal(modalDialog(
         div(
-          fileInput("incomplete_test", "Upload incomplete test csv"),#,
+          fileInput("file_incomplete", "Upload incomplete test csv"),#,
               shinyjs::hidden(
                 tags$img(src = paste0("slides/Slide", 1, ".jpeg"), id = "instructions")
               )
@@ -715,26 +696,41 @@ app_server <- function( input, output, session ) {
   })
   
   # observer for uploading data
-  observeEvent(input$incomplete_test,{
-    file <- input$incomplete_test
+  observeEvent(input$file_incomplete,{
+    file <- input$file_incomplete
     ext <- tools::file_ext(file$datapath)
     # check upload
     req(file)
     validate(need(ext == "csv", "Please upload a csv file"))
     # save upload
-    values$item_difficulty <- read.csv(file$datapath)# %>% dplyr::arrange(item_number)
-    values$item_difficulty <- values$item_difficulty[order(values$item_difficulty$item_number), , drop = FALSE]
     
-    #print(head(values$item_difficulty))
-    if ("key" %in% colnames(values$item_difficulty)) {
+    incomplete_dat <- read.csv(file$datapath)# %>% dplyr::arrange(item_number)
+    current_test = ifelse(values$new_test, input$numitems, input$numitems_retest)
+    
+    if (!all(c("key", "sem", "ability", "order", "test", "resp", "response",
+              "item_number", "itemDifficulty", "discrimination") %in% colnames(incomplete_dat))) {
+      
+      showNotification("Error: Incompatible file uploaded; please upload another", type = "error")
+      incomplete_dat <- NULL
+      values$item_difficulty <- items
+      shinyjs::reset("file_incomplete")
+
+    } else if (incomplete_dat$test[1] != current_test) {
+      
+      showNotification("Error: Please select the same test to continue", type = "error")
+      shinyjs::reset("file_incomplete")
+
+    } else {
+      
       shinyjs::enable("resume")
       shinyjs::show("instructions")
-    } else {
-      showNotification("Error: Incompatible file uploaded; please upload another", type = "error")
-      values$item_difficulty <- items
-      shinyjs::reset("incomplete_test")
+      values$item_difficulty <- incomplete_dat
+      values$item_difficulty <- values$item_difficulty[order(values$item_difficulty$item_number), , drop = FALSE]
     }
+
   })
+  
+  
   
   observeEvent(input$resume,{
     
@@ -746,7 +742,6 @@ app_server <- function( input, output, session ) {
     values$notes = input$notes
     values$notes_retest = input$notes_retest
     values$eskimo <- ifelse(values$new_test, input$eskimo, input$eskimo_retest)
-    
     if(isTruthy(values$new_test)){
       # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
       # computer adaptive if the string cat is in the num items inputs
@@ -846,18 +841,24 @@ app_server <- function( input, output, session ) {
     req(file)
     # save upload
     values$rescore <- read.csv(file$datapath) 
-    values$rescore <- values$rescore[!is.na(values$rescore$key), c("item_number", "target", "key")]
-
-    # saves teh error messages to be put back into the modal. 
-    values$error <- if(nrow(values$rescore)==0){
-      "Error: Please include at least one scored response"
-    } else if (!all(c("item_number", "target", "key") %in% colnames(values$rescore))){
-      "Error: Column names have been changed"
-    } else if (!all(unique(values$rescore$key) == 1 | unique(values$rescore$key) == 2)){
-      "Error: please only enter 1 for correct and 2 for incorrect in the response column"
+    
+  if(!all(colnames(values$rescore) == c("item_number", "target", "key"))){
+    values$error <- "Error: Column names have been changed"
     } else {
-      "no_error"
+      values$rescore <- values$rescore[!is.na(values$rescore$key), c("item_number", "target", "key")]
+      # saves teh error messages to be put back into the modal. 
+      if(nrow(values$rescore)==0){
+        values$error <- "Error: Please include at least one scored response"
+      } else if (!all(unique(values$rescore$key) == 1 | unique(values$rescore$key) == 2)){
+        values$error <- "Error: please only enter 1 for correct and 2 for incorrect in the response column"
+      } else if (!all(values$rescore$target %in% item_key$target)){
+        values$error <- "Error: some item names have changed"
+      } else {
+        values$error <- "no_error"
+      }
+      
     }
+    
     
     # depending on the error message, allow progressing or show the error
     if(values$error == "no_error"){
@@ -888,7 +889,7 @@ app_server <- function( input, output, session ) {
     renderPlot({
       req(values$rescore_list)
       #values$rescore_list$plot
-      get_plot(irt_final = values$rescore_list$irt_final)
+      get_plot(irt_final = values$rescore_list$irt_final, values = values)
     })
   
   # outputs the rescored data
@@ -927,7 +928,8 @@ app_server <- function( input, output, session ) {
                                   sem = values$rescore_list$irt_final$sem,
                                   last_ability = NA,
                                   last_sem = NA,
-                                  num_previous = values$num_previous),
+                                  num_previous = values$num_previous,
+                                  values = values),
           download_time = Sys.time()
           )
         

@@ -178,16 +178,10 @@ intro_tab_div <- function() {
                               div(
                                 style = "display: inline-block; text-align: left;",
                                 h3("Scoring an offline or completed test"),
-                                p(
-                                  "To score an offline or previously completed test, download the blank spreadsheet below."
-                                ),
-                                p(
-                                  "Enter 1 for error/incorrect and 2 for correct in the response column."
-                                ),
-                                p(
-                                  "If other responses are entered or additional changes made to the spreadsheet,
-                                rescoring may not work."
-                                ),
+                                p("To score an offline or previously completed test, download the blank spreadsheet below."),
+                                p("Enter 1 for error/incorrect and 2 for correct in the response column."),
+                                p("If other responses are entered or additional changes made to the spreadsheet,
+                                rescoring may not work."),
                                 p("You have to upload a .csv file before you can hit ok."),
                                 downloadButton("downloadEmpty", "Download Blank Spreadsheet"),
                                 fileInput("file2", "Upload offline or re-scored data", accept = ".csv"),

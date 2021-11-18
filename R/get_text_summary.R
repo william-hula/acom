@@ -15,8 +15,11 @@ get_text_summary <- function(
   sem,
   last_ability,
   last_sem,
-  num_previous
+  num_previous,
+  values
 ){
+  
+  
     summary =  paste(
         "The final IRT ability estimate is ",
         round(ability, 2),
@@ -37,6 +40,12 @@ get_text_summary <- function(
           ,sep = "")
     }
     
-    return((summary))
+    if(sum(!is.na(values$item_difficulty$response))<30){
+      #return()
+      warning = "Warning: Less than 30 items have been administered. Naming ability estimates are not reliable."
+      return(paste(warning, summary, sep = " "))
+    } else {
+      return(summary)
+    }
   
 }

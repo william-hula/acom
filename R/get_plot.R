@@ -11,8 +11,16 @@
 #' @return a ggplot object
 #' 
 #' @export
-get_plot <- function(irt_final, basesize = 18, sample_thetas = thetas){
+get_plot <- function(irt_final, basesize = 18, sample_thetas = thetas, values=NA){
   
+  
+  # if(sum(!is.na(values$item_difficulty$response))<30){
+  #   text = "\n   Not enough items were scored to produce a reliable ability estimate (< 30) \n"
+  #   empty_plot <- ggplot2::ggplot() + 
+  #     ggplot2::annotate("text", x = 4, y = 25, size=8, label = text) + 
+  #     ggplot2::theme_void()
+  #  return(empty_plot) 
+  # }
   
   theta_df = tibble::tibble( thetas = c(thetas, 80, 20) )
 

@@ -4,7 +4,7 @@
 \alias{get_text_summary}
 \title{Text summary for the top of the results page above the plot}
 \usage{
-get_text_summary(ability, sem, last_ability, last_sem, num_previous)
+get_text_summary(ability, sem, last_ability, last_sem, num_previous, values)
 }
 \arguments{
 \item{ability}{ability}
