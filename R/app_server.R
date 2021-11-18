@@ -422,6 +422,7 @@ app_server <- function( input, output, session ) {
           } 
         # iterate the order
         values$i = values$i + 1
+        print(values$i)
       } 
       # prints to the console the last 5 items. DELETE FOR RELEASE
       # print(tail(values$item_difficulty %>% tidyr::drop_na(response) %>%

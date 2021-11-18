@@ -17,16 +17,18 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
       # this is for the out argument. 
       # creates a vector of the items that have already been completed
       # to be fed to IRT so they don't get chosen again
-      completed = all_items %>% 
-        tidyr::drop_na(response) %>%
-        dplyr::pull(item_number)
+      completed = all_items[!is.na(all_items$response),]$item_number
+      # completed = all_items %>% 
+      #   tidyr::drop_na(response) %>%
+      #   dplyr::pull(item_number)
 
       # don't re-use previous items
       if(exclude_previous){
-        previously_completed = previous %>%
-        # selects only done items and grabs them.
-                                dplyr::pull(item_number)
-          
+        # previously_completed = previous %>%
+        # # selects only done items and grabs them.
+        #                         dplyr::pull(item_number)
+        
+        previously_completed = previous$item_number
         completed = c(completed, previously_completed)
       }
       
@@ -54,7 +56,7 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
          # removes eskimo
          completed = c(completed, 49)
          
-         next_item = if(length(completed)<174){
+         next_item = if(length(completed)<175){
            # CHANGE FOR T SCORE HERE
            catR::nextItem(itemBank = bank, theta = ability, out = completed,
                           method = "EAP", range = c(5, 95), priorPar = c(50,10))
@@ -71,9 +73,13 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
          
        } else if(walker) {
          # randomize? if true, then use random order column
-         next_slide_num <- all_items %>%
-           dplyr::mutate(next_item = ifelse(!is.na(response), walker_order+1, NA)) %>%
-           dplyr::filter(walker_order == max(next_item, na.rm = T)) 
+         # next_slide_num <- all_items %>%
+         #   dplyr::mutate(next_item = ifelse(!is.na(response), walker_order+1, NA)) %>%
+         #   dplyr::filter(walker_order == max(next_item, na.rm = T)) 
+         
+         next_slide_num <- all_items
+         next_slide_num$next_item = ifelse(!is.na(next_slide_num$response), next_slide_num$walker_order+1, NA)
+         next_slide_num <- next_slide_num[next_slide_num$walker_order==max(next_slide_num$next_item, na.rm = T),]
          
          tmp_list = list(
            ability,
@@ -88,13 +94,18 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
     } else { # this is the full PNT
         if(exclude_eskimo){
           
-        next_slide_num <- all_items %>%
-          dplyr::filter(item_number != 49) %>% 
-          dplyr::filter(is.na(response))
+        # next_slide_num <- all_items %>%
+        #   dplyr::filter(item_number != 49) %>% 
+        #   dplyr::filter(is.na(response))
         
+        next_slide_num <- all_items[all_items$item_number != 49 & is.na(all_items$response),]
+
             if(nrow(next_slide_num)>=1){
-              next_slide_num <- next_slide_num %>%
-                dplyr::filter(pnt_order == min(pnt_order))
+              # next_slide_num <- next_slide_num %>%
+              #   dplyr::filter(pnt_order == min(pnt_order))
+              
+              next_slide_num <- next_slide_num[next_slide_num$pnt_order==min(next_slide_num$pnt_order),]
+
             }
         
         # helps with ending the test
@@ -102,12 +113,16 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
         
         } else {
           
-          next_slide_num <- all_items %>%
-            dplyr::filter(is.na(response)) 
+          # next_slide_num <- all_items %>%
+          #   dplyr::filter(is.na(response)) 
+          
+          next_slide_num <- all_items[is.na(all_items$response),]
           
             if(nrow(next_slide_num)>=1){
-              next_slide_num <- next_slide_num %>%
-                dplyr::filter(pnt_order == min(pnt_order))
+              # next_slide_num <- next_slide_num %>%
+              #   dplyr::filter(pnt_order == min(pnt_order))
+              next_slide_num <- next_slide_num[next_slide_num$pnt_order==min(next_slide_num$pnt_order),]
+              
             }
         # helps with ending the test. see tmp list
         out_stop = 190
