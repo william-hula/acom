@@ -129,20 +129,27 @@ intro_tab_div <- function() {
                                   label = "Select PNT Re-Administration",
                                   choices = c(
                                     "30-item Computer Adaptive PNT" = "30_cat",
+                                    "Variable length Computer Adaptive PNT" = "SEM",
+                                    "175-item Computer Adaptive PNT" = "175_cat",
                                     "30-item PNT Short form (Walker)" = "30_walker",
-                                    "Variable length Computer Adaptive PNT" = "SEM"
+                                    "175-item Standard PNT" = "175_standard"
                                   ),
                                   selected = "30_cat",
                                   inline = F
                                 ),
                                 # should only be available for the 30 item
-                                shinyjs::hidden(
+                                shinyjs::disabled(
                                   checkboxInput(
                                     "exclude_previous",
-                                    "Exclude items from the previous test?",
+                                    "Exclude items from first administration",
                                     value = T
                                   )
                                 ),
+                                shinyjs::hidden(checkboxInput(
+                                  "eskimo_retest",
+                                  'Exclude item "Eskimo"',
+                                  value = T
+                                )),
                                 shinyjs::hidden(
                                   radioButtons(
                                     "walker_retest",
@@ -203,15 +210,11 @@ intro_tab_div <- function() {
                               h3("Administration Instructions"),
                               includeMarkdown(system.file("app/www/instructions.md",
                                                           package = "pnt")),
-                              fileInput("incomplete_test", "Upload incomplete test csv"),
                               div(
                                 align = "center",
                                 actionButton("back_to_test_or_retest", "Back"),
-                                shinyjs::disabled(actionButton(
-                                  "continue_test", "Resume incomplete test"
-                                )),
-                                actionButton("start_practice",
-                                             "Start Practice")
+                                actionButton("continue_test", "Resume incomplete test"),
+                                actionButton("start_practice","Start Practice")
                               )
                             )
                           ))

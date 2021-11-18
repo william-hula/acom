@@ -24,7 +24,7 @@ app_server <- function( input, output, session ) {
   values$num_previous <- 0 # number of previous tests
   values$datetime <- Sys.time() # establishes datetime when app opens for saving
   values$downloadableData = F # will the download data button appear? starts with no. yes after first response. 
-  values$sound = "document.getElementById('audio').play();"
+  #values$sound = "document.getElementById('audio').play();"
   
   ################################## PREVIOUS DATA ###############################
   # ------------------------------------------------------------------------------
@@ -148,22 +148,58 @@ app_server <- function( input, output, session ) {
           shinyjs::hide("eskimo")
           shinyjs::hide("walker")
         } else { #if(input$num_items == "30_walker")
+          
+          values$test_length = 30
           shinyjs::show("walker")
           shinyjs::hide("eskimo")
         }
-    } else {
+    } else { # retest conditions
+      
       if(input$numitems_retest == "SEM"){
+        
         values$test_length <- "SEM"
-        shinyjs::show("exclude_previous")
+        shinyjs::enable("exclude_previous")
         shinyjs::hide("walker_retest")
+        shinyjs::hide("eskimo_retest")
+        
       } else if(input$numitems_retest == "30_cat"){
+        
         # fixed length IRT
         values$test_length = 30
-        shinyjs::show("exclude_previous")
+        shinyjs::enable("exclude_previous")
         shinyjs::hide("walker_retest")
+        shinyjs::hide("eskimo_retest")
+        
+      } else if(input$numitems_retest == "175_cat"){
+        
+        values$test_length = 174
+        
+        shinyjs::disable("exclude_previous")
+        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = F)
+        
+        shinyjs::hide("walker_retest")
+        shinyjs::hide("eskimo_retest")
+        
+      } else if(input$numitems_retest == "175_standard"){
+        # full pnt
+        values$test_length = ifelse(input$eskimo_retest, 174, 175)
+        
+        shinyjs::disable("exclude_previous")
+        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = F)
+        
+        shinyjs::hide("walker_retest")
+        shinyjs::show("eskimo_retest")
+        
       } else { #if(input$numitems_retest == "30_walker")
+        
+        values$test_length = 30
+        
+        shinyjs::disable("exclude_previous")
+        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = F)
+        
         shinyjs::show("walker_retest")
-        shinyjs::hide("exclude_previous")
+        shinyjs::hide("eskimo_retest")
+        
       }
     }
   })
@@ -178,19 +214,38 @@ app_server <- function( input, output, session ) {
   ################################ END TEST ##################################
   
   observeEvent(input$end_test,{
-    showModal(modalDialog(
-      div(
-        h5("Are you sure you want to end the test?"),br(),
-        p("Only items with confirmed responses will be saved. If you would like to continue the test later, please download the current results before ending the test.")
-      ),
-      easyClose = TRUE,
-      size = "s",
-      footer = tagList(
-        modalButton("Cancel"),
-        actionButton("confirm_end_test", "End Test")
-      )
-    ))
+    if(values$i > 1){
+      showModal(modalDialog(
+        div(
+          h5("Are you sure you want to end the test?"),br(),
+          p("Make sure you have pressed 1 or 2 for the current item if you would like this response to be saved."),
+          p("Taking a break and want to download results in the mean time? you can also download the results below.")
+          
+        ),
+        easyClose = TRUE,
+        size = "m",
+        footer = tagList(
+          modalButton("Cancel"),
+          downloadButton("downloadIncompleteData","Download current results"),
+          actionButton("confirm_end_test", "End test/Go to results")
+        )
+      ))
+    }
   })
+  
+  output$downloadIncompleteData <- downloadHandler(
+    filename = function() {
+      paste(gsub(" ", "-", input$name),
+            as.character(Sys.Date()),
+            "pnt.csv", sep = "_"
+      )
+    },
+    content = function(file) {
+      write.csv(get_data_for_download(values = values,
+                                      in_progress = input$mainpage
+      ), file, row.names = FALSE)
+    }
+  )
   
   observeEvent(input$confirm_end_test,{
     removeModal()
@@ -201,7 +256,7 @@ app_server <- function( input, output, session ) {
                           previous = values$previous,
                           num_previous = values$num_previous)
       shinyjs::show("report")
-      shinyjs::hide("help")
+      #shinyjs::hide("help")
       updateNavbarPage(session, "mainpage",
                        selected = "Results")
     }
@@ -231,6 +286,7 @@ app_server <- function( input, output, session ) {
     values$name = input$name
     values$notes = input$notes
     values$notes_retest = input$notes_retest
+    values$eskimo <- ifelse(values$new_test, input$eskimo, input$eskimo_retest)
     
     
 
@@ -251,7 +307,7 @@ app_server <- function( input, output, session ) {
       # computer adaptive if the string cat is in the num items inputs
       values$selected_test = input$numitems_retest
       values$IRT = ifelse(grepl(input$numitems_retest, "cat"), TRUE, FALSE)
-      print(values$IRT)
+      #print(values$IRT)
       # walker is true if the string walker is in the num items inputs
       values$walker = ifelse(grepl(input$numitems_retest, "walker"), TRUE, FALSE)
       values$walker_form = input$walker_retest
@@ -262,7 +318,7 @@ app_server <- function( input, output, session ) {
     }
     
     shinyjs::show("start_over")
-    shinyjs::show("help")
+    #shinyjs::show("help")
     # go to practice slides
     updateNavbarPage(session, "mainpage",
                      selected = "Practice")
@@ -344,7 +400,7 @@ app_server <- function( input, output, session ) {
       # essentially, if we're on the first two instruction slides,
       # don't require a 1 or 2..
       else if(values$i %in% c(1, 2)){
-        shinyjs::runjs("document.getElementById('audio').play();")
+        #shinyjs::runjs("document.getElementById('audio').play();")
         values$i = ifelse(values$i<13, values$i + 1, values$i)
         # otherwise, (i.e. not a practice slide)
       } else if(is.null(values$key_val)){ 
@@ -352,13 +408,11 @@ app_server <- function( input, output, session ) {
         showNotification("Enter a score", type = "error")
         # Remove tank from practice items
       } else if (values$i == 5){
-        shinyjs::runjs("document.getElementById('audio').play();")
-        #js$click_sound()
+        #shinyjs::runjs("document.getElementById('audio').play();")
         values$i = values$i + 2
         # as long as there's a response or it's an insturction slide...
       } else {
-        shinyjs::runjs("document.getElementById('audio').play();")
-        #js$click_sound()
+        #shinyjs::runjs("document.getElementById('audio').play();")
         values$i = ifelse(values$i<13, values$i + 1, values$i)
       }
       values$key_val = NULL
@@ -366,7 +420,7 @@ app_server <- function( input, output, session ) {
       ########### main testing area###############
       # can you download data? yes - will calculate the data to go out. 
       values$downloadableData = T
-      shinyjs::show("downloadData")
+      shinyjs::enable("downloadIncompleteData")
       
       another_item <- if(values$test_length == "SEM"){
         values$min_sem<values$irt_out[[3]]
@@ -378,7 +432,7 @@ app_server <- function( input, output, session ) {
         showNotification("Enter a score", type = "error")
         # as long as there's a response or it's an insturction slide...
       } else if (another_item) {
-        shinyjs::runjs("document.getElementById('audio').play();")
+        #shinyjs::runjs("document.getElementById('audio').play();")
         # If a key press was detected, store it in our dataframe of items,
         # difficulty, discrimination etc...
         # 1 is incorrect (1) and 2 is correct (0).
@@ -399,7 +453,7 @@ app_server <- function( input, output, session ) {
                                       exclude_previous = values$exclude_previous,
                                       previous = values$previous,
                                       #test = input$numitems,
-                                      exclude_eskimo = input$eskimo,
+                                      exclude_eskimo = values$eskimo,
                                       walker = values$walker
         )
         # save info to the item_difficulty data_frame
@@ -428,7 +482,7 @@ app_server <- function( input, output, session ) {
           } 
         # iterate the order
         values$i = values$i + 1
-        print(values$i)
+        #print(values$i)
       } 
       # prints to the console the last 5 items. DELETE FOR RELEASE
       # print(tail(values$item_difficulty %>% tidyr::drop_na(response) %>%
@@ -454,7 +508,7 @@ app_server <- function( input, output, session ) {
         updateNavbarPage(session, "mainpage",
                          selected = "Results")
         shinyjs::show("report")
-        shinyjs::hide("help")
+        shinyjs::show("downloadData")
       }
       values$key_val = NULL
       #for testing::
@@ -522,9 +576,7 @@ app_server <- function( input, output, session ) {
     },
     content = function(file) {
       write.csv(get_data_for_download(values = values,
-                                      in_progress = input$mainpage#,
-                                      #current_item = values$irt_out[[2]]$name,
-                                      #IRT = values$IRT
+                                      in_progress = input$mainpage
                                       ), file, row.names = FALSE)
     }
   )
@@ -572,32 +624,24 @@ app_server <- function( input, output, session ) {
   ################################## FOOTER MODAL ################################
   # ------------------------------------------------------------------------------
   ################################################################################
-  # More information modal
-  observeEvent(input$info, {
-    showModal(modalDialog(
-      tags$iframe(src="www/about.html", width = "100%",
-                  height = "650px", frameBorder = "0"),
-      easyClose = TRUE,
-      size = "l"
-    ))
-  })
+  
 # Help modal
-  observeEvent(input$help, {
-    showModal(modalDialog(
-      div(
-        h5("Instructions:"),
-        tags$ul(
-          tags$li("Click Start Practice to get started"),
-          tags$li("Press 1 for incorrect and 2 for correct"),
-          tags$li("A 1 or 2 will appear in the top-right of the screen to show the key entered."),
-          tags$li("Remember to score the first complete response"),
-          tags$li("Press Enter to advance the screen"),
-        )
-      ),
-      size = "m",
-      easyClose = TRUE,
-    ))
-  })
+  # observeEvent(input$help, {
+  #   showModal(modalDialog(
+  #     div(
+  #       h5("Instructions:"),
+  #       tags$ul(
+  #         tags$li("Click Start Practice to get started"),
+  #         tags$li("Press 1 for incorrect and 2 for correct"),
+  #         tags$li("A 1 or 2 will appear in the top-right of the screen to show the key entered."),
+  #         tags$li("Remember to score the first complete response"),
+  #         tags$li("Press Enter to advance the screen"),
+  #       )
+  #     ),
+  #     size = "m",
+  #     easyClose = TRUE,
+  #   ))
+  # })
   
   ################################## PLOT ######################################## 
   # ------------------------------------------------------------------------------
@@ -646,6 +690,29 @@ app_server <- function( input, output, session ) {
   outputOptions(output, "slides_tab", suspendWhenHidden = FALSE)
   outputOptions(output, "results_table", suspendWhenHidden = FALSE)
   
+
+  
+  ################################## Continue paused test #################
+  # ----------------------------------------------------------------------------
+  ##############################################################################
+  observeEvent(input$continue_test,{
+      showModal(modalDialog(
+        div(
+          fileInput("incomplete_test", "Upload incomplete test csv"),#,
+              shinyjs::hidden(
+                tags$img(src = paste0("slides/Slide", 1, ".jpeg"), id = "instructions")
+              )
+        ),
+        easyClose = TRUE,
+        size = "m",
+        footer = tagList(
+          modalButton("Cancel"),
+          shinyjs::disabled(actionButton("resume", "Continue Test"))
+        )
+      ))
+
+    
+  })
   
   # observer for uploading data
   observeEvent(input$incomplete_test,{
@@ -660,7 +727,8 @@ app_server <- function( input, output, session ) {
     
     #print(head(values$item_difficulty))
     if ("key" %in% colnames(values$item_difficulty)) {
-      shinyjs::enable("continue_test")
+      shinyjs::enable("resume")
+      shinyjs::show("instructions")
     } else {
       showNotification("Error: Incompatible file uploaded; please upload another", type = "error")
       values$item_difficulty <- items
@@ -668,11 +736,7 @@ app_server <- function( input, output, session ) {
     }
   })
   
-  ################################## Continue paused test #################
-  # ----------------------------------------------------------------------------
-  ##############################################################################
-  
-  observeEvent(input$continue_test,{
+  observeEvent(input$resume,{
     
     ### start practice stuff  ############################################
     values$key_val = NULL # keeps track of button press 1 (error), 2 (correct)
@@ -681,28 +745,59 @@ app_server <- function( input, output, session ) {
     values$name = input$name
     values$notes = input$notes
     values$notes_retest = input$notes_retest
-    # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
-    values$IRT = ifelse(input$numitems == "175_standard", FALSE, TRUE)
+    values$eskimo <- ifelse(values$new_test, input$eskimo, input$eskimo_retest)
+    
+    if(isTruthy(values$new_test)){
+      # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
+      # computer adaptive if the string cat is in the num items inputs
+      values$selected_test = input$numitems
+      values$IRT = ifelse(grepl( "cat", input$numitems), TRUE, FALSE)
+      # walker is true if the string walker is in the num items inputs
+      values$walker = ifelse(grepl("walker", input$numitems), TRUE, FALSE)
+      values$exclude_previous = F
+      values$walker_form = input$walker
+      if(isTruthy(values$walker)){
+        values$item_difficulty = values$item_difficulty[values$item_difficulty$walker == input$walker,]
+        print(str(values$item_difficulty))
+      }
+      
+    } else {
+      # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
+      # computer adaptive if the string cat is in the num items inputs
+      values$selected_test = input$numitems_retest
+      values$IRT = ifelse(grepl(input$numitems_retest, "cat"), TRUE, FALSE)
+      #print(values$IRT)
+      # walker is true if the string walker is in the num items inputs
+      values$walker = ifelse(grepl(input$numitems_retest, "walker"), TRUE, FALSE)
+      values$walker_form = input$walker_retest
+      if(isTruthy(values$walker)){
+        values$item_difficulty = values$item_difficulty[values$item_difficulty$walker == input$walker_retest,]
+      }
+      
+    }
+
     shinyjs::show("start_over")
-    shinyjs::show("help")
+    #shinyjs::show("help")
+    
+    
     
     #### start stuff ############################################
     # how many items are done already?
-    values$i = sum(!is.na(values$item_difficulty$response))
+    values$i = sum(!is.na(values$item_difficulty$response))+1
     #print(values$i)
     values$irt_out = irt_function(all_items = values$item_difficulty,
                                   IRT = values$IRT,
                                   exclude_previous = values$exclude_previous,
                                   previous = values$previous,
                                   #test = input$numitems,
-                                  exclude_eskimo = input$eskimo
+                                  exclude_eskimo = values$eskimo,
+                                  walker = values$walker
     )
     #print(values$irt_out)
     values$n = 
       if(values$IRT){
         if(!is.na(values$irt_out[[2]][[1]])){
           values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
-          # print(values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num)
         } else {
           190
         }
@@ -710,15 +805,16 @@ app_server <- function( input, output, session ) {
         values$irt_out[[2]][[2]]
       } 
     # for testing:
-    # if (isTRUE(getOption("shiny.testmode"))) {
-    #   shinyjs::reset("keys")
-    # }
+    if (isTRUE(getOption("shiny.testmode"))) {
+      shinyjs::reset("keys")
+    }
     values$irt_out <- list(0, 0, 11) # reset saved data just in case. 
     #play a sound...not working right now :(
-    shinyjs::runjs("document.getElementById('audio').play();")
+    # shinyjs::runjs("document.getElementById('audio').play();")
     # got to slides
     # reset keyval
     values$key_val = NULL # keeps track of button press 1 (error) or 2 (correct)
+    shiny::removeModal()
     updateNavbarPage(session, "mainpage", selected = "Assessment")
     
     
@@ -751,11 +847,7 @@ app_server <- function( input, output, session ) {
     # save upload
     values$rescore <- read.csv(file$datapath) 
     values$rescore <- values$rescore[!is.na(values$rescore$key), c("item_number", "target", "key")]
-    # 
-    # 
-    # values$rescore <- read.csv(file$datapath) %>%
-    #   tidyr::drop_na(key) %>%
-    #   dplyr::select(item_number, target, key)
+
     # saves teh error messages to be put back into the modal. 
     values$error <- if(nrow(values$rescore)==0){
       "Error: Please include at least one scored response"

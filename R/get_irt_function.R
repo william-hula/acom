@@ -39,7 +39,6 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
         previously_completed = previous$item_number
         completed = c(completed, previously_completed)
       }
-      
       # dataframe of inputs
       pars = data.frame(a = all_items$discrimination,
                         b = all_items$itemDifficulty, # CHANGE TO T SCORES 50 +/- 10
@@ -53,15 +52,14 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
       x = all_items$response
        # ability estimate using bayes modal:
       # 10-6 CHANGING TO T ESTIMATES
-
        ability = catR::thetaEst(bank, x, method = "EAP", parInt = c(5, 95, 33), priorPar = c(50,10))
        # generates the next item
        # standard error of the mean
        # CHANGE FOR T-SCORE HERE
        sem = catR::semTheta(ability, bank, x, method = "EAP", parInt = c(5, 95, 33), priorPar = c(50,10))
-       
        if(IRT){
          # removes eskimo
+
          completed = c(completed, 49)
          
          next_item = if(length(completed)<175){
@@ -84,7 +82,6 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
          # next_slide_num <- all_items %>%
          #   dplyr::mutate(next_item = ifelse(!is.na(response), walker_order+1, NA)) %>%
          #   dplyr::filter(walker_order == max(next_item, na.rm = T)) 
-         
          next_slide_num <- all_items
          next_slide_num$next_item = ifelse(!is.na(next_slide_num$response), next_slide_num$walker_order+1, NA)
          next_slide_num <- next_slide_num[next_slide_num$walker_order==max(next_slide_num$next_item, na.rm = T),]
