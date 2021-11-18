@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_irt_function.R
 \name{irt_function}
 \alias{irt_function}
-\title{irt magic function}
+\title{The IRT magic function}
 \usage{
 irt_function(
   all_items,
@@ -14,14 +14,31 @@ irt_function(
 )
 }
 \arguments{
-\item{all_items}{everything}
+\item{all_items}{a dataframe of all items in the current test with responses appended}
 
-\item{IRT}{irt yes no}
+\item{IRT}{whether or not the test is adaptive}
 
-\item{exclude_previous}{like name}
+\item{exclude_previous}{excluding items used in a prior administration}
 
-\item{previous}{prev if}
+\item{previous}{what those previous items were}
+
+\item{exclude_eskimo}{eclude the eskimo item for cultural sensitivity}
+
+\item{walker}{is it a walker short form test}
+}
+\value{
+A list with ability first then the next item then the sem
 }
 \description{
-irt magic function
+This function is the core of the computer adaptive functionality. It takes a data
+frame of all the current items, and whether or not the current test is adaptive (IRT)
+whether or not the user has elected to exclude previous items, what those items were,
+whether or not the user elected to exclude eskimo, and whether the test is a 30-item static short 
+form.
+}
+\details{
+First, it creates a vector of all of the completed items in the current test
+Then adds any items from a previous test if there was one. 
+Then uses the current test responses to generate an ability estimate, sem, and the next item
+How these are generated depends on the current test (adaptive or not, 175 or not, walker or not)
 }

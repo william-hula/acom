@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>get plot — get_plot • pnt</title>
+<title>the plot for the results page and rmarkdown documents — get_plot • pnt</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="get plot — get_plot" />
-<meta property="og:description" content="get plot" />
+<meta property="og:title" content="the plot for the results page and rmarkdown documents — get_plot" />
+<meta property="og:description" content="generates a plot for the results pages and rmarkdown documents using the final scores
+theta estimates from all of the current PNT norms (in sys.Data)." />
 
 
 
@@ -135,13 +136,14 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>get plot</h1>
+    <h1>the plot for the results page and rmarkdown documents</h1>
     <small class="dont-index">Source: <a href='https://github.com/aphaisa-apps/pnt/blob/master/R/get_plot.R'><code>R/get_plot.R</code></a></small>
     <div class="hidden name"><code>get_plot.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>get plot</p>
+    <p>generates a plot for the results pages and rmarkdown documents using the final scores
+theta estimates from all of the current PNT norms (in sys.Data).</p>
     </div>
 
     <pre class="usage"><span class='fu'>get_plot</span><span class='op'>(</span><span class='va'>irt_final</span>, basesize <span class='op'>=</span> <span class='fl'>18</span>, sample_thetas <span class='op'>=</span> <span class='va'>thetas</span><span class='op'>)</span></pre>
@@ -151,10 +153,21 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>irt_final</th>
-      <td><p>final irt</p></td>
+      <td><p>final irt estimates from get_final_numbers</p></td>
+    </tr>
+    <tr>
+      <th>basesize</th>
+      <td><p>basesize for font of the plot. changes for rmarkdown</p></td>
+    </tr>
+    <tr>
+      <th>sample_thetas</th>
+      <td><p>vector of PNT ability scores from MAPPD database and R03</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a ggplot object</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

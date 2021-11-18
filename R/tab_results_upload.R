@@ -1,4 +1,7 @@
-#' results tab
+#' Shows the user interface for the resutls page when using the rescore function
+#' 
+#' This is a different page for reasons I can't recall right now...
+#' 
 #' @export
 results_tab_div2 <- function(){
   fluidRow(

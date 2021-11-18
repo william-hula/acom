@@ -1,4 +1,7 @@
-#' slides tab
+#' User interface for the assessment tab
+#' 
+#' Shows PNT images during testing (not practice). Also
+#' shows the 1 and 2 in the top right of the screen. 
 #'
 #' @param values values
 #' @param progbar progress bar (not used)

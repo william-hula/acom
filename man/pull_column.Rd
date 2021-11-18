@@ -2,18 +2,18 @@
 % Please edit documentation in R/pull_column.R
 \name{pull_column}
 \alias{pull_column}
-\title{Title Pull Column}
+\title{Pulls a pasted column from the final data for exporting data from the app during testing.}
 \usage{
 pull_column(dat, pull)
 }
 \arguments{
-\item{dat}{dataframe in}
+\item{dat}{dataframe of final results in}
 
-\item{pull}{column to select}
+\item{pull}{column to select from the final data frame}
 }
 \value{
-
+a string of concatenated values with _ between them
 }
 \description{
-Title Pull Column
+Pulls a pasted column from the final data for exporting data from the app during testing.
 }

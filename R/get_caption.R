@@ -1,11 +1,13 @@
 
 
 
-#' Get caption
+#' The caption for the plot. 
+#' 
+#' It changes based on whether its a repeat administration or not. 
 #'
 #' @param values all values
 #'
-#' @return
+#' @return a html tag with the caption in italics
 #' @export
 get_caption <- function(values){
   if(is.na(values$irt_final$last_ability)){

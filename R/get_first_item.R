@@ -1,8 +1,13 @@
-#' get first item
+#' obtains the first item for the test
+#' 
+#' because the tests are different and have different first items,
 #'
-#' @param all_items out
-#' @param previous prev
-#' @param exclude_previous num prev
+#' @param all_items at this stage, a dataframe of all possible items
+#' @param previous are there previous items to exclude
+#' @param exclude_previous whether or not to exclude those previous items
+#' 
+#' @return a slide number for the first item
+#' 
 #' @export
 get_first_item <- function(all_items, previous, exclude_previous = F){ 
   

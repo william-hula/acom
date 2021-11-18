@@ -2,10 +2,10 @@
 % Please edit documentation in R/tab_results.R
 \name{results_tab_div}
 \alias{results_tab_div}
-\title{results tab}
+\title{Shows the user interface for the results page.}
 \usage{
 results_tab_div()
 }
 \description{
-results tab
+Shows the user interface for the results page.
 }

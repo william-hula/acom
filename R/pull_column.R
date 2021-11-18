@@ -1,11 +1,11 @@
 
 
-#' Title Pull Column
+#' Pulls a pasted column from the final data for exporting data from the app during testing. 
 #'
-#' @param dat dataframe in
-#' @param pull column to select
+#' @param dat dataframe of final results in
+#' @param pull column to select from the final data frame
 #'
-#' @return
+#' @return a string of concatenated values with _ between them
 pull_column <- function(dat, pull){
   
   pull_tmp = deparse(substitute(pull))

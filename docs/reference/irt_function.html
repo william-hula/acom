@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>irt magic function — irt_function • pnt</title>
+<title>The IRT magic function — irt_function • pnt</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,12 @@
 
 
 
-<meta property="og:title" content="irt magic function — irt_function" />
-<meta property="og:description" content="irt magic function" />
+<meta property="og:title" content="The IRT magic function — irt_function" />
+<meta property="og:description" content="This function is the core of the computer adaptive functionality. It takes a data
+frame of all the current items, and whether or not the current test is adaptive (IRT)
+whether or not the user has elected to exclude previous items, what those items were,
+whether or not the user elected to exclude eskimo, and whether the test is a 30-item static short 
+form." />
 
 
 
@@ -135,13 +139,17 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>irt magic function</h1>
+    <h1>The IRT magic function</h1>
     <small class="dont-index">Source: <a href='https://github.com/aphaisa-apps/pnt/blob/master/R/get_irt_function.R'><code>R/get_irt_function.R</code></a></small>
     <div class="hidden name"><code>irt_function.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>irt magic function</p>
+    <p>This function is the core of the computer adaptive functionality. It takes a data
+frame of all the current items, and whether or not the current test is adaptive (IRT)
+whether or not the user has elected to exclude previous items, what those items were,
+whether or not the user elected to exclude eskimo, and whether the test is a 30-item static short 
+form.</p>
     </div>
 
     <pre class="usage"><span class='fu'>irt_function</span><span class='op'>(</span>
@@ -158,22 +166,39 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>all_items</th>
-      <td><p>everything</p></td>
+      <td><p>a dataframe of all items in the current test with responses appended</p></td>
     </tr>
     <tr>
       <th>IRT</th>
-      <td><p>irt yes no</p></td>
+      <td><p>whether or not the test is adaptive</p></td>
     </tr>
     <tr>
       <th>exclude_previous</th>
-      <td><p>like name</p></td>
+      <td><p>excluding items used in a prior administration</p></td>
     </tr>
     <tr>
       <th>previous</th>
-      <td><p>prev if</p></td>
+      <td><p>what those previous items were</p></td>
+    </tr>
+    <tr>
+      <th>exclude_eskimo</th>
+      <td><p>eclude the eskimo item for cultural sensitivity</p></td>
+    </tr>
+    <tr>
+      <th>walker</th>
+      <td><p>is it a walker short form test</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A list with ability first then the next item then the sem</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>First, it creates a vector of all of the completed items in the current test
+Then adds any items from a previous test if there was one. 
+Then uses the current test responses to generate an ability estimate, sem, and the next item
+How these are generated depends on the current test (adaptive or not, 175 or not, walker or not)</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

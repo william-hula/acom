@@ -1,4 +1,5 @@
-#' results tab
+#' Shows the user interface for the results page. 
+#' 
 #' @export
 results_tab_div <- function(){
   fluidRow(

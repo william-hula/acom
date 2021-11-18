@@ -2,16 +2,18 @@
 % Please edit documentation in R/get_data_for_download.R
 \name{get_data_for_download}
 \alias{get_data_for_download}
-\title{gets data for download.}
+\title{Compiles data for downloading}
 \usage{
 get_data_for_download(values, in_progress)
 }
 \arguments{
-\item{dat}{}
+\item{values}{all the reactive values in the session}
+
+\item{in_progress}{whether or not the test was ended early.}
 }
 \value{
-a dataframe of responses
+a dataframe of responses for downloading
 }
 \description{
-gets data for download.
+Compiles data for downloading
 }

@@ -120,6 +120,7 @@
 <div id="using-the-application" class="section level2">
 <h2 class="hasAnchor">
 <a href="#using-the-application" class="anchor"></a>Using the application:</h2>
+<p>There are a number of ways to use the application (see below). However, please note that server resources are finite, and therefore <strong>we ask that researchers use option 2-4 if able and recommend that researchers use option 2 or 4 below for the following reasons:</strong> (1) The version of the app remains consistent throughout the research study (option 3 will always change based on any updates to the app), (2) There is a 15-minute inactive time-out limitation on the free online version of the app to keep server costs reasonable. However, there is no application time-out when running the application locally on option 2-4. (3) Both the free online version and <code>shiny::runGithub()</code> function requires a stable internet connection.</p>
 <div id="online" class="section level3">
 <h3 class="hasAnchor">
 <a href="#online" class="anchor"></a>1. Online</h3>
@@ -129,7 +130,7 @@
 <h3 class="hasAnchor">
 <a href="#local-installation" class="anchor"></a>2. Local Installation</h3>
 <p>The app can be installed locally via <code><a href="https://remotes.r-lib.org/reference/install_github.html">remotes::install_github()</a></code></p>
-<p><em>Note: It’s likely that installing the package will prompt you to update packages on your local machine. This may be necessary if you have much older versions of some packages installed (e.g. the {bslib} package). The number of packages to update is large, as the current app uses quite a few {tidyverse} apps which have a number of dependencies. Please raise an issue in github if there are any issues downloading.</em></p>
+<p><em>Note: It’s likely that installing the package will prompt you to update packages on your local machine. This may be necessary if you have much older versions of some packages installed (e.g. the {bslib} package). Sometimes this can cause errors. Please raise an issue in github if there are any issues downloading the app.</em></p>
 <ol style="list-style-type: decimal">
 <li>Download the package:</li>
 </ol>
@@ -151,9 +152,9 @@
 <li>Necessary packages must be installed first:</li>
 </ol>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"here"</span>, <span class="st">"shiny"</span>, <span class="st">"tibble"</span>, <span class="st">"dplyr"</span>, <span class="st">"tidyr"</span>, <span class="st">"ggplot2"</span>,
-                   <span class="st">"shinyWidgets"</span>, <span class="st">"htmltools"</span>, <span class="st">"keys"</span>, <span class="st">"DT"</span>, <span class="st">"shinyjs"</span>, <span class="st">"catR"</span>,
-                   <span class="st">"bslib"</span>, <span class="st">"bayestestR"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"here"</span>, <span class="st">"shiny"</span>, <span class="st">"tibble"</span>, <span class="st">"ggplot2"</span>,
+                   <span class="st">"keys"</span>, <span class="st">"DT"</span>, <span class="st">"shinyjs"</span>, <span class="st">"catR"</span>,
+                   <span class="st">"bslib"</span>, <span class="st">"golem"</span>, <span class="st">"pkgload"</span>, <span class="st">"config"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>The app can be run straight from Github</li>
 </ol>

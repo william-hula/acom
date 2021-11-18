@@ -2,7 +2,7 @@
 % Please edit documentation in R/tab_slides.R
 \name{slides_tab_div}
 \alias{slides_tab_div}
-\title{slides tab}
+\title{User interface for the assessment tab}
 \usage{
 slides_tab_div(values)
 }
@@ -12,5 +12,6 @@ slides_tab_div(values)
 \item{progbar}{progress bar (not used)}
 }
 \description{
-slides tab
+Shows PNT images during testing (not practice). Also
+shows the 1 and 2 in the top right of the screen.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_text_summary.R
 \name{get_text_summary}
 \alias{get_text_summary}
-\title{get text summary}
+\title{Text summary for the top of the results page above the plot}
 \usage{
 get_text_summary(ability, sem, last_ability, last_sem, num_previous)
 }
@@ -24,5 +24,5 @@ get_text_summary(ability, sem, last_ability, last_sem, num_previous)
 \item{first_ci_95}{first ci}
 }
 \description{
-get text summary
+Text summary for the top of the results page above the plot
 }

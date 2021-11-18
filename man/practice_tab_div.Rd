@@ -2,7 +2,7 @@
 % Please edit documentation in R/tab_practice.R
 \name{practice_tab_div}
 \alias{practice_tab_div}
-\title{practice}
+\title{Shows the user interface for the practice slides.}
 \usage{
 practice_tab_div(values)
 }
@@ -10,5 +10,5 @@ practice_tab_div(values)
 \item{values}{values}
 }
 \description{
-practice
+Shows the user interface for the practice slides.
 }

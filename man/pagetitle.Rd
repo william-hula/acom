@@ -2,10 +2,11 @@
 % Please edit documentation in R/title.R
 \name{pagetitle}
 \alias{pagetitle}
-\title{Page title}
+\title{Returns the page title for the navbar}
 \usage{
 pagetitle()
 }
 \description{
-Page title
+Reveals keys for testing inputs during tests (not permitted by keys).
+Code for download buttons, start-over, help, and github link
 }

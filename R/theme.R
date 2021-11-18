@@ -1,5 +1,7 @@
 
-#' theme function
+#' Theming function for the app
+#' 
+#' Returns a {bslib} theme as long as the app is not in test mode
 #'
 #' @export
 minimal_theme <- function(){

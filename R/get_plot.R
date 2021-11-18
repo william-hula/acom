@@ -1,9 +1,15 @@
 
-# note 95 CI / 2 is not a SD. Need to figure out actual conversion...
-
-#' get plot
+#' the plot for the results page and rmarkdown documents
 #'
-#' @param irt_final final irt
+#' generates a plot for the results pages and rmarkdown documents using the final scores
+#' theta estimates from all of the current PNT norms (in sys.Data).
+#' 
+#' @param irt_final final irt estimates from get_final_numbers
+#' @param basesize basesize for font of the plot. changes for rmarkdown
+#' @param sample_thetas vector of PNT ability scores from MAPPD database and R03
+#' 
+#' @return a ggplot object
+#' 
 #' @export
     get_plot <- function(irt_final, basesize = 18, sample_thetas = thetas){
       

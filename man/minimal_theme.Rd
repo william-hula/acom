@@ -2,10 +2,10 @@
 % Please edit documentation in R/theme.R
 \name{minimal_theme}
 \alias{minimal_theme}
-\title{theme function}
+\title{Theming function for the app}
 \usage{
 minimal_theme()
 }
 \description{
-theme function
+Returns a {bslib} theme as long as the app is not in test mode
 }

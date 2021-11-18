@@ -25,16 +25,12 @@ Imports:
     golem (>= 0.3.1),
     shiny (>= 1.6.0),
     catR,
-    dplyr,
     DT,
     here,
     keys,
     shinyjs,
-    shinyWidgets,
     tibble,
-    tidyr,
     ggplot2,
-    magrittr,
     bslib (>= 0.2.5.0),
     pkgload
 Encoding: UTF-8

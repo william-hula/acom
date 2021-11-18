@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>The caption for the plot. — get_caption • pnt</title>
+<title>Pulls a pasted column from the final data for exporting data from the app during testing. — pull_column • pnt</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="The caption for the plot. — get_caption" />
-<meta property="og:description" content="It changes based on whether its a repeat administration or not." />
+<meta property="og:title" content="Pulls a pasted column from the final data for exporting data from the app during testing. — pull_column" />
+<meta property="og:description" content="Pulls a pasted column from the final data for exporting data from the app during testing." />
 
 
 
@@ -135,29 +135,33 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>The caption for the plot.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/aphaisa-apps/pnt/blob/master/R/get_caption.R'><code>R/get_caption.R</code></a></small>
-    <div class="hidden name"><code>get_caption.Rd</code></div>
+    <h1>Pulls a pasted column from the final data for exporting data from the app during testing.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/aphaisa-apps/pnt/blob/master/R/pull_column.R'><code>R/pull_column.R</code></a></small>
+    <div class="hidden name"><code>pull_column.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>It changes based on whether its a repeat administration or not.</p>
+    <p>Pulls a pasted column from the final data for exporting data from the app during testing.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_caption</span><span class='op'>(</span><span class='va'>values</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>pull_column</span><span class='op'>(</span><span class='va'>dat</span>, <span class='va'>pull</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>values</th>
-      <td><p>all values</p></td>
+      <th>dat</th>
+      <td><p>dataframe of final results in</p></td>
+    </tr>
+    <tr>
+      <th>pull</th>
+      <td><p>column to select from the final data frame</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a html tag with the caption in italics</p>
+    <p>a string of concatenated values with _ between them</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

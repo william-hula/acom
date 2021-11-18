@@ -2,10 +2,10 @@
 % Please edit documentation in R/tab_results_upload.R
 \name{results_tab_div2}
 \alias{results_tab_div2}
-\title{results tab}
+\title{Shows the user interface for the resutls page when using the rescore function}
 \usage{
 results_tab_div2()
 }
 \description{
-results tab
+This is a different page for reasons I can't recall right now...
 }

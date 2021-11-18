@@ -1,5 +1,5 @@
 
-#' practice
+#' Shows the user interface for the practice slides. 
 #'
 #' @param values values
 #' @export
@@ -22,8 +22,7 @@ practice_tab_div <- function(values){
                           actionButton("start", "Start Assessment")
                       )
                     }
-             ),
-             column(width = 2)
+             )
            )
     )
 }

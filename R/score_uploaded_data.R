@@ -1,6 +1,6 @@
 #' Scores data that has been uploaded. 
 #'
-#' @return list of stuff needed for uploaded data
+#' @return a list containing final IRT estimates and a text summary via get_text_summary()
 #' @export
 score_uploaded_data <- function(uploaded_dat){
   to_join <- items[,c("target", "itemDifficulty", "discrimination")] 
@@ -12,17 +12,6 @@ score_uploaded_data <- function(uploaded_dat){
   dat$response = ifelse(dat$key == 1, 1,
                         ifelse(dat$key == 2, 
                                0, NA))
-  
-  # dat <- uploaded_dat %>%
-  #   #dplyr::rename(key = response) %>%
-  #   dplyr::left_join(to_join, by = "target") %>%
-  #   dplyr::mutate(resp = ifelse(key == 1, "incorrect",
-  #                               ifelse(key == 2, 
-  #                                      "correct", NA)),
-  #                 response = ifelse(key == 1, 1,
-  #                                   ifelse(key == 2, 
-  #                                          0, NA))
-  #   )
   
   pars = data.frame(a = dat$discrimination,
                     b = dat$itemDifficulty,
@@ -51,10 +40,7 @@ score_uploaded_data <- function(uploaded_dat){
     ci_95 = ci_95,
     last_ability = NA
   )
-  
-  # out_list$final_ability = ability
-  # out_list$final_sem = sem
-  # out_list$final_95_ci = ci_95
+
   out_list$final_accuracy = accuracy
   out_list$date_scored = Sys.Date()
   out_list$data = dat

@@ -2,7 +2,7 @@
 
   - 30-item PNT-CAT (Hula et al., 2015)
   - 175-item PNT-CAT (Fergadiotis et al., 2015)
-  - Two 30-item PNT short-forms (Walker & Schwartz, 2012)
+  - Two static 30-item PNT short-forms (Walker & Schwartz, 2012)
   - 175-item Standard PNT (Roach et al., 1996)
   
 **Re-administer a PNT to assess change in naming ability:**
@@ -18,7 +18,7 @@
 1. Re-administrations are limited based on the first test administered:
     - If the 30-item PNT-CAT is administered first, the 30-item PNT-CAT or variable-length PNT-CAT can be administered second.
     - If one of the two 30-item static short forms (Walker & Schwartz, 2012) are administered first, the other can be administered second.
-    - If either 175-item tests are administered first, **a second administration is not currently permitted**.  
+    - If either 175-item tests are administered first, we do not recommend excluding items on the second   
     
 2. For each option, users have the option of downloading performance data and a pdf-report of the results.
 

@@ -2,10 +2,12 @@
 
 
 
-#' Title Get Results data long
+#' Compiles final results in long format
+#' 
+#' Also appends notes, and other test information to the final dataframe
 #'
 #' @param values list of stuff from server
-#'
+#' @return a dataframe of final result and test information
 #' @export
 get_results_data_long <- function(values){
   
@@ -16,15 +18,6 @@ get_results_data_long <- function(values){
     paste0(values$test_length, " items")
   }
   
-  # tmp = dplyr::bind_rows(values$item_difficulty) %>%
-  #   dplyr::mutate(ci_95 = sem*1.96,
-  #                 precision = precision,
-  #                 name = values$name,
-  #                 date = values$datetime,
-  #                 notes = NA
-  #   ) %>%
-  #   dplyr::arrange(order)
-
   tmp = rbind(values$item_difficulty)
   
   tmp$ci_95 = tmp$sem*1.96

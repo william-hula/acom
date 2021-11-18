@@ -1,5 +1,5 @@
 
-`%!in%` <- Negate(`%in%`)
+#`%!in%` <- Negate(`%in%`)
 
 #' The application server-side
 #' 
@@ -178,16 +178,22 @@ app_server <- function( input, output, session ) {
   ################################ END TEST ##################################
   
   observeEvent(input$end_test,{
-    shinyWidgets::confirmSweetAlert(
-      inputId = "confirm_end_test",
-      session = session,
-      title = "Are you sure you want to stop?",
-      text = "Only items with confirmed responses will be saved. If you would like to continue the test later, please download the current results before ending the test.",
-      type = "warning",
-    )
+    showModal(modalDialog(
+      div(
+        h5("Are you sure you want to end the test?"),br(),
+        p("Only items with confirmed responses will be saved. If you would like to continue the test later, please download the current results before ending the test.")
+      ),
+      easyClose = TRUE,
+      size = "s",
+      footer = tagList(
+        modalButton("Cancel"),
+        actionButton("confirm_end_test", "End Test")
+      )
+    ))
   })
   
   observeEvent(input$confirm_end_test,{
+    removeModal()
     if(isTruthy(input$confirm_end_test)){
       
       values$irt_final <- 

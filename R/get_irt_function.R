@@ -1,16 +1,24 @@
-############# return a new slide function script #############
 
-# This is where all the magic happens
-
-
-# the magic!
-
-#' irt magic function
+#' The IRT magic function
 #'
-#' @param all_items everything
-#' @param IRT irt yes no
-#' @param exclude_previous like name
-#' @param previous prev if
+#' This function is the core of the computer adaptive functionality. It takes a data
+#' frame of all the current items, and whether or not the current test is adaptive (IRT)
+#' whether or not the user has elected to exclude previous items, what those items were,
+#' whether or not the user elected to exclude eskimo, and whether the test is a 30-item static short 
+#' form. 
+#' 
+#' First, it creates a vector of all of the completed items in the current test
+#' Then adds any items from a previous test if there was one. 
+#' Then uses the current test responses to generate an ability estimate, sem, and the next item
+#' How these are generated depends on the current test (adaptive or not, 175 or not, walker or not)
+#'
+#' @param all_items a dataframe of all items in the current test with responses appended
+#' @param IRT whether or not the test is adaptive
+#' @param exclude_previous excluding items used in a prior administration
+#' @param previous what those previous items were
+#' @param exclude_eskimo eclude the eskimo item for cultural sensitivity
+#' @param walker is it a walker short form test
+#' @return A list with ability first then the next item then the sem
 #' @export
 irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exclude_eskimo = T, walker = F){
 

@@ -1,4 +1,9 @@
-#' Page title
+
+#' Returns the page title for the navbar
+#' 
+#' Reveals keys for testing inputs during tests (not permitted by keys).
+#' Code for download buttons, start-over, help, and github link
+#'
 #' @export
 pagetitle <- function(){
   

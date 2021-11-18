@@ -2,13 +2,21 @@
 % Please edit documentation in R/get_plot.R
 \name{get_plot}
 \alias{get_plot}
-\title{get plot}
+\title{the plot for the results page and rmarkdown documents}
 \usage{
 get_plot(irt_final, basesize = 18, sample_thetas = thetas)
 }
 \arguments{
-\item{irt_final}{final irt}
+\item{irt_final}{final irt estimates from get_final_numbers}
+
+\item{basesize}{basesize for font of the plot. changes for rmarkdown}
+
+\item{sample_thetas}{vector of PNT ability scores from MAPPD database and R03}
+}
+\value{
+a ggplot object
 }
 \description{
-get plot
+generates a plot for the results pages and rmarkdown documents using the final scores
+theta estimates from all of the current PNT norms (in sys.Data).
 }

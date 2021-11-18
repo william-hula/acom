@@ -2,10 +2,10 @@
 % Please edit documentation in R/tab_intro.R
 \name{intro_tab_div}
 \alias{intro_tab_div}
-\title{Intro doc}
+\title{This is the user interface for the intro pages bfore testing}
 \usage{
 intro_tab_div()
 }
 \description{
-Intro doc
+It looks a little crazy, but is relatively straightforward.
 }

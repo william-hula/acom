@@ -7,7 +7,7 @@
 score_uploaded_data(uploaded_dat)
 }
 \value{
-list of stuff needed for uploaded data
+a list containing final IRT estimates and a text summary via get_text_summary()
 }
 \description{
 Scores data that has been uploaded.

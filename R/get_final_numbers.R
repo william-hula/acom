@@ -1,8 +1,10 @@
-#' final numbers
+#' obtains final numbers from the testing data. 
 #'
-#' @param out out
-#' @param previous prev
-#' @param num_previous num prev
+#' @param out list of the final numbers from the get_irt function
+#' @param previous previous items
+#' @param num_previous how many previous tests...0 or 1
+#' 
+#' @return a small dataframe of final number estimates
 #' @export
 get_final_numbers <- function(out,
                               previous,

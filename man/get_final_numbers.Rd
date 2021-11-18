@@ -2,17 +2,20 @@
 % Please edit documentation in R/get_final_numbers.R
 \name{get_final_numbers}
 \alias{get_final_numbers}
-\title{final numbers}
+\title{obtains final numbers from the testing data.}
 \usage{
 get_final_numbers(out, previous, num_previous)
 }
 \arguments{
-\item{out}{out}
+\item{out}{list of the final numbers from the get_irt function}
 
-\item{previous}{prev}
+\item{previous}{previous items}
 
-\item{num_previous}{num prev}
+\item{num_previous}{how many previous tests...0 or 1}
+}
+\value{
+a small dataframe of final number estimates
 }
 \description{
-final numbers
+obtains final numbers from the testing data.
 }

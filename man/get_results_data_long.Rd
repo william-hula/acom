@@ -2,13 +2,16 @@
 % Please edit documentation in R/get_results_data_long.R
 \name{get_results_data_long}
 \alias{get_results_data_long}
-\title{Title Get Results data long}
+\title{Compiles final results in long format}
 \usage{
 get_results_data_long(values)
 }
 \arguments{
 \item{values}{list of stuff from server}
 }
+\value{
+a dataframe of final result and test information
+}
 \description{
-Title Get Results data long
+Also appends notes, and other test information to the final dataframe
 }

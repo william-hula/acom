@@ -1,5 +1,5 @@
   
-#' get text summary
+#' Text summary for the top of the results page above the plot
 #'
 #' @param acc acc
 #' @param ability ability

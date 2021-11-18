@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_caption.R
 \name{get_caption}
 \alias{get_caption}
-\title{Get caption}
+\title{The caption for the plot.}
 \usage{
 get_caption(values)
 }
@@ -10,8 +10,8 @@ get_caption(values)
 \item{values}{all values}
 }
 \value{
-
+a html tag with the caption in italics
 }
 \description{
-Get caption
+It changes based on whether its a repeat administration or not.
 }

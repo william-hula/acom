@@ -17,8 +17,8 @@ respectively.
 
 Specifically, the web-app allows clinicians to:
 
-1.  Administer a 30-item PNT-CAT, 175-item PNT-CAT, two 30-item PNT
-    short-forms, 175-item Standard PNT.
+1.  Administer a 30-item PNT-CAT, 175-item PNT-CAT, two static 30-item
+    PNT short-forms, 175-item Standard PNT.
 2.  Re-administer a 30-item PNT-CAT, variable-length PNT-CAT, or
     alternate PNT short-form to assess change in naming ability
 3.  Upload a scores from an offline PNT to obtain a naming ability

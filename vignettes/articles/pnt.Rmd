@@ -25,6 +25,8 @@ Users may also wish to review the principles of item-response theory and compute
 
 ## Using the application:
 
+There are a number of ways to use the application (see below). However, please note that server resources are finite, and therefore **we ask that researchers use option 2-4 if able and recommend that researchers use option 2 or 4 below for the following reasons:** (1) The version of the app remains consistent throughout the research study (option 3 will always change based on any updates to the app), (2) There is a 15-minute inactive time-out limitation on the free online version of the app to keep server costs reasonable. However, there is no application time-out when running the application locally on option 2-4. (3) Both the free online version and `shiny::runGithub()` function requires a stable internet connection. 
+
 ### 1. Online
 
 The app is now online at https://aphasia-apps.shinyapps.io/PNT-CAT/
@@ -33,7 +35,7 @@ The app is now online at https://aphasia-apps.shinyapps.io/PNT-CAT/
 
 The app can be installed locally via `remotes::install_github()`
 
-*Note: It's likely that installing the package will prompt you to update packages on your local machine. This may be necessary if you have much older versions of some packages installed (e.g. the {bslib} package). The number of packages to update is large, as the current app uses quite a few {tidyverse} apps which have a number of dependencies. Please raise an issue in github if there are any issues downloading.*
+*Note: It's likely that installing the package will prompt you to update packages on your local machine. This may be necessary if you have much older versions of some packages installed (e.g. the {bslib} package). Sometimes this can cause errors. Please raise an issue in github if there are any issues downloading the app.*
 
 1. Download the package: 
 
@@ -56,9 +58,9 @@ The app can also be accessed via `shiny::runGitHub()`
 1. Necessary packages must be installed first: 
 
 ```{r, eval = F}
-install.packages(c("here", "shiny", "tibble", "dplyr", "tidyr", "ggplot2",
-                   "shinyWidgets", "htmltools", "keys", "DT", "shinyjs", "catR",
-                   "bslib", "bayestestR"))
+install.packages(c("here", "shiny", "tibble", "ggplot2",
+                   "keys", "DT", "shinyjs", "catR",
+                   "bslib", "golem", "pkgload", "config"))
 ```
 
 2. The app can be run straight from Github
