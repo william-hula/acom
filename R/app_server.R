@@ -295,6 +295,7 @@ app_server <- function( input, output, session ) {
       values$IRT = ifelse(grepl( "cat", input$numitems), TRUE, FALSE)
       # walker is true if the string walker is in the num items inputs
       values$walker = ifelse(grepl("walker", input$numitems), TRUE, FALSE)
+
       values$walker_form = input$walker
       if(isTruthy(values$walker)){
         values$item_difficulty = subset(values$item_difficulty, walker == input$walker)
@@ -304,10 +305,12 @@ app_server <- function( input, output, session ) {
       # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
       # computer adaptive if the string cat is in the num items inputs
       values$selected_test = input$numitems_retest
-      values$IRT = ifelse(grepl(input$numitems_retest, "cat"), TRUE, FALSE)
+      values$IRT = ifelse(grepl( "cat", input$numitems_retest), TRUE, FALSE)
+
       #print(values$IRT)
       # walker is true if the string walker is in the num items inputs
-      values$walker = ifelse(grepl(input$numitems_retest, "walker"), TRUE, FALSE)
+      values$walker = ifelse(grepl("walker", input$numitems_retest), TRUE, FALSE)
+
       values$walker_form = input$walker_retest
       if(isTruthy(values$walker)){
         values$item_difficulty = subset(values$item_difficulty, walker == input$walker_retest)
@@ -318,6 +321,7 @@ app_server <- function( input, output, session ) {
     shinyjs::show("start_over")
     #shinyjs::show("help")
     # go to practice slides
+
     updateNavbarPage(session, "mainpage",
                      selected = "Practice")
   })
@@ -344,13 +348,13 @@ app_server <- function( input, output, session ) {
         
      } else if (isTruthy(values$walker)){ # walker first item
         values$item_difficulty[values$item_difficulty$walker_order == 1,]$slide_num 
-    } else {
+     } else {
       14 #otherwise candle for standard PNT
-    }
+     }
     # for testing:
-    if (isTRUE(getOption("shiny.testmode"))) {
-      shinyjs::reset("keys")
-    }
+    # if (isTRUE(getOption("shiny.testmode"))) {
+    #   shinyjs::reset("keys")
+    # }
     values$irt_out <- list(0, 0, 11) # reset saved data just in case. 
     #play a sound...not working right now :(
     shinyjs::runjs("document.getElementById('audio').play();")
@@ -509,9 +513,9 @@ app_server <- function( input, output, session ) {
       }
       values$key_val = NULL
       #for testing::
-      if (isTRUE(getOption("shiny.testmode"))) {
-        reset("keys")
-      }
+      # if (isTRUE(getOption("shiny.testmode"))) {
+      #   shinyjs::reset("keys")
+      # }
     }
     # don't run this on start up. 
   }, ignoreInit = T)
@@ -523,7 +527,7 @@ app_server <- function( input, output, session ) {
   observeEvent(input$mainpage=="Results",{
     values$results_data_long = get_results_data_long(values)
     
-    values$out_words <- pull_column(values$results_data_long, target)
+    #values$out_words <- pull_column(values$results_data_long, target)
     values$out_nums <- pull_column(values$results_data_long, response)
     values$out_ability <- pull_column(values$results_data_long, ability)
     values$out_sem <- pull_column(values$results_data_long,sem)
@@ -531,7 +535,7 @@ app_server <- function( input, output, session ) {
     values$disc <- pull_column(values$results_data_long,discrimination)
     values$key <- pull_column(values$results_data_long, key)
     values$order <- pull_column(values$results_data_long, order)
-    values$item_number <- pull_column(values$results_data_long, item_number)
+    #values$item_number <- pull_column(values$results_data_long, item_number)
     
   })
   
@@ -800,9 +804,9 @@ app_server <- function( input, output, session ) {
         values$irt_out[[2]][[2]]
       } 
     # for testing:
-    if (isTRUE(getOption("shiny.testmode"))) {
-      shinyjs::reset("keys")
-    }
+    # if (isTRUE(getOption("shiny.testmode"))) {
+    #   shinyjs::reset("keys")
+    # }
     values$irt_out <- list(0, 0, 11) # reset saved data just in case. 
     #play a sound...not working right now :(
     # shinyjs::runjs("document.getElementById('audio').play();")

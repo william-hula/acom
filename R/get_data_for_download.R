@@ -35,11 +35,12 @@ get_data_for_download <- function(values, in_progress){
     values$item_difficulty[values$item_difficulty$slide_num == values$n,]$ability = round(values$irt_out[[1]],4)
     values$item_difficulty[values$item_difficulty$slide_num == values$n,]$sem = round(values$irt_out[[3]],4)
     
+    current_item = values$irt_out[[2]]$name
+    
   }
   
-  
-  current_item = values$irt_out[[2]]$name
   IRT = values$IRT
+
   
   tmp <- get_results_data_long(values)
   tmp$test = values$selected_test
@@ -69,5 +70,5 @@ if(in_progress == "Assessment" & isTruthy(IRT)){
     dat_out$notes[4] = current_item
 }
 return(dat_out)   
-
+print(head(dat_out))
 }

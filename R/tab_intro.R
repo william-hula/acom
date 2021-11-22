@@ -130,7 +130,7 @@ intro_tab_div <- function() {
                                   choices = c(
                                     "30-item Computer Adaptive PNT" = "30_cat",
                                     "Variable length Computer Adaptive PNT" = "SEM",
-                                    "175-item Computer Adaptive PNT" = "175_cat",
+                                    #"175-item Computer Adaptive PNT" = "175_cat",
                                     "30-item PNT Short form (Walker)" = "30_walker",
                                     "175-item Standard PNT" = "175_standard"
                                   ),

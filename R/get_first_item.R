@@ -15,37 +15,23 @@ get_first_item <- function(all_items, previous, exclude_previous = F){
   
   if(!exclude_previous){
     
-    # if we want to sample the four anyway
-    # first_item = sample(choices, 1)
-    # return(first_item)
+    #pumpkin
     return(130)
 
   } else {
 
-    completed = previous
+    # pick the item closest to zero from the remaining items (0 == 51.9 in T scores)
+    all_items$response[match(previous$item_number, all_items$item_number)] <- previous$response
+    
+    remaining_items = subset(all_items, is.na(response))
+    remaining_items$near_zero = abs(51.9-remaining_items$itemDifficulty)
+    next_slide_num = remaining_items[remaining_items$near_zero == min(remaining_items$near_zero),]$slide_num
+    
 
-    all_items$response[match(completed$item_number, all_items$item_number)] <- completed$response
-    # dataframe of inputs
-    pars = data.frame(a = all_items$discrimination,
-                      b = all_items$itemDifficulty,
-                      c = rep(1), #1PL has no guessing parameter ,
-                      d = rep(0), #1PL has no innatention parameter,
-                      cbGroup = rep(1))
-    
-    # breaks it down into what gets fed into the 1PL IRT
-    prov = catR::breakBank(pars) 
-    bank = prov$itemPar
-    rownames(bank) <- all_items$target
-    x = all_items$response
-    
-    
-    # ability estimate using bayes modal:
-    ability = catR::thetaEst(bank, x, method = "EAP", range = c(-5, 5))
-    first_item = catR::nextItem(itemBank = bank, theta = ability, out = completed$item_number)
-    
-    first_slide_num = all_items[all_items$target==first_item$name,]$slide_num
-    
-    return(first_slide_num)
+    print(head(remaining_items[order(remaining_items$near_zero), , drop = FALSE], 20))
+   
+    return(next_slide_num)
+
   }
   
   

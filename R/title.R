@@ -7,14 +7,14 @@
 #' @export
 pagetitle <- function(){
   
-    if (isTRUE(getOption("shiny.testmode"))) {
-     title= pagetitle = div(#
-        radioButtons("keys", "for testing inputs",
-                     choices = c(NA, incorrect_key_response, correct_key_response),
-                     inline = T, selected = NULL),
-        actionButton("enter_key", "enter")
-      )
-    } else {
+    # if (isTRUE(getOption("shiny.testmode"))) {
+    #  title= pagetitle = div(#
+    #     radioButtons("keys", "for testing inputs",
+    #                  choices = c(NA, incorrect_key_response, correct_key_response),
+    #                  inline = T, selected = NULL),
+    #     actionButton("enter_key", "enter")
+    #   )
+    # } else {
      title = div(
        div("PNT-CAT"),
        div(id = "navbar-right",
@@ -62,6 +62,6 @@ pagetitle <- function(){
            ),
            style = "position: absolute; right: 5px; top: 8px;")
      )
-    }
+   # }
   return(title)
 }

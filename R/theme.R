@@ -6,9 +6,9 @@
 #' @export
 minimal_theme <- function(){
   
-    if (isTRUE(getOption("shiny.testmode"))) {
-     
-    } else {
+    # if (isTRUE(getOption("shiny.testmode"))) {
+    #  
+    # } else {
       bslib::bs_theme(bootswatch = "default",
                      base_font = bslib::font_google("Open Sans"),
                      heading_font = bslib::font_google("Open Sans"),
@@ -17,6 +17,6 @@ minimal_theme <- function(){
                      `enable-transitions` = F,
                      primary = "#1665AC"
     ) 
-    }
+   # }
   
 }
