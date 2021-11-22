@@ -9,25 +9,25 @@ knitr::opts_chunk$set(
 )
 ```
 
-Baylor, C., Hula, W. D., Donovan, N. J., Doyle, P. J., Kendall, D., & Yorkston, K. (2011). An introduction to item response theory and Rasch models for speech-language pathologists. American Journal of Speech-Language Pathology, 20(3), 243–259.
+[Baylor, C., Hula, W. D., Donovan, N. J., Doyle, P. J., Kendall, D., & Yorkston, K. (2011). An introduction to item response theory and Rasch models for speech-language pathologists. American Journal of Speech-Language Pathology, 20(3), 243–259.](https://pubs.asha.org/doi/abs/10.1044/1058-0360%282011/10-0079%29?rfr_dat=cr_pub++0pubmed&url_ver=Z39.88-2003&rfr_id=ori%3Arid%3Acrossref.org)
 
-Fergadiotis, G., Casilio, M., Hula, W. D., & Swiderski, A. M. (2021). Computer adaptive testing for the assessment of anomia severity. Seminars in Speech and Language.
+[Fergadiotis, G., Casilio, M., Hula, W. D., & Swiderski, A. M. (2021). Computer adaptive testing for the assessment of anomia severity. Seminars in Speech and Language.](https://pubmed.ncbi.nlm.nih.gov/34261162/)
 
-Fergadiotis, G., Hula, W. D., Swiderski, A. M., Lei, C.-M., & Kellough, S. (2019). Enhancing the efficiency of confrontation naming assessment for aphasia using computer adaptive testing. Journal of Speech, Language, and Hearing Research, 62(6), 1724–1738.
+[Fergadiotis, G., Hula, W. D., Swiderski, A. M., Lei, C.-M., & Kellough, S. (2019). Enhancing the efficiency of confrontation naming assessment for aphasia using computer adaptive testing. Journal of Speech, Language, and Hearing Research, 62(6), 1724–1738.](https://pubs.asha.org/doi/abs/10.1044/2018_JSLHR-L-18-0344)
 
-Fergadiotis, G., Kellough, S., & Hula, W. D. (2015). Item response theory modeling of the Philadelphia Naming Test. Journal of Speech, Language, and Hearing Research, 58(3), 865–877.
+[Fergadiotis, G., Kellough, S., & Hula, W. D. (2015). Item response theory modeling of the Philadelphia Naming Test. Journal of Speech, Language, and Hearing Research, 58(3), 865–877.](https://pubs.asha.org/doi/full/10.1044/2015_JSLHR-L-14-0249?casa_token=dPjWhuIEXvIAAAAA%3AOw0hz7jHSJ8DQ_yMJktmknbwqzGnUXYWSrwL6eU75qbOu3SjXdkst4JjD19oMrtDNhbC-glwJV6dQWI)
 
-Hula, W. D., Fergadiotis, G., Swiderski, A. M., Silkes, J. P., & Kellough, S. (2020). Empirical Evaluation of Computer-Adaptive Alternate Short Forms for the Assessment of Anomia Severity. Journal of Speech, Language, and Hearing Research, 63(1), 163–172.
+[Hula, W. D., Fergadiotis, G., Swiderski, A. M., Silkes, J. P., & Kellough, S. (2020). Empirical Evaluation of Computer-Adaptive Alternate Short Forms for the Assessment of Anomia Severity. Journal of Speech, Language, and Hearing Research, 63(1), 163–172.](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7213484/)
 
-Hula, W. D., Kellough, S., & Fergadiotis, G. (2015). Development and simulation testing of a computerized adaptive version of the Philadelphia naming test. Journal of Speech, Language, and Hearing Research, 1–13. https://doi.org/10.1044/2015_JSLHR-L-14-0297
+[Hula, W. D., Kellough, S., & Fergadiotis, G. (2015). Development and simulation testing of a computerized adaptive version of the Philadelphia naming test. Journal of Speech, Language, and Hearing Research, 1–13. https://doi.org/10.1044/2015_JSLHR-L-14-0297](https://pubs.asha.org/doi/full/10.1044/2015_JSLHR-L-14-0297?casa_token=tMSqOL5JpXkAAAAA%3AXPYov-zlx9fluRZwBRhsOuzkWzM20RyVuQ3US3M4TZqekdpq1njZ2pLqjzQ0PBDHhpPSEssU8RYmAHQ)
 
 Huston, H. (2021). Bayesian item response theory modelling [Maser’s thesis]. Portland State University.
 
 Kaplan, E., Goodlgass, H., & Weintraub, S. (2001). Boston Naming Test (2nd ed.). Lippincott Williams & Wilkins.
 
-Mirman, D., Strauss, T. J., Brecher, A., Walker, G. M., Sobel, P., Dell, G. S., & Schwartz, M. F. (2010). A large, searchable, web-based database of aphasic performance on picture naming and other tests of cognitive function. Cognitive Neuropsychology, 27(6), 495–504.
+[Mirman, D., Strauss, T. J., Brecher, A., Walker, G. M., Sobel, P., Dell, G. S., & Schwartz, M. F. (2010). A large, searchable, web-based database of aphasic performance on picture naming and other tests of cognitive function. Cognitive Neuropsychology, 27(6), 495–504.](https://www.tandfonline.com/doi/abs/10.1080/02643294.2011.574112)
 
-Walker, G. M., Hickok, G., & Fridriksson, J. (2018). A cognitive psychometric model for assessment of picture naming abilities in aphasia. Psychological Assessment, 809–826.
+[Walker, G. M., Hickok, G., & Fridriksson, J. (2018). A cognitive psychometric model for assessment of picture naming abilities in aphasia. Psychological Assessment, 809–826.](https://psycnet.apa.org/doiLanding?doi=10.1037%2Fpas0000529)
 
-Walker, G. M., & Schwartz, M. F. (2012). Short-Form Philadelphia Naming Test: Rationale and Empirical Evaluation. American Journal of Speech-Language Pathology, 21(2), S140–S153.
+[Walker, G. M., & Schwartz, M. F. (2012). Short-Form Philadelphia Naming Test: Rationale and Empirical Evaluation. American Journal of Speech-Language Pathology, 21(2), S140–S153.](https://pubs.asha.org/doi/abs/10.1044/1058-0360%282012/11-0089%29)
 

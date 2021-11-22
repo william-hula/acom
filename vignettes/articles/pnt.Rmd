@@ -25,7 +25,7 @@ Users may also wish to review the principles of item-response theory and compute
 
 ## Using the application:
 
-There are a number of ways to use the application (see below). However, please note that server resources are finite, and therefore **we ask that researchers use option 2-4 if able and recommend that researchers use option 2 or 4 below for the following reasons:** (1) The version of the app remains consistent throughout the research study (option 3 will always change based on any updates to the app), (2) There is a 15-minute inactive time-out limitation on the free online version of the app to keep server costs reasonable. However, there is no application time-out when running the application locally on option 2-4. (3) Both the free online version and `shiny::runGithub()` function requires a stable internet connection. 
+There are a number of ways to use the application (see below). However, please note that server resources are finite, and therefore **we ask that researchers use option 2-4 if able and recommend for the following reasons:** (1) The version of the app remains consistent throughout the research study (option 3 will always change based on any updates to the app), (2) There is a 15-minute inactive time-out limitation on the free online version of the app to keep server costs reasonable. However, there is no application time-out when running the application locally on option 2-4. (3) Both the free online version and `shiny::runGithub()` function requires a stable internet connection. 
 
 ### 1. Online
 
@@ -71,7 +71,7 @@ shiny::runGitHub("aphasia-apps/pnt")
 
 *Note: If you get any errors about missing a package, install it, restart your session, and try again*
 
-### 4 .Clone the repository
+### 4. Clone the repository
 
 If desired, the repository can be cloned, and run locally:
 
