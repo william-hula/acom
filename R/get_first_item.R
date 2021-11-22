@@ -28,7 +28,7 @@ get_first_item <- function(all_items, previous, exclude_previous = F){
     next_slide_num = remaining_items[remaining_items$near_zero == min(remaining_items$near_zero),]$slide_num
     
 
-    print(head(remaining_items[order(remaining_items$near_zero), , drop = FALSE], 20))
+  #  print(head(remaining_items[order(remaining_items$near_zero), , drop = FALSE], 20))
    
     return(next_slide_num)
 

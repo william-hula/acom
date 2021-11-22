@@ -296,7 +296,7 @@ app_server <- function( input, output, session ) {
       # walker is true if the string walker is in the num items inputs
       values$walker = ifelse(grepl("walker", input$numitems), TRUE, FALSE)
 
-      values$walker_form = input$walker
+      values$walker_form = ifelse(isTruthy(values$walker), input$walker, NA)
       if(isTruthy(values$walker)){
         values$item_difficulty = subset(values$item_difficulty, walker == input$walker)
       }
@@ -305,13 +305,15 @@ app_server <- function( input, output, session ) {
       # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
       # computer adaptive if the string cat is in the num items inputs
       values$selected_test = input$numitems_retest
-      values$IRT = ifelse(grepl( "cat", input$numitems_retest), TRUE, FALSE)
+      values$IRT = ifelse(grepl( "cat", input$numitems_retest), TRUE,
+                          ifelse(grepl("SEM", input$numitems_retest), TRUE,
+                                       FALSE))
 
       #print(values$IRT)
       # walker is true if the string walker is in the num items inputs
       values$walker = ifelse(grepl("walker", input$numitems_retest), TRUE, FALSE)
 
-      values$walker_form = input$walker_retest
+      values$walker_form = ifelse(isTruthy(values$walker), input$walker_retest, NA)
       if(isTruthy(values$walker)){
         values$item_difficulty = subset(values$item_difficulty, walker == input$walker_retest)
       }
@@ -324,6 +326,18 @@ app_server <- function( input, output, session ) {
 
     updateNavbarPage(session, "mainpage",
                      selected = "Practice")
+    
+    # prints to the console for  troubleshooting
+    cat(paste("Key app variables after selecting start practice:", "\n",
+              "Selected test:", values$selected_test, "\n",
+              "New test:", values$new_test, "\n",
+              "Exclude previous:", values$exclude_previous, "\n",
+              "IRT:", values$IRT, "\n",
+              "Walker:", values$walker, "\n",
+              "Walker form:", values$walker_form, "\n",
+              "Excludes item 'eskimo':", values$eskimo, "\n", 
+              "----------------------------------------", "\n"
+              ))
   })
   
   
@@ -362,6 +376,14 @@ app_server <- function( input, output, session ) {
     # reset keyval
     values$key_val = NULL # keeps track of button press 1 (error) or 2 (correct)
     updateNavbarPage(session, "mainpage", selected = "Assessment")
+    
+    # prints to the console for  troubleshooting
+    cat(paste(
+      "Key app variables after selecting start assessment:", "\n",
+      "First item slide number:", values$n, "\n",
+      "List for tracking CAT/IRT info:", paste(unlist(values$irt_out), collapse = " "), "\n",
+      "----------------------------------------", "\n"
+    ))
   })
   
   
@@ -486,9 +508,7 @@ app_server <- function( input, output, session ) {
         values$i = values$i + 1
         #print(values$i)
       } 
-      # prints to the console the last 5 items. DELETE FOR RELEASE
-      # print(tail(values$item_difficulty %>% tidyr::drop_na(response) %>%
-      #              dplyr::arrange(order), 5))
+
       # decides whether to cut to the results page or not!
       # returns TRUE or FALSE
       go_to_results <- if(is.na(values$n)){
@@ -510,6 +530,13 @@ app_server <- function( input, output, session ) {
                          selected = "Results")
         shinyjs::show("report")
         shinyjs::show("downloadData")
+        
+        cat(paste(
+          "Key app variables after ending test:", "\n",
+          "Number of items administered:", values$i-1, "\n",
+          "----------------------------------------"
+        ))
+        
       }
       values$key_val = NULL
       #for testing::
@@ -556,7 +583,7 @@ app_server <- function( input, output, session ) {
   #  outputs a summary sentence
   output$results_summary <- renderUI({
     sty = "color:black;"
-    if(sum(!is.na(values$item_difficulty$response))<30){sty="color:darkred;"}
+    if(!isTruthy(values$IRT) & sum(!is.na(values$item_difficulty$response))<30){sty="color:darkred;"}
     summary = p(
       get_text_summary(ability = values$irt_final$ability,
                        sem = values$irt_final$sem,
@@ -757,7 +784,7 @@ app_server <- function( input, output, session ) {
       values$walker_form = input$walker
       if(isTruthy(values$walker)){
         values$item_difficulty = values$item_difficulty[values$item_difficulty$walker == input$walker,]
-        print(str(values$item_difficulty))
+        
       }
       
     } else {

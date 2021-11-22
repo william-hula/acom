@@ -40,7 +40,7 @@ get_text_summary <- function(
           ,sep = "")
     }
     
-    if(sum(!is.na(values$item_difficulty$response))<30){
+    if(!isTruthy(values$IRT) & sum(!is.na(values$item_difficulty$response))<30){
       #return()
       warning = "Warning: Less than 30 items have been administered. Naming ability estimates are not reliable."
       return(paste(warning, summary, sep = " "))
