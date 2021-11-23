@@ -19,24 +19,22 @@ pagetitle <- function(){
        div("PNT-CAT"),
        div(id = "navbar-right",
            shinyjs::hidden(
-             downloadButton("report",
-                            "Download Report",
-                            style = "background-color:#f8f9fa; border:0px;")
+             downloadReportUI(id = "download_report")
            ),
            shinyjs::hidden(
-             downloadButton("downloadData",
-                            "Download results",
-                            style = "background-color:#f8f9fa; border:0px;")
+             # downloadButton("downloadData",
+             #                "Download results",
+             #                style = "background-color:#f8f9fa; border:0px;")
+             downloadResultsUI(id = "download_results")
            ),
+          shinyjs::hidden(
+             downloadReportUI(id = "download_report_rescore")
+         ),
            shinyjs::hidden(
-             downloadButton("rescore_report",
-                            "Download Report",
-                            style = "background-color:#f8f9fa; border:0px;")
-           ),
-           shinyjs::hidden(
-             downloadButton("rescore_downloadData",
-                            "Download results",
-                            style = "background-color:#f8f9fa; border:0px;")
+             # downloadButton("rescore_downloadData",
+             #                "Download results",
+             #                style = "background-color:#f8f9fa; border:0px;")
+             downloadResultsUI(id = "download_results_rescore")
            ),
            shinyjs::hidden(
              actionButton("start_over",

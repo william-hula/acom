@@ -4,7 +4,7 @@
 \alias{score_uploaded_data}
 \title{Scores data that has been uploaded.}
 \usage{
-score_uploaded_data(uploaded_dat)
+score_uploaded_data(values)
 }
 \value{
 a list containing final IRT estimates and a text summary via get_text_summary()

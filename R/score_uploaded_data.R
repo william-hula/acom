@@ -2,10 +2,10 @@
 #'
 #' @return a list containing final IRT estimates and a text summary via get_text_summary()
 #' @export
-score_uploaded_data <- function(uploaded_dat){
+score_uploaded_data <- function(values){
   to_join <- items[,c("target", "itemDifficulty", "discrimination")] 
   
-  dat <- merge(uploaded_dat, to_join, by = "target")
+  dat <- merge(values$rescore, to_join, by = "target")
   dat$resp = ifelse(dat$key == 1, "incorrect",
                     ifelse(dat$key == 2, 
                            "correct", NA))
@@ -18,7 +18,6 @@ score_uploaded_data <- function(uploaded_dat){
                     c = rep(1), #1PL has no guessing parameter ,
                     d = rep(0), #1PL has no innatention parameter,
                     cbGroup = rep(1))
-  
   # breaks it down into what gets fed into the 1PL IRT
   prov = catR::breakBank(pars)
   bank = prov$itemPar
@@ -52,9 +51,10 @@ score_uploaded_data <- function(uploaded_dat){
     sem = sem,
     last_ability = NA,
     last_sem = NA,
-    num_previous = 0
+    num_previous = 0,
+    values = values
   )
-
+  
   return(out_list)
   
 }

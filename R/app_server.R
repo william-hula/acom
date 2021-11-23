@@ -155,7 +155,8 @@ app_server <- function( input, output, session ) {
       if(input$numitems_retest == "SEM"){
         
         values$test_length <- "SEM"
-        shinyjs::enable("exclude_previous")
+        shinyjs::disable("exclude_previous")
+        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = T)
         shinyjs::hide("walker_retest")
         shinyjs::hide("eskimo_retest")
         
@@ -164,6 +165,7 @@ app_server <- function( input, output, session ) {
         # fixed length IRT
         values$test_length = 30
         shinyjs::enable("exclude_previous")
+        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = T)
         shinyjs::hide("walker_retest")
         shinyjs::hide("eskimo_retest")
         
@@ -253,7 +255,8 @@ app_server <- function( input, output, session ) {
         get_final_numbers(out = values$irt_out,
                           previous = values$previous,
                           num_previous = values$num_previous)
-      shinyjs::show("report")
+      shinyjs::show("download_report-report_download")
+      shinyjs::show("download_results-results_download")
       #shinyjs::hide("help")
       updateNavbarPage(session, "mainpage",
                        selected = "Results")
@@ -356,8 +359,7 @@ app_server <- function( input, output, session ) {
       if(isTruthy(values$IRT)){
       # samples one of four first possible items, unless used previously...
       # returns the first item number
-      get_first_item(all_items = values$item_difficulty,
-                     previous = values$previous,
+      get_first_item(previous = values$previous,
                      exclude_previous = values$exclude_previous)
         
      } else if (isTruthy(values$walker)){ # walker first item
@@ -366,12 +368,8 @@ app_server <- function( input, output, session ) {
       14 #otherwise candle for standard PNT
      }
     # for testing:
-    # if (isTRUE(getOption("shiny.testmode"))) {
-    #   shinyjs::reset("keys")
-    # }
+
     values$irt_out <- list(0, 0, 11) # reset saved data just in case. 
-    #play a sound...not working right now :(
-    shinyjs::runjs("document.getElementById('audio').play();")
     # got to slides
     # reset keyval
     values$key_val = NULL # keeps track of button press 1 (error) or 2 (correct)
@@ -424,7 +422,6 @@ app_server <- function( input, output, session ) {
       # essentially, if we're on the first two instruction slides,
       # don't require a 1 or 2..
       else if(values$i %in% c(1, 2)){
-        #shinyjs::runjs("document.getElementById('audio').play();")
         values$i = ifelse(values$i<13, values$i + 1, values$i)
         # otherwise, (i.e. not a practice slide)
       } else if(is.null(values$key_val)){ 
@@ -432,11 +429,9 @@ app_server <- function( input, output, session ) {
         showNotification("Enter a score", type = "error")
         # Remove tank from practice items
       } else if (values$i == 5){
-        #shinyjs::runjs("document.getElementById('audio').play();")
         values$i = values$i + 2
         # as long as there's a response or it's an insturction slide...
       } else {
-        #shinyjs::runjs("document.getElementById('audio').play();")
         values$i = ifelse(values$i<13, values$i + 1, values$i)
       }
       values$key_val = NULL
@@ -456,7 +451,6 @@ app_server <- function( input, output, session ) {
         showNotification("Enter a score", type = "error")
         # as long as there's a response or it's an insturction slide...
       } else if (another_item) {
-        #shinyjs::runjs("document.getElementById('audio').play();")
         # If a key press was detected, store it in our dataframe of items,
         # difficulty, discrimination etc...
         # 1 is incorrect (1) and 2 is correct (0).
@@ -528,8 +522,8 @@ app_server <- function( input, output, session ) {
         
         updateNavbarPage(session, "mainpage",
                          selected = "Results")
-        shinyjs::show("report")
-        shinyjs::show("downloadData")
+        shinyjs::show("download_report-report_download")
+        shinyjs::show("download_results-results_download")
         
         cat(paste(
           "Key app variables after ending test:", "\n",
@@ -539,10 +533,7 @@ app_server <- function( input, output, session ) {
         
       }
       values$key_val = NULL
-      #for testing::
-      # if (isTRUE(getOption("shiny.testmode"))) {
-      #   shinyjs::reset("keys")
-      # }
+
     }
     # don't run this on start up. 
   }, ignoreInit = T)
@@ -594,66 +585,28 @@ app_server <- function( input, output, session ) {
       style = sty
     )
   })
-  ################################## DOWNLOAD ####################################  
+  ################################## DOWNLOADS ###################################
   # ------------------------------------------------------------------------------
   ################################################################################
 
-  # downloading output
-  output$downloadData <- downloadHandler(
-    filename = function() {
-      paste(gsub(" ", "-", input$name),
-            as.character(Sys.Date()),
-            "pnt.csv", sep = "_"
-      )
-    },
-    content = function(file) {
-      write.csv(get_data_for_download(values = values,
-                                      in_progress = input$mainpage
-                                      ), file, row.names = FALSE)
-    }
-  )
+  # Data
   
-########### DOWNLOAD REPORT #############
+  downloadResultsServer(id = "download_results",
+                       values = values,
+                       in_progress = input$mainpage, name = input$name)
+  downloadResultsServer(id = "download_results_rescore",
+                       values = values,
+                       in_progress = input$mainpage, name = input$name)
   
-  output$report <- downloadHandler(
-    
-    # For PDF output, change this to "report.pdf"
-    filename = "report.pdf",
-    content = function(file) {
-      withProgress(message = 'Rendering, please wait!', {
-        # Copy the report file to a temporary directory before processing it, in
-        # case we don't have write permissions to the current working dir (which
-        # can happen when deployed).
-        tempReport <- system.file("report.Rmd", package = "pnt")#file.path(tempdir(), "report.Rmd")
-        file.copy("report.Rmd", tempReport, overwrite = TRUE)
-        
-        # Set up parameters to pass to Rmd document
-        params <- list(
-          name = ifelse(nchar(input$name)>0, input$name, "X"),
-          notes = input$notes,
-          values = values,
-          irt_final = values$irt_final,
-          text = get_text_summary(ability = values$irt_final$ability,
-                                  sem = values$irt_final$sem,
-                                  last_ability = values$irt_final$last_ability,
-                                  last_sem = values$irt_final$last_sem,
-                                  num_previous = values$num_previous,
-                                  values = values),
-          caption = get_caption(values)
-        )
-        
-        # Knit the document, passing in the `params` list, and eval it in a
-        # child of the global environment (this isolates the code in the document
-        # from the code in this app).
-        rmarkdown::render(tempReport, output_file = file,
-                          params = params,
-                          envir = new.env(parent = globalenv())
-        )
-      })
-    }
-  )
+   # REPORT 
   
-  
+  downloadReportServer(id = "download_report",
+                       values = values,
+                       name = input$name, notes = input$notes)
+  downloadReportServer(id = "download_report_rescore",
+                       values = values,
+                       name = input$name, notes = input$notes)
+
   
   ################################## PLOT ######################################## 
   # ------------------------------------------------------------------------------
@@ -675,7 +628,8 @@ app_server <- function( input, output, session ) {
   # outputs a table of the item level responses
   output$results_table <- DT::renderDT({
     req(values$results_data_long)
-    out <- values$results_data_long[!is.na(values$results_data_long$response),c("order", "target", "resp", "key", "itemDifficulty", "ability", "sem")]
+    out <- values$results_data_long[!is.na(values$results_data_long$response),
+                                    c("order", "target", "resp", "key", "itemDifficulty", "ability", "sem")]
     return(out)
     # values$results_data_long %>%
     #   tidyr::drop_na(response) %>%
@@ -830,20 +784,12 @@ app_server <- function( input, output, session ) {
       } else {
         values$irt_out[[2]][[2]]
       } 
-    # for testing:
-    # if (isTRUE(getOption("shiny.testmode"))) {
-    #   shinyjs::reset("keys")
-    # }
+
     values$irt_out <- list(0, 0, 11) # reset saved data just in case. 
-    #play a sound...not working right now :(
-    # shinyjs::runjs("document.getElementById('audio').play();")
-    # got to slides
-    # reset keyval
+
     values$key_val = NULL # keeps track of button press 1 (error) or 2 (correct)
     shiny::removeModal()
     updateNavbarPage(session, "mainpage", selected = "Assessment")
-    
-    
     
   })
   
@@ -873,11 +819,13 @@ app_server <- function( input, output, session ) {
     # save upload
     values$rescore <- read.csv(file$datapath) 
     
-  if(!all(colnames(values$rescore) == c("item_number", "target", "key"))){
-    values$error <- "Error: Column names have been changed"
-    } else {
+  if(!all(c("item_number" %in% colnames(values$rescore),
+           "target" %in% colnames(values$rescore),
+           "key" %in% colnames(values$rescore)))){
+  values$error <- "Error: Column names have been changed"
+  } else {
       values$rescore <- values$rescore[!is.na(values$rescore$key), c("item_number", "target", "key")]
-      # saves teh error messages to be put back into the modal. 
+      #saves teh error messages to be put back into the modal.
       if(nrow(values$rescore)==0){
         values$error <- "Error: Please include at least one scored response"
       } else if (!all(unique(values$rescore$key) == 1 | unique(values$rescore$key) == 2)){
@@ -902,17 +850,19 @@ app_server <- function( input, output, session ) {
   })
   # output of the dynamic error message. 
   output$upload_error <- renderUI({
+    req(values$error)
     p(values$error, style="color:red;")
   })
   # scores the uploaded data, moves to the results page and shows the start over and 
   # download report buttons
   observeEvent(input$score_uploaded_data,{
-    values$rescore_list <- score_uploaded_data(values$rescore)
+    values$rescore_list <- score_uploaded_data(values = values)
     updateNavbarPage(session, "mainpage",
                      selected = "Results2")
     shinyjs::show("start_over")
-    #shinyjs::show("rescore_downloadData")
-    shinyjs::show("rescore_report")
+    shinyjs::show("download_report-report_download")
+    shinyjs::show("download_results-results_download")
+    
   })
   
   #outputs the rescored plot
@@ -937,43 +887,6 @@ app_server <- function( input, output, session ) {
       req(values$rescore_list)
       p(values$rescore_list$text)
     })
-  
-  # download a report for the resscored data. 
-  output$rescore_report <- downloadHandler(
-    
-    # For PDF output, change this to "report.pdf"
-    filename = "rescore_report.pdf",
-    content = function(file) {
-      withProgress(message = 'Rendering, please wait!', {
-        # Copy the report file to a temporary directory before processing it, in
-        # case we don't have write permissions to the current working dir (which
-        # can happen when deployed).
-        tempReport <- system.file("rescore_report.Rmd", package = "pnt")#file.path(tempdir(), "report.Rmd")
-        file.copy("rescore_report.Rmd", tempReport, overwrite = TRUE)
-        
-        # Set up parameters to pass to Rmd document
-        params <- list(
-          values = values$rescore_list,
-          irt_final = values$rescore_list$irt_final,
-          text = get_text_summary(ability = values$rescore_list$irt_final$ability,
-                                  sem = values$rescore_list$irt_final$sem,
-                                  last_ability = NA,
-                                  last_sem = NA,
-                                  num_previous = values$num_previous,
-                                  values = values),
-          download_time = Sys.time()
-          )
-        
-        # Knit the document, passing in the `params` list, and eval it in a
-        # child of the global environment (this isolates the code in the document
-        # from the code in this app).
-        rmarkdown::render(tempReport, output_file = file,
-                          params = params,
-                          envir = new.env(parent = globalenv())
-        )
-      })
-    }
-  )
   
   ################################## END RESCORE MODULE ########################
   # ----------------------------------------------------------------------------

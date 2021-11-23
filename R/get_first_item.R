@@ -13,26 +13,22 @@ get_first_item <- function(all_items, previous, exclude_previous = F){
   
   #choices = c(130, 25, 39, 154)
   
+  items$near_zero = abs(50-items$itemDifficulty)
+  
   if(!exclude_previous){
     
-    #pumpkin
-    return(130)
-
+    next_slide_num = items[items$near_zero == min(items$near_zero),]$slide_num
+    
   } else {
 
-    # pick the item closest to zero from the remaining items (0 == 51.9 in T scores)
-    all_items$response[match(previous$item_number, all_items$item_number)] <- previous$response
-    
-    remaining_items = subset(all_items, is.na(response))
-    remaining_items$near_zero = abs(51.9-remaining_items$itemDifficulty)
+    # pick the item closest to zero from the remaining items (0 == 50 in T scores)
+    items$response[match(previous$item_number, items$item_number)] <- previous$response
+    remaining_items = subset(items, is.na(response))
     next_slide_num = remaining_items[remaining_items$near_zero == min(remaining_items$near_zero),]$slide_num
-    
-
-  #  print(head(remaining_items[order(remaining_items$near_zero), , drop = FALSE], 20))
-   
-    return(next_slide_num)
 
   }
+  
+  return(next_slide_num)
   
   
 }
