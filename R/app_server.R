@@ -8,10 +8,13 @@
 #' @import shiny
 #' @noRd
 app_server <- function( input, output, session ) {
-  # Your application server logic 
+
+  ################################################################################
   ########################## Initialize reactive values ##########################
   # ------------------------------------------------------------------------------
   ################################################################################
+  ################################################################################
+  
   # reactiveValues is a list where elements of the list can change
   values = reactiveValues()
   values$item_difficulty <- items #items...see observe #dataframe of potential values
@@ -24,101 +27,96 @@ app_server <- function( input, output, session ) {
   values$num_previous <- 0 # number of previous tests
   values$datetime <- Sys.time() # establishes datetime when app opens for saving
   values$downloadableData = F # will the download data button appear? starts with no. yes after first response. 
-  #values$sound = "document.getElementById('audio').play();"
-  
-  ################################## PREVIOUS DATA ###############################
+
+  ################################################################################
+  ################################## UPLOADS #####################################
   # ------------------------------------------------------------------------------
   ################################################################################ 
+  ################################################################################
   
-  
-  # need to add a lot more resturctions hre...
-  
-  # observer for uploading data
+  # observer for uploading prior administration data
   observeEvent(input$file1,{
-    file <- input$file1
-    ext <- tools::file_ext(file$datapath)
-    # check upload
-    req(file)
-    # save upload
-    values$previous <- read.csv(file$datapath) 
     
-    if (all(c("key", "sem", "ability", "order", "test", "resp", "response", "item_number") %in% colnames(values$previous))) {
-
-      values$previous = values$previous[!is.na(values$previous$key),]
-      values$previous$response = ifelse(values$previous$key == 2, 0, 1)
-      # assign number of previous values
-      values$num_previous <- 1
-      values$min_sem <- min(values$previous$sem, na.rm = T)
-      shinyjs::enable("next_retest")
+    uploadedData <- uploadData(file_input = input$file1)
+    values$previous <- uploadedData$dat
+    
+    if(nrow(values$previous)>1){
+        values$num_previous <- 1
+        values$min_sem <- min(values$previous$sem, na.rm = T)
+        shinyjs::enable("next_retest")
     } else {
-      showNotification("Error: Incompatible file uploaded; please upload another", type = "error")
-      values$previous <- NULL
-      shinyjs::reset("file1")
+        showNotification(uploadedData$error, type = "error")
+        values$previous <- NULL
+        shinyjs::reset("file1")
     }
-   
-    
     
   })
   
+  ################################################################################
   ################################## OBSERVERS ###################################
   # ------------------------------------------------------------------------------
+  ################################################################################
   ################################################################################
   
   ###########################Intro tab next and back############################
   
+  changeIntroPage <- function(go_to_page){
+    updateTabsetPanel(session, "glide", go_to_page)
+  }
+  
   # INTRO FLOW
   observeEvent(input$welcome_next,{
     values$new_test = T
-    updateTabsetPanel(session, "glide", "intro_page")
+    changeIntroPage("intro_page")
   })
   
   observeEvent(input$back_intro,{
-    updateTabsetPanel(session, "glide", "welcome_page")
+    changeIntroPage("welcome_page")
   })
   
   # TEST FLOW
   observeEvent(input$administer_test,{
     values$new_test = T
-    updateTabsetPanel(session, "glide", "new_pnt_page")
+    changeIntroPage("new_pnt_page")
   })
   
   observeEvent(input$back_test,{
-    updateTabsetPanel(session, "glide", "intro_page")
+    changeIntroPage("intro_page")
   })
   
   # RETEST FLOW
   observeEvent(input$administer_retest,{
     values$new_test = F
-    updateTabsetPanel(session, "glide", "retest_pnt_page")
+    changeIntroPage("retest_pnt_page")
   })
   
   observeEvent(input$back_retest,{
-    updateTabsetPanel(session, "glide", "intro_page")
+    changeIntroPage("intro_page")
   })
   
   # OFFLINE FLOW
   observeEvent(input$score_test,{
     values$new_test = F
-    updateTabsetPanel(session, "glide", "score_offline_page")
+    changeIntroPage("score_offline_page")
   })
   
   observeEvent(input$back_offline,{
-    updateTabsetPanel(session, "glide", "intro_page")
+    changeIntroPage("intro_page")
   })
   
   observeEvent(input$next_test,{
-    updateTabsetPanel(session, "glide", "instructions_page")
+    changeIntroPage("instructions_page")
   })
   
   observeEvent(input$next_retest,{
-    updateTabsetPanel(session, "glide", "instructions_page")
+    changeIntroPage("instructions_page")
   })
   
   observeEvent(input$back_to_test_or_retest,{
     if(isTruthy(values$new_test)){
-      updateTabsetPanel(session, "glide", "new_pnt_page")
+      changeIntroPage("new_pnt_page")
     } else {
-      updateTabsetPanel(session, "glide", "retest_pnt_page")
+      changeIntroPage("retest_pnt_page")
     }
   })
   
@@ -215,13 +213,7 @@ app_server <- function( input, output, session ) {
   observeEvent(input$end_test,{
     if(values$i > 1){
       showModal(modalDialog(
-        div(
-          h5("Are you sure you want to end the test?"),br(),
-          p("Make sure you have pressed 1 or 2 for the current item if you would like this response to be saved."),
-          p("Note that at least 30 items must be administered to obtain reliable naming ability estimates."),
-          p("Taking a break and want to download results in the mean time? you can also download the results below.")
-          
-        ),
+        get_endtest_div(),
         easyClose = TRUE,
         size = "m",
         footer = tagList(
@@ -543,8 +535,9 @@ app_server <- function( input, output, session ) {
   ################################################################################
   # get data into strings for exporting...test only
   observeEvent(input$mainpage=="Results",{
+    if(!isTruthy(values$score_uploaded_test)){
     values$results_data_long = get_results_data_long(values)
-    
+    }
     #values$out_words <- pull_column(values$results_data_long, target)
     values$out_nums <- pull_column(values$results_data_long, response)
     values$out_ability <- pull_column(values$results_data_long, ability)
@@ -554,7 +547,6 @@ app_server <- function( input, output, session ) {
     values$key <- pull_column(values$results_data_long, key)
     values$order <- pull_column(values$results_data_long, order)
     #values$item_number <- pull_column(values$results_data_long, item_number)
-    
   })
   
   # This makes the above data available after running unit test.
@@ -573,18 +565,15 @@ app_server <- function( input, output, session ) {
   ################################################################################
   #  outputs a summary sentence
   output$results_summary <- renderUI({
-    sty = "color:black;"
-    if(!isTruthy(values$IRT) & sum(!is.na(values$item_difficulty$response))<30){sty="color:darkred;"}
-    summary = p(
-      get_text_summary(ability = values$irt_final$ability,
-                       sem = values$irt_final$sem,
-                       last_ability = values$irt_final$last_ability,
-                       last_sem = values$irt_final$last_sem,
-                       num_previous = values$num_previous,
-                       values = values),
-      style = sty
-    )
+    req(values$irt_final)
+    get_text_summary(ability = values$irt_final$ability,
+                     sem = values$irt_final$sem,
+                     last_ability = values$irt_final$last_ability,
+                     last_sem = values$irt_final$last_sem,
+                     num_previous = values$num_previous,
+                     n_items = sum(!is.na(values$results_data_long$key)))
   })
+  
   ################################## DOWNLOADS ###################################
   # ------------------------------------------------------------------------------
   ################################################################################
@@ -613,31 +602,36 @@ app_server <- function( input, output, session ) {
   ################################################################################
   # plot
   output$plot <- renderPlot({# Fergadiotis, 2019
-    req(values$irt_final)
-    get_plot(irt_final = values$irt_final, values = values)
+      req(values$irt_final)
+      get_plot(irt_final = values$irt_final)
   })
   
   output$plot_caption <- renderUI({
-    req(values$irt_final)
-    get_caption(values)
+      req(values$irt_final)
+      get_caption(repeat_admin = !values$new_test)
   })
+
   
   ################################## TABLE #######################################
   # ------------------------------------------------------------------------------
   ################################################################################
   # outputs a table of the item level responses
   output$results_table <- DT::renderDT({
-    req(values$results_data_long)
-    out <- values$results_data_long[!is.na(values$results_data_long$response),
-                                    c("order", "target", "resp", "key", "itemDifficulty", "ability", "sem")]
-    return(out)
-    # values$results_data_long %>%
-    #   tidyr::drop_na(response) %>%
-    #   dplyr::select(order, target, resp, key, itemDifficulty, ability, sem)
-    
+      req(values$results_data_long)
+      cols = if(isTruthy(values$score_uploaded_test)){
+        c("target", "resp", "key", "itemDifficulty")
+      } else {
+        c("order", "target", "resp", "key",
+          "itemDifficulty", "ability", "sem")
+      }
+      out <- values$results_data_long[!is.na(values$results_data_long$key),
+                                      cols]
+      return(out)
+
   }, rownames = F,
   options = list(dom = "tp"))
   
+
   ################################## TAB UI ######################################
   # ------------------------------------------------------------------------------
   ################################################################################
@@ -812,81 +806,37 @@ app_server <- function( input, output, session ) {
   
   # observer for uploading data - including error messages
   observeEvent(input$file2,{
-    file <- input$file2
-    ext <- tools::file_ext(file$datapath)
-    # check upload
-    req(file)
-    # save upload
-    values$rescore <- read.csv(file$datapath) 
-    
-  if(!all(c("item_number" %in% colnames(values$rescore),
-           "target" %in% colnames(values$rescore),
-           "key" %in% colnames(values$rescore)))){
-  values$error <- "Error: Column names have been changed"
-  } else {
-      values$rescore <- values$rescore[!is.na(values$rescore$key), c("item_number", "target", "key")]
-      #saves teh error messages to be put back into the modal.
-      if(nrow(values$rescore)==0){
-        values$error <- "Error: Please include at least one scored response"
-      } else if (!all(unique(values$rescore$key) == 1 | unique(values$rescore$key) == 2)){
-        values$error <- "Error: please only enter 1 for correct and 2 for incorrect in the response column"
-      } else if (!all(values$rescore$target %in% item_key$target)){
-        values$error <- "Error: some item names have changed"
-      } else {
-        values$error <- "no_error"
-      }
-      
-    }
-    
-    
+
+    uploadedData <- uploadData(input$file2, rescore = T)
+    values$rescore <- uploadedData$dat
+
     # depending on the error message, allow progressing or show the error
-    if(values$error == "no_error"){
+    if(is.na(uploadedData$error)){
       shinyjs::enable("score_uploaded_data")
-      shinyjs::hide("input_file_warning")
     } else {
-      shinyjs::show("input_file_warning")
+      showNotification(uploadedData$error, type = "error")
+      values$rescore <- NULL
+      shinyjs::reset("file2")
       shinyjs::disable("score_uploaded_data")
     }
   })
-  # output of the dynamic error message. 
-  output$upload_error <- renderUI({
-    req(values$error)
-    p(values$error, style="color:red;")
-  })
+  
   # scores the uploaded data, moves to the results page and shows the start over and 
   # download report buttons
   observeEvent(input$score_uploaded_data,{
+    values$score_uploaded_test = T
+    values$new_test = F
     values$rescore_list <- score_uploaded_data(values = values)
+    values$results_data_long <- score_uploaded_data(values = values)$data
+    values$irt_final <- score_uploaded_data(values = values)$irt_final
     updateNavbarPage(session, "mainpage",
-                     selected = "Results2")
+                     selected = "Results")
     shinyjs::show("start_over")
     shinyjs::show("download_report-report_download")
     shinyjs::show("download_results-results_download")
     
   })
   
-  #outputs the rescored plot
-  output$plot2 <-
-    renderPlot({
-      req(values$rescore_list)
-      #values$rescore_list$plot
-      get_plot(irt_final = values$rescore_list$irt_final, values = values)
-    })
-  
-  # outputs the rescored data
-  output$results_table2 <-
-    DT::renderDT({
-      req(values$rescore_list)
-      values$rescore_list$data
-    }, rownames = F,
-    options = list(dom = "tp"))
-  
-  #  outputs a summary sentence
-  output$results_summary2 <-
-    renderUI({
-      req(values$rescore_list)
-      p(values$rescore_list$text)
-    })
   
   ################################## END RESCORE MODULE ########################
   # ----------------------------------------------------------------------------

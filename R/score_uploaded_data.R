@@ -3,6 +3,10 @@
 #' @return a list containing final IRT estimates and a text summary via get_text_summary()
 #' @export
 score_uploaded_data <- function(values){
+  
+  print(paste("number of columns:", ncol(values$rescore)))
+  # only need to do this if uploaded a blank csv. 
+  if(ncol(values$rescore)<5){
   to_join <- items[,c("target", "itemDifficulty", "discrimination")] 
   
   dat <- merge(values$rescore, to_join, by = "target")
@@ -12,6 +16,18 @@ score_uploaded_data <- function(values){
   dat$response = ifelse(dat$key == 1, 1,
                         ifelse(dat$key == 2, 
                                0, NA))
+  } else {
+    # 
+    dat = values$rescore
+    dat$resp = ifelse(dat$key == 1, "incorrect",
+                      ifelse(dat$key == 2, 
+                             "correct", NA))
+    dat$response = ifelse(dat$key == 1, 1,
+                          ifelse(dat$key == 2, 
+                                 0, NA))
+  }
+  
+  print(head(dat))
   
   pars = data.frame(a = dat$discrimination,
                     b = dat$itemDifficulty,
@@ -37,23 +53,28 @@ score_uploaded_data <- function(values){
     ability = ability,
     sem = sem,
     ci_95 = ci_95,
-    last_ability = NA
+    last_ability = NA,
+    last_ci_95 = NA,
+    last_sem = NA
   )
 
   out_list$final_accuracy = accuracy
   out_list$date_scored = Sys.Date()
-  out_list$data = dat
   
+  dat$ability = round(ability,4)
+  dat$sem = round(sem,4)
+  dat$ci_95 = round(ci_95,4)
+  if(ncol(values$rescore)<5){
+  dat$order = NA
+  dat$name = NA
+  dat$notes = NA
+  dat$date = Sys.Date()
+  dat$test = "Offline test"
+  }
+  out_list$data = dat
   ####### TEXT ######
   
-  out_list$text <- get_text_summary(
-    ability = ability,
-    sem = sem,
-    last_ability = NA,
-    last_sem = NA,
-    num_previous = 0,
-    values = values
-  )
+  out_list$rescored_items = sum(!is.na(dat$response))
   
   return(out_list)
   

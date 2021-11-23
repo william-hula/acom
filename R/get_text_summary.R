@@ -16,7 +16,8 @@ get_text_summary <- function(
   last_ability,
   last_sem,
   num_previous,
-  values
+  n_items,
+  html_p = T
 ){
   
   
@@ -40,12 +41,20 @@ get_text_summary <- function(
           ,sep = "")
     }
     
-    if(!isTruthy(values$IRT) & sum(!is.na(values$item_difficulty$response))<30){
+    if(n_items<30){
       #return()
       warning = "Warning: Less than 30 items have been administered. Naming ability estimates are not reliable."
-      return(paste(warning, summary, sep = " "))
+      sty = "color:darkred;"
+      summary = paste(warning, summary, sep = " ")
     } else {
-      return(summary)
+      sty = "color:black;"
     }
-  
+    
+    if(isTruthy(html_p)){
+      out = p(summary, style = sty)
+    } else {
+      out = summary
+    }
+    return(out)
+      
 }

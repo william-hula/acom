@@ -4,7 +4,7 @@
 \alias{get_plot}
 \title{the plot for the results page and rmarkdown documents}
 \usage{
-get_plot(irt_final, basesize = 18, sample_thetas = thetas, values = NA)
+get_plot(irt_final, basesize = 18, sample_thetas = thetas)
 }
 \arguments{
 \item{irt_final}{final irt estimates from get_final_numbers}

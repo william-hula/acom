@@ -9,6 +9,10 @@
 #' @export
 get_data_for_download <- function(values, in_progress){
   
+  # if an uploaded test, just do this...
+  if(isTruthy(values$score_uploaded_test)){
+    return(score_uploaded_data(values = values)$data)
+  }
   # if the test is in progress, and has acurrent response, log it: 
   if(in_progress == "Assessment" & isTruthy(values$key_val)){
     
@@ -38,7 +42,9 @@ get_data_for_download <- function(values, in_progress){
 
   }
   
+  
   tmp <- get_results_data_long(values)
+
   tmp$test = values$selected_test
 
   # only add walker column for walker tests. otherwise just confusing. 
@@ -65,6 +71,5 @@ if(in_progress == "Assessment" & isTruthy(values$IRT)){
     dat_out$notes[3] = "Next item"
     dat_out$notes[4] = values$irt_out[[2]]$name
 }
-print(head(dat_out))
 return(dat_out)   
 }

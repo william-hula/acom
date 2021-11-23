@@ -9,14 +9,14 @@
 #'
 #' @return a html tag with the caption in italics
 #' @export
-get_caption <- function(values){
+get_caption <- function(repeat_admin){
   
   # if(sum(!is.na(values$item_difficulty$response))<30){
   #   return("Please administer more items to obtain a reliable ability estimate. If desired, results can be downloaded above,
   #          and the current test continued by re-uploading this data.")
   # }
   
-  if(is.na(values$irt_final$last_ability)){
+  if(!isTruthy(repeat_admin)){
     
    cap = tags$em("The blue dashed line reflects current estimate and the shaded area reflects uncertainty in current estiate. The average ability for individuals with aphasia is 50, with a standard deviation of 10. The density plot represents the distribution of ability scores in the calibration sample, which includes 296 cases from the Moss Aphasia Psycholinguistic Project Database and XX cases from NIH/NIDCD Award R03DC014556 (PI: Fergadiotis)")
     

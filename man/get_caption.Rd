@@ -4,7 +4,7 @@
 \alias{get_caption}
 \title{The caption for the plot.}
 \usage{
-get_caption(values)
+get_caption(repeat_admin)
 }
 \arguments{
 \item{values}{all values}

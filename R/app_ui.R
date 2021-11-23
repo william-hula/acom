@@ -57,12 +57,6 @@ app_ui <- function(request) {
                  
                  tabPanelBody(value = "Results", 
                               results_tab_div()
-                 ),
-                 
-                 ############################ Rescored Results ###########################
-                 
-                 tabPanelBody(value = "Results2", 
-                              results_tab_div2()
                  )
                  
                  ########################################################################
