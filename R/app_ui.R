@@ -20,6 +20,7 @@ app_ui <- function(request) {
       keys::keysInput("keys", response_keys),
       keys::keysInput("enter_key", enter),
       keys::keysInput("end_test", end_test_key),
+      keys::keysInput("clear_key", "0"),
       
       ################################### layout starts here ######################### 
       

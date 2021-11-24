@@ -52,9 +52,7 @@ score_uploaded_data <- function(values){
   out_list$irt_final = tibble::tibble(
     ability = ability,
     sem = sem,
-    ci_95 = ci_95,
     last_ability = NA,
-    last_ci_95 = NA,
     last_sem = NA
   )
 

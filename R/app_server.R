@@ -27,6 +27,8 @@ app_server <- function( input, output, session ) {
   values$num_previous <- 0 # number of previous tests
   values$datetime <- Sys.time() # establishes datetime when app opens for saving
   values$downloadableData = F # will the download data button appear? starts with no. yes after first response. 
+  values$endTestEarly = F
+  
 
   ################################################################################
   ################################## UPLOADS #####################################
@@ -52,13 +54,11 @@ app_server <- function( input, output, session ) {
     
   })
   
-  ################################################################################
-  ################################## OBSERVERS ###################################
-  # ------------------------------------------------------------------------------
-  ################################################################################
-  ################################################################################
-  
-  ###########################Intro tab next and back############################
+  ##############################################################################
+  ##############################################################################
+  ################################ INTRO TAB NAV ###############################
+  ##############################################################################
+  ##############################################################################
   
   changeIntroPage <- function(go_to_page){
     updateTabsetPanel(session, "glide", go_to_page)
@@ -121,10 +121,12 @@ app_server <- function( input, output, session ) {
   })
   
   
-  ##########################NUM ITEMS AND PRECISION#############################
-  # enables or disables precision option if SEM is or isn't selected. 
-  # also converts the numeric option to a number
-  # saves either to values$test_length
+  ##############################################################################
+  ##############################################################################
+  ################################ TEST OPTIONS ################################
+  ##############################################################################
+  ##############################################################################
+  # controls available options for selecting a test or retest
   observe({
     if(isTruthy(values$new_test)){
        if(input$numitems == "175_standard"){
@@ -143,7 +145,6 @@ app_server <- function( input, output, session ) {
           shinyjs::hide("eskimo")
           shinyjs::hide("walker")
         } else { #if(input$num_items == "30_walker")
-          
           values$test_length = 30
           shinyjs::show("walker")
           shinyjs::hide("eskimo")
@@ -170,30 +171,23 @@ app_server <- function( input, output, session ) {
       } else if(input$numitems_retest == "175_cat"){
         
         values$test_length = 174
-        
         shinyjs::disable("exclude_previous")
         updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = F)
-        
         shinyjs::hide("walker_retest")
         shinyjs::hide("eskimo_retest")
         
-      } else if(input$numitems_retest == "175_standard"){
-        # full pnt
+      } else if(input$numitems_retest == "175_standard"){# full pnt
         values$test_length = ifelse(input$eskimo_retest, 174, 175)
-        
         shinyjs::disable("exclude_previous")
         updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = F)
-        
         shinyjs::hide("walker_retest")
         shinyjs::show("eskimo_retest")
         
       } else { #if(input$numitems_retest == "30_walker")
         
         values$test_length = 30
-        
         shinyjs::disable("exclude_previous")
         updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = F)
-        
         shinyjs::show("walker_retest")
         shinyjs::hide("eskimo_retest")
         
@@ -201,61 +195,28 @@ app_server <- function( input, output, session ) {
     }
   })
   
-  #############################START OVER#########################################
-  # if start over is hit, go to home page
-  # start assessment button then resets everything
+  ##############################################################################
+  ##############################################################################
+  ################################ START OVER ##################################
+  ##############################################################################
+  ##############################################################################
+  
   observeEvent(input$start_over,{
     session$reload()
   })
   
-  ################################ END TEST ##################################
+  ##############################################################################
+  ##############################################################################
+  ################################ KEYS ########################################
+  ##############################################################################
+  ##############################################################################
   
-  observeEvent(input$end_test,{
-    if(values$i > 1){
-      showModal(modalDialog(
-        get_endtest_div(),
-        easyClose = TRUE,
-        size = "m",
-        footer = tagList(
-          modalButton("Cancel"),
-          downloadButton("downloadIncompleteData","Download current results"),
-          actionButton("confirm_end_test", "End test/Go to results")
-        )
-      ))
-    }
+  # tracks the key inputs
+  observeEvent(input$keys, {
+    values$key_val = input$keys
   })
   
-  output$downloadIncompleteData <- downloadHandler(
-    filename = function() {
-      paste(gsub(" ", "-", input$name),
-            as.character(Sys.Date()),
-            "pnt.csv", sep = "_"
-      )
-    },
-    content = function(file) {
-      write.csv(get_data_for_download(values = values,
-                                      in_progress = input$mainpage
-      ), file, row.names = FALSE)
-    }
-  )
-  
-  observeEvent(input$confirm_end_test,{
-    removeModal()
-    if(isTruthy(input$confirm_end_test)){
-      
-      values$irt_final <- 
-        get_final_numbers(out = values$irt_out,
-                          previous = values$previous,
-                          num_previous = values$num_previous)
-      shinyjs::show("download_report-report_download")
-      shinyjs::show("download_results-results_download")
-      #shinyjs::hide("help")
-      updateNavbarPage(session, "mainpage",
-                       selected = "Results")
-    }
-  })
-  ################################ Displaying key inputs #######################
-  
+  # display the key inputs
   output$key_feedback_practice <- renderText({
     req(values$key_val)
     values$key_val
@@ -266,49 +227,62 @@ app_server <- function( input, output, session ) {
     values$key_val
   })
   
+  #no key presses on home or results page
+  observe({
+    if(input$mainpage=="Results" || input$mainpage=="Home"){
+      keys::pauseKey()
+    } else {
+      keys::unpauseKey()
+    }
+  })
+  
+  observeEvent(input$clear_key, {
+    values$key_val = NULL
+  })
+  
+  ##############################################################################
+  ##############################################################################
   ################################ START PRACTICE ##############################
+  ##############################################################################
+  ##############################################################################
+  
   observeEvent(input$start_practice,{
     
-    # runjs("document.getElementById('audio').play();") # play click
+    # save inputs as reactive values for easier use later
     shinyjs::runjs(values$sound)
     values$i = 1 # reset values$i
-    values$n = 130 # reset 
+    values$n = NULL # reset 
     values$key_val = NULL # keeps track of button press 1 (error), 2 (correct)
-    values$exclude_previous <- ifelse(values$new_test, F, input$exclude_previous) # only informs second tests
-    # only use IRT function if NOT 175 items
+    values$exclude_previous <- ifelse(values$new_test, F, input$exclude_previous) 
     values$name = input$name
     values$notes = input$notes
     values$notes_retest = input$notes_retest
     values$eskimo <- ifelse(values$new_test, input$eskimo, input$eskimo_retest)
     
-    
-
     if(isTruthy(values$new_test)){
+      values$selected_test = input$numitems
       # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
       # computer adaptive if the string cat is in the num items inputs
-      values$selected_test = input$numitems
       values$IRT = ifelse(grepl( "cat", input$numitems), TRUE, FALSE)
       # walker is true if the string walker is in the num items inputs
       values$walker = ifelse(grepl("walker", input$numitems), TRUE, FALSE)
-
       values$walker_form = ifelse(isTruthy(values$walker), input$walker, NA)
+      
       if(isTruthy(values$walker)){
         values$item_difficulty = subset(values$item_difficulty, walker == input$walker)
       }
       
     } else {
+      values$selected_test = input$numitems_retest
       # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
       # computer adaptive if the string cat is in the num items inputs
-      values$selected_test = input$numitems_retest
       values$IRT = ifelse(grepl( "cat", input$numitems_retest), TRUE,
                           ifelse(grepl("SEM", input$numitems_retest), TRUE,
                                        FALSE))
-
-      #print(values$IRT)
       # walker is true if the string walker is in the num items inputs
       values$walker = ifelse(grepl("walker", input$numitems_retest), TRUE, FALSE)
-
       values$walker_form = ifelse(isTruthy(values$walker), input$walker_retest, NA)
+      
       if(isTruthy(values$walker)){
         values$item_difficulty = subset(values$item_difficulty, walker == input$walker_retest)
       }
@@ -316,9 +290,8 @@ app_server <- function( input, output, session ) {
     }
     
     shinyjs::show("start_over")
-    #shinyjs::show("help")
+    
     # go to practice slides
-
     updateNavbarPage(session, "mainpage",
                      selected = "Practice")
     
@@ -335,9 +308,12 @@ app_server <- function( input, output, session ) {
               ))
   })
   
+  ##############################################################################
+  ##############################################################################
+  ################################## START ASSESSMENT ##########################
+  ##############################################################################
+  ##############################################################################
   
-  
-  ################################## START ASSESSMENT ############################
   # start button. sets the i value to 1 corresponding to the first slide
   # switches to the assessment tab
   # initialize values in here so that they reset whever someone hits start. 
@@ -345,8 +321,7 @@ app_server <- function( input, output, session ) {
     
     # keeps track of button press 1 (error), 2 (correct)
     values$i = 1
-    
-    values$n = 
+    values$n = # slide number for current slide
       # regular old CAT 
       if(isTruthy(values$IRT)){
       # samples one of four first possible items, unless used previously...
@@ -359,11 +334,8 @@ app_server <- function( input, output, session ) {
      } else {
       14 #otherwise candle for standard PNT
      }
-    # for testing:
-
     values$irt_out <- list(0, 0, 11) # reset saved data just in case. 
-    # got to slides
-    # reset keyval
+    # got to slides, reset keyval
     values$key_val = NULL # keeps track of button press 1 (error) or 2 (correct)
     updateNavbarPage(session, "mainpage", selected = "Assessment")
     
@@ -375,37 +347,22 @@ app_server <- function( input, output, session ) {
       "----------------------------------------", "\n"
     ))
   })
-  
-  
-  #############################KEY PRESS##########################################
-  # tracks the key inputs
-  observeEvent(input$keys, {
-    values$key_val = input$keys
-  })
-  
-  #no key presses on home or results page
-  observe({
-    if(input$mainpage=="Results" || input$mainpage=="Home"){
-      keys::pauseKey()
-      shinyjs::show("footer_id")
-    } else {
-      keys::unpauseKey()
-      shinyjs::hide("footer_id")
-    }
-  })
-  
-  ################ THIS IS WHRERE CAT STUFF GETS INCORPORATED ####################
-  
-  # observe event will take an action if an input changes.
-  # here the next button or the enter key
+
+  ##############################################################################
+  ##############################################################################
+  ##############################################################################
+  ################################ FANCY CAT STUFF #############################
+  ##############################################################################
+  ##############################################################################
+  ##############################################################################
+
   # This is where the app will interact with the -CAT-IRT algorithm
   observeEvent(input$enter_key, {
-    # should the app show another item?
-    # if the stopping choice is SEM,
-    # check if the current sem is less than the desired precision
-    # if its just a static number of items,
-    # then check if this number has already been shown
-    # returns TRUE or FALSE
+    
+  ##############################################################################
+  # For situations when enter/space is hit on the practice slide page
+  ##############################################################################
+    
     if(input$mainpage=="Practice"){
       # if slide 13, don't iterate, just show a message that says hit start...
       if(values$i == 13){
@@ -427,139 +384,177 @@ app_server <- function( input, output, session ) {
         values$i = ifelse(values$i<13, values$i + 1, values$i)
       }
       values$key_val = NULL
+      
+  ##############################################################################
+  # What happens when enter is hit on the assessment page
+  ##############################################################################
+      
     } else {
-      ########### main testing area###############
       # can you download data? yes - will calculate the data to go out. 
       values$downloadableData = T
       shinyjs::enable("downloadIncompleteData")
       
-      another_item <- if(values$test_length == "SEM"){
-        values$min_sem<values$irt_out[[3]]
-      } else {
-        values$i<=values$test_length
-      }
+      ##########################################################################
+      # Should the test show another item? 
+      ##########################################################################
+      # another_item <- 
+      #     if(values$test_length == "SEM"){
+      #     values$min_sem<values$irt_out[[3]]
+      #     } else {
+      #     values$i<=values$test_length
+      #     }
+      
       # require a key input response
       if(is.null(values$key_val)){ 
         showNotification("Enter a score", type = "error")
-        # as long as there's a response or it's an insturction slide...
-      } else if (another_item) {
-        # If a key press was detected, store it in our dataframe of items,
-        # difficulty, discrimination etc...
-        # 1 is incorrect (1) and 2 is correct (0).
-        # IRT model reverses 1 and 0...
+      } else { #} if (another_item) {
         
+        ########################################################################
+        # store key press in our dataframe of items,
+        # 1 is incorrect (1) and 2 is correct (0); (IRT model reverses 1 and 0...)
+        ########################################################################
         values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <-
           ifelse(values$key_val == incorrect_key_response, 1,
                  ifelse(values$key_val == correct_key_response, 0, "NR"))
-        # irt_function: takes in the current data, values$item_difficulty
-        # which also includes the most recent response 
-        # returns a list of 3 elements
-        # element[[1]] is the new ability estimate
-        # element[[2]] is a list of info returned by catR::nextSlide(), 
-        # including $name, the name of the next item
-        # element[[3]] returns the sem after re-estimating the model
+        values$item_difficulty[values$item_difficulty$slide_num == values$n,]$order = values$i
+        values$item_difficulty[values$item_difficulty$slide_num == values$n,]$key = values$key_val
+        values$item_difficulty[values$item_difficulty$slide_num == values$n,]$resp = 
+          ifelse(values$key_val == incorrect_key_response,"incorrect",
+                 ifelse(values$key_val == correct_key_response,"correct", "NR")
+          )
+        
+        ########################################################################
+        # irt_function: current data, (values$item_difficulty) w/ most recent response 
+        ########################################################################
         values$irt_out = irt_function(all_items = values$item_difficulty,
                                       IRT = values$IRT,
                                       exclude_previous = values$exclude_previous,
                                       previous = values$previous,
-                                      #test = input$numitems,
                                       exclude_eskimo = values$eskimo,
                                       walker = values$walker
         )
-        # save info to the item_difficulty data_frame
-        values$item_difficulty[values$item_difficulty$slide_num == values$n,]$order = values$i
-        values$item_difficulty[values$item_difficulty$slide_num == values$n,]$key = values$key_val
-        values$item_difficulty[values$item_difficulty$slide_num == values$n,]$resp = ifelse(values$key_val == incorrect_key_response,
-                                                                                            "incorrect",
-                                                                                            ifelse(values$key_val == correct_key_response,
-                                                                                                   "correct", "NR")
-        )
+        
+        ########################################################################
+        # Append output of the CAT/IRT function....ability and SEM estimates
+        ########################################################################
         values$item_difficulty[values$item_difficulty$slide_num == values$n,]$ability = round(values$irt_out[[1]],4)
         values$item_difficulty[values$item_difficulty$slide_num == values$n,]$sem = round(values$irt_out[[3]],4)
 
+        ########################################################################
         # pick the next slide using the output of the irt
-        # conditional fixes a bug for the last item
-        # if the test goes all the way to 175
-        values$n = 
-          if(values$IRT){
-            if(!is.na(values$irt_out[[2]][[1]])){
+        ########################################################################
+        values$n = # values$n refers to the slide number of next pnt item (e.g. the image file name)
+          if(values$IRT){ # if its a computer adaptive test, use this element from the IRT out list
+            if(!is.na(values$irt_out[[2]][[1]])){ # as long as its not na
               values$item_difficulty[values$item_difficulty$target == values$irt_out[[2]]$name,]$slide_num
             } else {
-              190
+              190 # otherwise, just 190, which will end the test. 
             }
-          } else {
+          } else { # if its not an IRT test, take this element of the list (walker, standard PNT)
             values$irt_out[[2]][[2]]
           } 
-        # iterate the order
-        values$i = values$i + 1
-        #print(values$i)
+        # values$i = values$i + 1
       } 
 
-      # decides whether to cut to the results page or not!
-      # returns TRUE or FALSE
-      go_to_results <- if(is.na(values$n)){
+      ########################################################################
+      # Should the test go to the results page? and subsequent operations
+      ########################################################################
+      go_to_results <- if(isTruthy(values$endTestEarly)){
+        TRUE
+      } else if (is.na(values$n)){
         TRUE
       } else if(values$test_length == "SEM"){
-        values$min_sem>values$irt_out[[3]]
+        values$irt_out[[3]]<values$min_sem # is the new sem  less than the min of the previos test?
       } else {
-        values$i>values$test_length
+        values$i==values$test_length # number of slides seen (+1) exceeds the test length # was < 
       }
+      
       # go to results if indicated
-      if (go_to_results){
+      if (isTruthy(go_to_results)){
         
+        # if its the end of the test, calculate the final ability/sem values
         values$irt_final <- 
           get_final_numbers(out = values$irt_out,
                             previous = values$previous,
                             num_previous = values$num_previous)
-        
-        updateNavbarPage(session, "mainpage",
-                         selected = "Results")
+        # go to the results page. 
+        updateNavbarPage(session, "mainpage", selected = "Results")
+        # show the download buttons
         shinyjs::show("download_report-report_download")
         shinyjs::show("download_results-results_download")
         
         cat(paste(
           "Key app variables after ending test:", "\n",
-          "Number of items administered:", values$i-1, "\n",
+          "Number of items administered:", values$i, "\n", # values$i-1
           "----------------------------------------"
         ))
         
+        
       }
-      values$key_val = NULL
+      ############################################################################
+      # final steps of the IRT function
+      ############################################################################
+      values$i = values$i + 1 # iterate the items
+      values$key_val = NULL # reset the keys
 
     }
     # don't run this on start up. 
   }, ignoreInit = T)
   
-  ################################## EXPORT TEST DATA ############################
-  # ------------------------------------------------------------------------------
-  ################################################################################
-  # get data into strings for exporting...test only
-  observeEvent(input$mainpage=="Results",{
-    if(!isTruthy(values$score_uploaded_test)){
-    values$results_data_long = get_results_data_long(values)
+  ############################################################################
+  ############################################################################
+  ################################ END TEST EARLY ############################
+  ############################################################################
+  ############################################################################
+  # Bring up the modal
+  observeEvent(input$end_test,{ 
+    if(values$i > 1){
+      showModal(modalDialog(
+        get_endtest_div(),
+        easyClose = TRUE,
+        size = "m",
+        footer = tagList(
+          modalButton("Cancel"),
+          actionButton("confirm_end_test", "End test/Go to results")
+        )
+      ))
     }
-    #values$out_words <- pull_column(values$results_data_long, target)
-    values$out_nums <- pull_column(values$results_data_long, response)
-    values$out_ability <- pull_column(values$results_data_long, ability)
-    values$out_sem <- pull_column(values$results_data_long,sem)
-    values$item_dif <- pull_column(values$results_data_long, itemDifficulty)
-    values$disc <- pull_column(values$results_data_long,discrimination)
-    values$key <- pull_column(values$results_data_long, key)
-    values$order <- pull_column(values$results_data_long, order)
-    #values$item_number <- pull_column(values$results_data_long, item_number)
+  })
+  # Download data before ending the test early. 
+  # output$downloadIncompleteData <- downloadHandler(
+  #   filename = function() {
+  #     paste(gsub(" ", "-", input$name),
+  #           as.character(Sys.Date()),
+  #           "pnt.csv", sep = "_")
+  #   },
+  #   content = function(file) {
+  #     write.csv(get_data_for_download(values = values,
+  #                                     in_progress = input$mainpage
+  #     ), file, row.names = FALSE)
+  #   }
+  # )
+  # If end test has been confirmed in the modal. 
+  observeEvent(input$confirm_end_test,{
+    values$endTestEarly = T
+    if(!is.null(values$key_val)){
+      shinyjs::runjs("Mousetrap.trigger('enter');")
+      cat("Logged last response before ending test early \n")
+    } else {
+      cat("Ended test early without logging last response \n")
+      req(values$irt_out)
+      values$irt_final <-
+        get_final_numbers(out = values$irt_out,
+                          previous = values$previous,
+                          num_previous = values$num_previous)
+      shinyjs::show("download_report-report_download")
+      shinyjs::show("download_results-results_download")
+      updateNavbarPage(session, "mainpage", selected = "Results")
+    }
+    removeModal()
+    
   })
   
-  # This makes the above data available after running unit test.
-  exportTestValues(abil = values$out_ability,
-                   sem = values$out_sem,
-                   words = values$out_words,
-                   responses = values$out_nums,
-                   itemDifficulty = values$item_dif,
-                   discrimination = values$disc,
-                   key_press = values$key,
-                   order = values$order,
-                   item_number = values$item_number
-  )
+
   ################################## SUMMARY TEXT ################################
   # ------------------------------------------------------------------------------
   ################################################################################
@@ -577,30 +572,24 @@ app_server <- function( input, output, session ) {
   ################################## DOWNLOADS ###################################
   # ------------------------------------------------------------------------------
   ################################################################################
-
   # Data
-  
   downloadResultsServer(id = "download_results",
                        values = values,
                        in_progress = input$mainpage, name = input$name)
   downloadResultsServer(id = "download_results_rescore",
                        values = values,
                        in_progress = input$mainpage, name = input$name)
-  
    # REPORT 
-  
   downloadReportServer(id = "download_report",
                        values = values,
                        name = input$name, notes = input$notes)
   downloadReportServer(id = "download_report_rescore",
                        values = values,
                        name = input$name, notes = input$notes)
-
   
   ################################## PLOT ######################################## 
   # ------------------------------------------------------------------------------
   ################################################################################
-  # plot
   output$plot <- renderPlot({# Fergadiotis, 2019
       req(values$irt_final)
       get_plot(irt_final = values$irt_final)
@@ -611,7 +600,6 @@ app_server <- function( input, output, session ) {
       get_caption(repeat_admin = !values$new_test)
   })
 
-  
   ################################## TABLE #######################################
   # ------------------------------------------------------------------------------
   ################################################################################
@@ -621,22 +609,15 @@ app_server <- function( input, output, session ) {
       cols = if(isTruthy(values$score_uploaded_test)){
         c("target", "resp", "key", "itemDifficulty")
       } else {
-        c("order", "target", "resp", "key",
-          "itemDifficulty", "ability", "sem")
+        c("order", "target", "resp", "key", "itemDifficulty", "ability", "sem", "ci95_lower", "ci95_upper")
       }
-      out <- values$results_data_long[!is.na(values$results_data_long$key),
-                                      cols]
-      return(out)
-
+      return(values$results_data_long[!is.na(values$results_data_long$key), cols])
   }, rownames = F,
   options = list(dom = "tp"))
   
-
   ################################## TAB UI ######################################
-  # ------------------------------------------------------------------------------
+  ## this UI is on the server side so that it can be dynamic based. see tab_*.R ##
   ################################################################################
-  # this UI is on the server side so that it can be dynamic based. 
-  # see scripts named tab_*.R 
   
   # this shows the practice slides
   output$practice_tab <- renderUI({
@@ -649,20 +630,18 @@ app_server <- function( input, output, session ) {
   })
   outputOptions(output, "slides_tab", suspendWhenHidden = FALSE)
   outputOptions(output, "results_table", suspendWhenHidden = FALSE)
-  
 
-  
-  ################################## Continue paused test #################
-  # ----------------------------------------------------------------------------
+  ##############################################################################
+  ##############################################################################
+  ######################## Continue stopped test ###############################
+  #########################UPDATE THIS SECTION WITH COMMENTED CODE#######################################!!!!!!!!!!
   ##############################################################################
   observeEvent(input$continue_test,{
       showModal(modalDialog(
-        div(
-          fileInput("file_incomplete", "Upload incomplete test csv"),#,
+        div(fileInput("file_incomplete", "Upload incomplete test csv"),#,
               shinyjs::hidden(
                 tags$img(src = paste0("slides/Slide", 1, ".jpeg"), id = "instructions")
-              )
-        ),
+              )),
         easyClose = TRUE,
         size = "m",
         footer = tagList(
@@ -670,20 +649,13 @@ app_server <- function( input, output, session ) {
           shinyjs::disabled(actionButton("resume", "Continue Test"))
         )
       ))
-
-    
   })
   
   # observer for uploading data
   observeEvent(input$file_incomplete,{
     file <- input$file_incomplete
-    ext <- tools::file_ext(file$datapath)
-    # check upload
-    req(file)
-    validate(need(ext == "csv", "Please upload a csv file"))
-    # save upload
-    
-    incomplete_dat <- read.csv(file$datapath)# %>% dplyr::arrange(item_number)
+
+    incomplete_dat <- read.csv(file$datapath)
     current_test = ifelse(values$new_test, input$numitems, input$numitems_retest)
     
     if (!all(c("key", "sem", "ability", "order", "test", "resp", "response",
@@ -751,10 +723,7 @@ app_server <- function( input, output, session ) {
     }
 
     shinyjs::show("start_over")
-    #shinyjs::show("help")
-    
-    
-    
+
     #### start stuff ############################################
     # how many items are done already?
     values$i = sum(!is.na(values$item_difficulty$response))+1
@@ -780,18 +749,17 @@ app_server <- function( input, output, session ) {
       } 
 
     values$irt_out <- list(0, 0, 11) # reset saved data just in case. 
-
     values$key_val = NULL # keeps track of button press 1 (error) or 2 (correct)
     shiny::removeModal()
     updateNavbarPage(session, "mainpage", selected = "Assessment")
     
   })
   
-  ################################## SCORE EXISTING TEST MODAL #################
-  # ----------------------------------------------------------------------------
   ##############################################################################
-  
-  # 
+  ##############################################################################
+  ########################## SCORE EXISTING TEST MODAL #########################
+  ##############################################################################
+  ##############################################################################
   # downloading empty file
   output$downloadEmpty <- downloadHandler(
     filename = function() {
@@ -806,10 +774,8 @@ app_server <- function( input, output, session ) {
   
   # observer for uploading data - including error messages
   observeEvent(input$file2,{
-
     uploadedData <- uploadData(input$file2, rescore = T)
     values$rescore <- uploadedData$dat
-
     # depending on the error message, allow progressing or show the error
     if(is.na(uploadedData$error)){
       shinyjs::enable("score_uploaded_data")
@@ -829,17 +795,40 @@ app_server <- function( input, output, session ) {
     values$rescore_list <- score_uploaded_data(values = values)
     values$results_data_long <- score_uploaded_data(values = values)$data
     values$irt_final <- score_uploaded_data(values = values)$irt_final
-    updateNavbarPage(session, "mainpage",
-                     selected = "Results")
+    updateNavbarPage(session, "mainpage", selected = "Results")
     shinyjs::show("start_over")
     shinyjs::show("download_report-report_download")
     shinyjs::show("download_results-results_download")
-    
   })
   
+  ################################################################################
+  ################################################################################
+  ################################## EXPORT TEST DATA ############################
+  ################################################################################
+  ################################################################################
+  # get data into strings for exporting...test only
+  observeEvent(input$mainpage=="Results",{
+    if(!isTruthy(values$score_uploaded_test)){
+      values$results_data_long = get_results_data_long(values)
+    }
+  })
   
-  ################################## END RESCORE MODULE ########################
+  observeEvent(input$mainpage,{
+    values$current_page = input$mainpage
+  })
+  
+  # This makes the above data available after running unit test.
+  exportTestValues(irt_final = values$irt_final,
+                   results = values$results_data_long,
+                   current_page = values$current_page#,
+                   #values = values
+  )
+  
   # ----------------------------------------------------------------------------
   ##############################################################################
-  # end of app
+  ##############################################################################
+  # end of app -----------------------------------------------------------------
+  ##############################################################################
+  ##############################################################################
+  # ----------------------------------------------------------------------------
 }
