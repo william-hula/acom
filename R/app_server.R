@@ -216,20 +216,23 @@ app_server <- function( input, output, session ) {
     values$key_val = input$keys
   })
   
-  # display the key inputs
-  output$key_feedback_practice <- renderText({
+  
+  output$key_feedback_practice <- renderUI({
     req(values$key_val)
-    values$key_val
+    column(align = "right", width = 12,
+           div(values$key_val, class = "response"))
   })
   
-  output$key_feedback_slides <- renderText({
+  output$key_feedback_slides <- renderUI({
     req(values$key_val)
-    values$key_val
+    column(align = "right", width = 12,
+           div(values$key_val, class = "response"))
   })
+  
   
   #no key presses on home or results page
   observe({
-    if(input$mainpage=="Results" || input$mainpage=="Home"){
+    if(isTruthy(input$mainpage=="Results" || input$mainpage=="Home")){
       keys::pauseKey()
     } else {
       keys::unpauseKey()
@@ -254,7 +257,7 @@ app_server <- function( input, output, session ) {
     values$n = NULL # reset 
     values$key_val = NULL # keeps track of button press 1 (error), 2 (correct)
     values$exclude_previous <- ifelse(values$new_test, F, input$exclude_previous) 
-    values$name = input$name
+    #values$name = input$name
     values$notes = input$notes
     values$notes_retest = input$notes_retest
     values$eskimo <- ifelse(values$new_test, input$eskimo, input$eskimo_retest)
@@ -478,16 +481,23 @@ app_server <- function( input, output, session ) {
                             previous = values$previous,
                             num_previous = values$num_previous)
         # go to the results page. 
+        values$results_data_long = get_results_data_long(values)
         updateNavbarPage(session, "mainpage", selected = "Results")
+        values$current_page = input$mainpage
         # show the download buttons
         shinyjs::show("download_report-report_download")
         shinyjs::show("download_results-results_download")
         
         cat(paste(
           "Key app variables after ending test:", "\n",
-          "Number of items administered:", values$i, "\n", # values$i-1
+          "Number of items administered:", values$i, "\n", 
+          "The current page is", values$current_page, "\n",
+          #"Other way of calc all items:", sum(!is.na(values$results_data_long$key)), "\n",
           "----------------------------------------"
         ))
+        
+        
+        
         
         
       }
@@ -548,7 +558,9 @@ app_server <- function( input, output, session ) {
                           num_previous = values$num_previous)
       shinyjs::show("download_report-report_download")
       shinyjs::show("download_results-results_download")
+      values$results_data_long = get_results_data_long(values)
       updateNavbarPage(session, "mainpage", selected = "Results")
+      values$current_page = input$mainpage
     }
     removeModal()
     
@@ -566,7 +578,7 @@ app_server <- function( input, output, session ) {
                      last_ability = values$irt_final$last_ability,
                      last_sem = values$irt_final$last_sem,
                      num_previous = values$num_previous,
-                     n_items = sum(!is.na(values$results_data_long$key)))
+                     n_items = values$i)
   })
   
   ################################## DOWNLOADS ###################################
@@ -575,17 +587,17 @@ app_server <- function( input, output, session ) {
   # Data
   downloadResultsServer(id = "download_results",
                        values = values,
-                       in_progress = input$mainpage, name = input$name)
+                       in_progress = input$mainpage) 
   downloadResultsServer(id = "download_results_rescore",
                        values = values,
-                       in_progress = input$mainpage, name = input$name)
+                       in_progress = input$mainpage)
    # REPORT 
   downloadReportServer(id = "download_report",
                        values = values,
-                       name = input$name, notes = input$notes)
+                       notes = input$notes)
   downloadReportServer(id = "download_report_rescore",
                        values = values,
-                       name = input$name, notes = input$notes)
+                       notes = input$notes)
   
   ################################## PLOT ######################################## 
   # ------------------------------------------------------------------------------
@@ -611,7 +623,8 @@ app_server <- function( input, output, session ) {
       } else {
         c("order", "target", "resp", "key", "itemDifficulty", "ability", "sem", "ci95_lower", "ci95_upper")
       }
-      return(values$results_data_long[!is.na(values$results_data_long$key), cols])
+      table_out = values$results_data_long[!is.na(values$results_data_long$key), cols]
+      return(table_out)
   }, rownames = F,
   options = list(dom = "tp"))
   
@@ -636,20 +649,6 @@ app_server <- function( input, output, session ) {
   ######################## Continue stopped test ###############################
   #########################UPDATE THIS SECTION WITH COMMENTED CODE#######################################!!!!!!!!!!
   ##############################################################################
-  observeEvent(input$continue_test,{
-      showModal(modalDialog(
-        div(fileInput("file_incomplete", "Upload incomplete test csv"),#,
-              shinyjs::hidden(
-                tags$img(src = paste0("slides/Slide", 1, ".jpeg"), id = "instructions")
-              )),
-        easyClose = TRUE,
-        size = "m",
-        footer = tagList(
-          modalButton("Cancel"),
-          shinyjs::disabled(actionButton("resume", "Continue Test"))
-        )
-      ))
-  })
   
   # observer for uploading data
   observeEvent(input$file_incomplete,{
@@ -674,7 +673,6 @@ app_server <- function( input, output, session ) {
     } else {
       
       shinyjs::enable("resume")
-      shinyjs::show("instructions")
       values$item_difficulty <- incomplete_dat
       values$item_difficulty <- values$item_difficulty[order(values$item_difficulty$item_number), , drop = FALSE]
     }
@@ -684,12 +682,18 @@ app_server <- function( input, output, session ) {
   
   
   observeEvent(input$resume,{
+    showModal(modalDialog(
+      h4("Click to resume the test"),
+      tags$img(src = paste0("slides/Slide", 1, ".jpeg"), id = "instructions"),
+      easyClose = TRUE,
+      size = "l",
+    ))
     
     ### start practice stuff  ############################################
     values$key_val = NULL # keeps track of button press 1 (error), 2 (correct)
     values$exclude_previous <- ifelse(values$new_test, F, input$exclude_previous) # only informs second tests
     # only use IRT function if NOT 175 items
-    values$name = input$name
+    #values$name = input$name
     values$notes = input$notes
     values$notes_retest = input$notes_retest
     values$eskimo <- ifelse(values$new_test, input$eskimo, input$eskimo_retest)
@@ -712,7 +716,6 @@ app_server <- function( input, output, session ) {
       # computer adaptive if the string cat is in the num items inputs
       values$selected_test = input$numitems_retest
       values$IRT = ifelse(grepl(input$numitems_retest, "cat"), TRUE, FALSE)
-      #print(values$IRT)
       # walker is true if the string walker is in the num items inputs
       values$walker = ifelse(grepl(input$numitems_retest, "walker"), TRUE, FALSE)
       values$walker_form = input$walker_retest
@@ -727,7 +730,6 @@ app_server <- function( input, output, session ) {
     #### start stuff ############################################
     # how many items are done already?
     values$i = sum(!is.na(values$item_difficulty$response))+1
-    #print(values$i)
     values$irt_out = irt_function(all_items = values$item_difficulty,
                                   IRT = values$IRT,
                                   exclude_previous = values$exclude_previous,
@@ -736,7 +738,6 @@ app_server <- function( input, output, session ) {
                                   exclude_eskimo = values$eskimo,
                                   walker = values$walker
     )
-    #print(values$irt_out)
     values$n = 
       if(values$IRT){
         if(!is.na(values$irt_out[[2]][[1]])){
@@ -750,7 +751,6 @@ app_server <- function( input, output, session ) {
 
     values$irt_out <- list(0, 0, 11) # reset saved data just in case. 
     values$key_val = NULL # keeps track of button press 1 (error) or 2 (correct)
-    shiny::removeModal()
     updateNavbarPage(session, "mainpage", selected = "Assessment")
     
   })
@@ -793,8 +793,9 @@ app_server <- function( input, output, session ) {
     values$score_uploaded_test = T
     values$new_test = F
     values$rescore_list <- score_uploaded_data(values = values)
-    values$results_data_long <- score_uploaded_data(values = values)$data
-    values$irt_final <- score_uploaded_data(values = values)$irt_final
+    values$results_data_long <- values$rescore_list$data
+    values$i <- values$rescore_list$rescored_items
+    values$irt_final <- values$rescore_list$irt_final
     updateNavbarPage(session, "mainpage", selected = "Results")
     shinyjs::show("start_over")
     shinyjs::show("download_report-report_download")
@@ -806,15 +807,10 @@ app_server <- function( input, output, session ) {
   ################################## EXPORT TEST DATA ############################
   ################################################################################
   ################################################################################
-  # get data into strings for exporting...test only
-  observeEvent(input$mainpage=="Results",{
-    if(!isTruthy(values$score_uploaded_test)){
-      values$results_data_long = get_results_data_long(values)
-    }
-  })
   
   observeEvent(input$mainpage,{
     values$current_page = input$mainpage
+    cat(paste("The page updated to", values$current_page, "\n"))
   })
   
   # This makes the above data available after running unit test.

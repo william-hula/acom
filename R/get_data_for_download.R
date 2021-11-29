@@ -17,21 +17,22 @@ get_data_for_download <- function(values, in_progress){
   tmp <- get_results_data_long(values)
 
   tmp$test = values$selected_test
+  
 
   # only add walker column for walker tests. otherwise just confusing. 
  if(grepl("walker", values$selected_test)){
     
     columns = c("item_number", "target", "key", "resp", "response", "discrimination",
-                "itemDifficulty", "slide_num", "order", "ability", "sem", "ci95_lower",
-                "ci95_upper", "test", "walker", "walker_order", "name", "date", "notes")
+                "itemDifficulty", "slide_num", "order", "pnt_order", "ability", "sem", "ci95_lower",
+                "ci95_upper", "test", "walker", "walker_order", "date", "notes")
     
   } else {
     
     columns = c("item_number", "target", "key", "resp", "response", "discrimination",
-                "itemDifficulty", "slide_num", "order", "ability", "sem", "ci95_lower",
+                "itemDifficulty", "slide_num", "order", "pnt_order", "ability", "sem", "ci95_lower",
                 "ci95_upper", "test",
                 # "walker", "walker_order",
-                "name", "date", "notes")
+                "date", "notes")
    
   }
 

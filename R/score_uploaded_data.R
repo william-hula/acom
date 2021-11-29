@@ -4,7 +4,6 @@
 #' @export
 score_uploaded_data <- function(values){
   
-  print(paste("number of columns:", ncol(values$rescore)))
   # only need to do this if uploaded a blank csv. 
   if(ncol(values$rescore)<5){
   to_join <- items[,c("target", "itemDifficulty", "discrimination")] 
@@ -26,8 +25,6 @@ score_uploaded_data <- function(values){
                           ifelse(dat$key == 2, 
                                  0, NA))
   }
-  
-  print(head(dat))
   
   pars = data.frame(a = dat$discrimination,
                     b = dat$itemDifficulty,

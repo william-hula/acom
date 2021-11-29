@@ -24,10 +24,10 @@ app_ui <- function(request) {
       
       ################################### layout starts here ######################### 
       
-      navbarPage(title = pagetitle(),
+      navbarPage(title = "PNT-CAT", #pagetitle(),
                  id = "mainpage",
                  theme = minimal_theme(),
-                 
+
                  ############################ Instructions ############################## 
                  
                  tabPanelBody(value = "Home",
@@ -35,10 +35,10 @@ app_ui <- function(request) {
                               #                output = "inst",
                               #                title = "shinyCAT",
                               #                icon = "www/cat.png"),
-                              tags$audio(id = "audio",
-                                         src = system.file("app", "www", "click.wav",package = "pnt"),
-                                         type = "audio/wav",
-                                         style = "display:none;"),
+                              # tags$audio(id = "audio",
+                              #            src = system.file("app", "www", "click.wav",package = "pnt"),
+                              #            type = "audio/wav",
+                              #            style = "display:none;"),
                               intro_tab_div()
                  ),
                  
@@ -58,7 +58,10 @@ app_ui <- function(request) {
                  
                  tabPanelBody(value = "Results", 
                               results_tab_div()
-                 )
+                 ),
+                 !!!list(bslib::nav_spacer(), bslib::nav_item(pagetitle()), bslib::nav_item(
+                   tags$a(icon("github"), href = "https://github.com/rstudio/shiny", target = "_blank", style = "color:black;")
+                 ))
                  
                  ########################################################################
                  

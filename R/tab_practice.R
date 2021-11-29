@@ -5,11 +5,10 @@
 #' @export
 practice_tab_div <- function(values){
     column(width = 12,
-           fluidRow(
+           fluidRow(style = "min-height:36px;",
              if(values$i %in% c(3:12)){
-              div(textOutput("key_feedback_practice"),
-                  style = "position: absolute; right: 1px; color:grey;")
-             }
+               uiOutput("key_feedback_practice")
+               }
            ),
            fluidRow(
              column(width = 12, align = "center",

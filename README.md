@@ -28,6 +28,15 @@ For each option, users have the option of downloading performance data
 and a pdf-report of the results. Please note that the app does not store
 any data beyond a single user-session.
 
+For users looking for a deeper dive into principles of item-response
+theory and computer adaptive testing in aphasia, we recommend:
+
+-   <a href="https://www.thieme-connect.com/products/ejournals/abstract/10.1055/s-0041-1727252" target="_blank">Fergadiotis,
+    Casilio, Hula, and Swiderski, 2021</a>
+-   The four articles available
+    <a href="https://aphasia-apps.github.io/pnt" target="_blank">**here**</a>
+-   <a href="https://aswiderski.shinyapps.io/IRTapp/ " target="_blank">https://aswiderski.shinyapps.io/IRTapp/</a>
+
 The development of this testing application was funded by National
 Institute on Deafness and Other Communication Disorders Awards
 R03DC014556 (PI: Fergadiotis) and R01DC018813 (MPIs: Fergadiotis &

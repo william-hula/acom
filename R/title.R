@@ -16,8 +16,8 @@ pagetitle <- function(){
     #   )
     # } else {
      title = div(
-       div("PNT-CAT"),
-       div(id = "navbar-right",
+       #div("PNT-CAT"),
+       div(#id = "navbar-right",
            shinyjs::hidden(
              downloadReportUI(id = "download_report")
            ),
@@ -49,16 +49,17 @@ pagetitle <- function(){
              icon = icon("question-circle"),
              style = "background:transparent; border:none;"
              )
-           ),
-           actionButton(
-             inputId='source',
-             label="",#Source Code",
-             icon = icon("github"),
-             onclick ="window.open('https://github.com/rbcavanaugh/pnt', '_blank')",
-             style = "background:transparent; border:none;"
-             
-           ),
-           style = "position: absolute; right: 5px; top: 8px;")
+           )#,
+           # actionButton(
+           #   inputId='source',
+           #   label="",#Source Code",
+           #   icon = icon("github"),
+           #   onclick ="window.open('https://github.com/rbcavanaugh/pnt', '_blank')",
+           #   style = "background:transparent; border:none;"
+           #   
+           # ),
+           #style = "position: absolute; right: 5px; top: 8px;")
+     )
      )
    # }
   return(title)

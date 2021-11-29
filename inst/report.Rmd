@@ -3,7 +3,6 @@ title: "PNT-CAT REPORT"
 output: pdf_document
 urlcolor: blue
 params:
-  name: NA
   notes: NA
   values: NA
   irt_final: NA
@@ -31,7 +30,7 @@ The Philadelphia Naming Test (PNT; Roach et al., 1996)...
 
 ### Results
 
-This test was completed by `r params$name` and scored on `r format(params$values$datetime, format="%B %d %Y %R %Z")`. `r params$text`
+This test was completed and scored on `r format(params$values$datetime, format="%B %d %Y %R %Z")`. `r params$text`
 
 ### Plots
 

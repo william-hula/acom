@@ -23,7 +23,6 @@ get_results_data_long <- function(values){
   tmp$ci95_lower = tmp$ability - tmp$sem*1.96
   tmp$ci95_upper = tmp$ability + tmp$sem*1.96
   tmp$precision = precision
-  tmp$name = values$name
   tmp$date = values$datetime
   tmp$notes = NA
   

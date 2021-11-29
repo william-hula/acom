@@ -5,7 +5,6 @@
 #'
 #' @export
 intro_tab_div <- function() {
-  column(width = 12,
          fluidRow(column(
            width = 12,
            tabsetPanel(
@@ -13,29 +12,32 @@ intro_tab_div <- function() {
              id = "glide",
              # PAGE 1 #########################################################
              tabPanelBody(value = "welcome_page", 
-                          fluidRow(column(
-                            align = "center",
-                            width = 12,
-                            div(style = "width:50%;",
-                                div(
-                                  h4(
-                                    "Welcome to the computer adaptive version of the Philadelphia Naming Test"
+                          fluidRow(
+                            column(align = "center",width = 12,
+                              div(style = "width:50%;",
+                                  div(
+                                    HTML("<h4>Welcome to the computer adaptive version of the <br> Philadelphia Naming Test</h4>")
+                                    )
                                   )
-                                ))
                           )), br(),
                           fluidRow(
-                            column(
-                              width = 10,
-                              offset = 1,
-                              includeMarkdown(system.file("app/www/new_intro.md",
-                                                          package = "pnt")),
+                            column(width = 8,offset = 2,
+                              div(
+                                includeMarkdown(system.file("app/www/new_intro.md",
+                                                          package = "pnt"))
+                                ),
                               br(),
                               div(align = "center",
-                                  actionButton("welcome_next", "Get Started"),)
+                                  actionButton("welcome_next", "Get Started")), br(), br(),
+                              div(id = "funding",
+                                includeMarkdown(system.file("app/www/funding.md",
+                                                            package = "pnt"))
+                              )
                             )
                           )),
              # PAGE 2 #########################################################
              tabPanelBody(value = "intro_page", 
+                    column(width = 10, offset = 1,
                           fluidRow(column(
                             align = "center",
                             width = 12,
@@ -45,38 +47,50 @@ intro_tab_div <- function() {
                                 )))
                           )), br(),
                           fluidRow(
-                            column(
-                              width = 10,
-                              offset = 1,
-                              includeMarkdown(system.file("app/www/new_intro2.md",
-                                                          package = "pnt")),
-                              br(),
+                            column(width = 4, style = "padding: 1%;",
+                                  div(class = "page2",
+                                      includeMarkdown(system.file("app/www/new_test.md", package = "pnt")),br(),
+                                     div(class = "page2buttons",
+                                       actionButton("administer_test", "Administer new PNT")
+                                       ))),
+                            column(width = 4, style = "padding: 1%;",
+                                   div(class = "page2",
+                                       includeMarkdown(system.file("app/www/retest.md", package = "pnt")),br(),
+                                       div(class = "page2buttons",
+                                   actionButton("administer_retest", "Re-administer PNT")
+                                   ))),
+                            column(width = 4, style = "padding: 1%;",
+                                   div(class = "page2",
+                                       includeMarkdown(system.file("app/www/upload_test.md", package = "pnt")),br(),
+                                       div(class = "page2buttons",
+                                   actionButton("score_test", "Rescore PNT / Score offline test")
+                                   )))
+                          ),br(),
+                          fluidRow(
+                            column(width = 12,
                               div(
                                 align = "center",
                                 actionButton('back_intro', "Back"),
-                                actionButton("administer_test", "Administer new PNT"),
-                                actionButton("administer_retest", "Re-administer PNT"),
-                                actionButton("score_test", "Rescore PNT / Score offline test")
                               )
                             )
-                          )),
+                          )
+                      )
+                    ),
              # PAGE 3 ############################################################################
              tabPanelBody(value = "new_pnt_page", #glide 1
                           fluidRow(
                             column(
-                              width = 6,
-                              offset = 3,
+                              width = 3,
+                              offset = 1,
                               align = "center",
                               div(
                                 style = "display: inline-block; text-align: left;",
-                                h5("Administer new PNT"),
+                                h5("Administer PNT"),
                                 br(),
-                                textInput("name", "Enter a Name"),
-                                textInput("notes", "Enter any notes"),
                                 ### Use this to set how many items to run.
                                 radioButtons(
                                   inputId = "numitems",
-                                  label = "Select PNT Test Administration",
+                                  label = NULL, #"Select PNT Test Administration",
                                   choices = c(
                                     "30-item Computer Adaptive PNT" = "30_cat",
                                     "175-item Computer Adaptive PNT" = "175_cat",
@@ -99,6 +113,8 @@ intro_tab_div <- function() {
                                     selected = "A"
                                   )
                                 ),
+                                #textInput("name", "Enter a Name (optional)"),
+                                textInput("notes", "Enter any notes (optional)"),
                                 div(
                                   align = "center",
                                   actionButton("back_test", "Back"),
@@ -106,14 +122,19 @@ intro_tab_div <- function() {
                                 )
                               )
                               # )
+                            ),
+                            column(width = 7, offset = 0, class = "testinfo",
+                                   h5("About the PNT test Versions", style = "margin-top:0;margin-bottom:1.25rem;"),
+                                   accordion_test(),br(), br(),
+                                   includeMarkdown(system.file("app/www/esk_footnote.md", package = "pnt"))
                             )
                           )),
              # PAGE 4 #########################################################
              tabPanelBody(value = "retest_pnt_page",
                           fluidRow(
                             column(
-                              width = 6,
-                              offset = 3,
+                              width = 3,
+                              offset = 1,
                               align = "center",
                               # div(align = "center",
                               div(
@@ -122,11 +143,10 @@ intro_tab_div <- function() {
                                 br(),
                                 
                                 fileInput("file1", "Upload previous results", accept = ".csv"),
-                                textInput("notes_retest", "Enter any notes"),
                                 ### Use this to set how many items to run.
                                 radioButtons(
                                   inputId = "numitems_retest",
-                                  label = "Select PNT Re-Administration",
+                                  label = NULL,#"Select PNT Re-Administration",
                                   choices = c(
                                     "30-item Computer Adaptive PNT" = "30_cat",
                                     "Variable length Computer Adaptive PNT" = "SEM",
@@ -158,6 +178,7 @@ intro_tab_div <- function() {
                                     selected = "A"
                                   )
                                 ),
+                                textInput("notes_retest", "Enter any notes (optional)"),
                                 div(
                                   align = "center",
                                   actionButton("back_retest", "Back"),
@@ -165,26 +186,26 @@ intro_tab_div <- function() {
                                 )
                               )
                               # )
+                            ),
+                            column(width = 7, offset = 0, class = "testinfo",
+                                   h5("About the PNT test Versions", style = "margin-top:0;margin-bottom:1.25rem;"),
+                                   accordion_retest(),br(), br(),
+                                   includeMarkdown(system.file("app/www/esk_footnote.md", package = "pnt"))
                             )
+                            
                           )),
              # PAGE 5 #########################################################
              tabPanelBody(value = "score_offline_page",
                           fluidRow(
                             column(
-                              width = 6,
-                              offset = 3,
+                              width = 3,
+                              offset = 1,
                               align = "center",
                               # div(align = "center",
                               div(
                                 style = "display: inline-block; text-align: left;",
-                                h3("Scoring an offline or completed test"),
-                                p("There are two ways to score an offline or previously completed test."),
-                                p("Option 1: Download the blank spreadsheet below or "),
-                                p("Option 2: Modify a results file from a previous test. You only need to modify the key column."),
-                                p("Enter 1 for error/incorrect and 2 for correct in the key column."),
-                                p("If other responses are entered or additional changes made to the spreadsheet,
-                                rescoring may not work."),
-                                p("You have to upload a .csv file before you can hit ok."),
+                                h5("Scoring an offline or completed test"),
+                                
                                 downloadButton("downloadEmpty", "Download Blank Spreadsheet"),
                                 fileInput("file2", "Upload offline or re-scored data", accept = ".csv"),
                                 shinyjs::hidden(div(id = "input_file_warning", uiOutput("upload_error"))),
@@ -195,13 +216,18 @@ intro_tab_div <- function() {
                                 )
                                 
                               )
+                            ),
+                            column(width = 7, offset = 0, class = "testinfo",
+                                   h5("How to upload a file", style = "margin-top:0;margin-bottom:1.25rem;"),
+                                   includeMarkdown(system.file("app/www/rescore_pnt_notes.md", package = "pnt")),
                             )
+                            
                           )),
              # PAGE 6 #########################################################
              tabPanelBody(value = "instructions_page",
                           fluidRow(
                             column(
-                              width = 10,
+                              width = 4,
                               offset = 1,
                               h3("Administration Instructions"),
                               includeMarkdown(system.file("app/www/instructions.md",
@@ -209,12 +235,23 @@ intro_tab_div <- function() {
                               div(
                                 align = "center",
                                 actionButton("back_to_test_or_retest", "Back"),
-                                actionButton("continue_test", "Resume incomplete test"),
+                                #actionButton("continue_test", "Resume incomplete test"),
                                 actionButton("start_practice","Start Practice")
-                              )
+                              ),br(),
+                              div(
+                                fileInput("file_incomplete", h5("Continue incomplete test")),
+                                  div( align = "center",
+                                    shinyjs::disabled(actionButton("resume", "Continue Test"))
+                                  )
+                                )
+                            ),
+                            column(width = 6, offset = 0, class = "testinfo",
+                                   h5("Notes on test administration", style = "margin-top:0;margin-bottom:1.25rem;"),
+                                   accordion_faq()
+                                   
                             )
                           ))
            )
            
-         )))
+         ))
 }

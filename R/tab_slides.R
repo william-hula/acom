@@ -8,9 +8,8 @@
 #' @export
 slides_tab_div <- function(values){
 tmp_div =  column(width = 12,
-       fluidRow(
-         div(textOutput("key_feedback_slides"),
-             style = "position: absolute; right: 1px; color:grey;")
+       fluidRow(style = "min-height:36px;",
+         uiOutput("key_feedback_slides")
        ),
        fluidRow(
          column(width = 12, align = "center",
