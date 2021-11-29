@@ -5,7 +5,7 @@
 #'
 #' @export
 intro_tab_div <- function() {
-         fluidRow(column(
+         fluidRow(column(style = "padding: 1%;",
            width = 12,
            tabsetPanel(
              type = "hidden",
@@ -80,8 +80,8 @@ intro_tab_div <- function() {
              tabPanelBody(value = "new_pnt_page", #glide 1
                           fluidRow(
                             column(
-                              width = 3,
-                              offset = 1,
+                              width = 4,
+                              #offset = 1,
                               align = "center",
                               div(
                                 style = "display: inline-block; text-align: left;",
@@ -123,7 +123,9 @@ intro_tab_div <- function() {
                               )
                               # )
                             ),
-                            column(width = 7, offset = 0, class = "testinfo",
+                            column(width = 7,
+                                   #offset = 1,
+                                   class = "testinfo",
                                    h5("About the PNT test Versions", style = "margin-top:0;margin-bottom:1.25rem;"),
                                    accordion_test(),br(), br(),
                                    includeMarkdown(system.file("app/www/esk_footnote.md", package = "pnt"))
@@ -133,8 +135,8 @@ intro_tab_div <- function() {
              tabPanelBody(value = "retest_pnt_page",
                           fluidRow(
                             column(
-                              width = 3,
-                              offset = 1,
+                              width = 4,
+                              #offset = 1,
                               align = "center",
                               # div(align = "center",
                               div(
@@ -187,7 +189,9 @@ intro_tab_div <- function() {
                               )
                               # )
                             ),
-                            column(width = 7, offset = 0, class = "testinfo",
+                            column(width = 7,
+                                   #offset = 1, 
+                                   class = "testinfo",
                                    h5("About the PNT test Versions", style = "margin-top:0;margin-bottom:1.25rem;"),
                                    accordion_retest(),br(), br(),
                                    includeMarkdown(system.file("app/www/esk_footnote.md", package = "pnt"))
@@ -198,8 +202,8 @@ intro_tab_div <- function() {
              tabPanelBody(value = "score_offline_page",
                           fluidRow(
                             column(
-                              width = 3,
-                              offset = 1,
+                              width = 4,
+                              #offset = 1,
                               align = "center",
                               # div(align = "center",
                               div(
@@ -217,7 +221,9 @@ intro_tab_div <- function() {
                                 
                               )
                             ),
-                            column(width = 7, offset = 0, class = "testinfo",
+                            column(width = 7,
+                                   #offset = 1,
+                                   class = "testinfo",
                                    h5("How to upload a file", style = "margin-top:0;margin-bottom:1.25rem;"),
                                    includeMarkdown(system.file("app/www/rescore_pnt_notes.md", package = "pnt")),
                             )
@@ -226,8 +232,8 @@ intro_tab_div <- function() {
              # PAGE 6 #########################################################
              tabPanelBody(value = "instructions_page",
                           fluidRow(
-                            column(
-                              width = 4,
+                            column(style = "padding-right:2%;",
+                              width = 5,
                               offset = 1,
                               h3("Administration Instructions"),
                               includeMarkdown(system.file("app/www/instructions.md",
@@ -245,7 +251,9 @@ intro_tab_div <- function() {
                                   )
                                 )
                             ),
-                            column(width = 6, offset = 0, class = "testinfo",
+                            column(width = 5,
+                                   #offset = 1,
+                                   class = "testinfo",
                                    h5("Notes on test administration", style = "margin-top:0;margin-bottom:1.25rem;"),
                                    accordion_faq()
                                    
