@@ -23,13 +23,14 @@ get_results_data_long <- function(values){
   tmp$ci95_lower = tmp$ability - tmp$sem*1.96
   tmp$ci95_upper = tmp$ability + tmp$sem*1.96
   tmp$precision = precision
-  tmp$date = values$datetime
+  tmp$start = values$start_time
+  tmp$end = values$end_time
   tmp$notes = NA
   
   tmp = tmp[order(tmp$order), , drop = FALSE]
   
   tmp$notes[[1]] = ifelse(values$new_test, values$notes, values$notes_retest)
-
+  #cat("The number of rows is ", nrow(tmp), ".\n")
   return(tmp)
   
 }

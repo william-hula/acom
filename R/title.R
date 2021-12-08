@@ -42,14 +42,14 @@ pagetitle <- function(){
                           icon = icon("undo-alt"),
                           style = "background-color:#f8f9fa; border:0px;")
            ),
-           shinyjs::hidden(
+           
              actionButton(
-             inputId = "help",
-             label = "Help",
-             icon = icon("question-circle"),
-             style = "background:transparent; border:none;"
+             inputId = "feedback",
+             label = "Leave Feedback!",
+             icon = icon("comment"),
+             style = "background-color:#f8f9fa; border:0px;"
              )
-           )#,
+           #)#,
            # actionButton(
            #   inputId='source',
            #   label="",#Source Code",

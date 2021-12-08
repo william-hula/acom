@@ -24,7 +24,7 @@ get_data_for_download <- function(values, in_progress){
     
     columns = c("item_number", "target", "key", "resp", "response", "discrimination",
                 "itemDifficulty", "slide_num", "order", "pnt_order", "ability", "sem", "ci95_lower",
-                "ci95_upper", "test", "walker", "walker_order", "date", "notes")
+                "ci95_upper", "test", "walker", "walker_order", "start", "end", "notes")
     
   } else {
     
@@ -32,7 +32,7 @@ get_data_for_download <- function(values, in_progress){
                 "itemDifficulty", "slide_num", "order", "pnt_order", "ability", "sem", "ci95_lower",
                 "ci95_upper", "test",
                 # "walker", "walker_order",
-                "date", "notes")
+                "start", "end", "notes")
    
   }
 

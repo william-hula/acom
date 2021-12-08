@@ -1,0 +1,51 @@
+{
+  "input": {
+    "administer_retest": 0,
+    "administer_test": 0,
+    "back_intro": 0,
+    "back_offline": 0,
+    "back_retest": 0,
+    "back_test": 0,
+    "back_to_test_or_retest": 0,
+    "continue_test": 0,
+    "eskimo": true,
+    "eskimo_retest": true,
+    "exclude_previous": true,
+    "file1": null,
+    "file2": null,
+    "glide": null,
+    "help": 0,
+    "mainpage": null,
+    "next_retest": 0,
+    "next_test": 0,
+    "notes": "",
+    "notes_retest": "",
+    "numitems": "30_cat",
+    "numitems_retest": "30_cat",
+    "score_test": 0,
+    "score_uploaded_data": 0,
+    "start_over": 0,
+    "start_practice": 0,
+    "walker": "A",
+    "walker_retest": "A",
+    "welcome_next": 1
+  },
+  "output": {
+    "results_table": [
+      "",
+      "NULL",
+      "c(\"shiny.silent.error\", \"validation\")"
+    ],
+    "slides_tab": {
+      "html": "<div class=\"col-sm-12\">\n  <div class=\"row\">\n    <div style=\"position: absolute; right: 1px; color:grey;\">\n      <div id=\"key_feedback_slides\" class=\"shiny-text-output\"><\/div>\n    <\/div>\n  <\/div>\n  <div class=\"row\">\n    <div class=\"col-sm-12\" align=\"center\">\n      <img src=\"slides/Slide.jpeg\" style=\"height:80vh;\"/>\n    <\/div>\n  <\/div>\n<\/div>",
+      "deps": [
+
+      ]
+    }
+  },
+  "export": {
+    "current_page": null,
+    "irt_final": null,
+    "results": null
+  }
+}

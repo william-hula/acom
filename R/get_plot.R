@@ -11,7 +11,7 @@
 #' @return a ggplot object
 #' 
 #' @export
-get_plot <- function(irt_final, basesize = 18, sample_thetas = thetas){
+get_plot <- function(irt_final, basesize = 18, sample_thetas = thetas, line_weight = 1.25){
   
   
   theta_df = tibble::tibble( thetas = c(thetas, 80, 20) )
@@ -33,7 +33,7 @@ get_plot <- function(irt_final, basesize = 18, sample_thetas = thetas){
               ggplot2::aes(x=x, y=y), fill="blue3", alpha = 0.3) +
 
     ggplot2::geom_vline(ggplot2::aes(xintercept = irt_final$ability),
-                        linetype = "dashed", color = "darkblue", size = 1.25) +
+                        linetype = "dashed", color = "darkblue", size = line_weight) +
     ggplot2::labs(x = "PNT naming ability score") +
       ggplot2::theme_minimal(base_size = basesize) +
       ggplot2::theme(legend.position = "bottom",
@@ -63,7 +63,7 @@ get_plot <- function(irt_final, basesize = 18, sample_thetas = thetas){
                                          y=q_dat$data[[1]]$y[x1b:x2b]),
                          ggplot2::aes(x=x, y=y), fill="red3", alpha = 0.15) +
       ggplot2::geom_vline(ggplot2::aes(xintercept = irt_final$last_ability),
-                          linetype = "dashed", color = "darkred", size = 1.25)
+                          linetype = "dashed", color = "darkred", size = line_weight)
 
   }
 

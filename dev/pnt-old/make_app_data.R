@@ -61,6 +61,9 @@ thetas <- read_csv(here("dev","pnt-old", "data", "thetas_Tscaled_MAPPDn296_R03n3
 # Saves the data as an internal data file. 
 # uncomment to update app data. 
 
+download_df = items[c("item_number", "target", "key")]
+download_df$test = "offline"
+
 # usethis::use_data(internal = T, overwrite = T,
 #                   item_key,
 #                   items,
@@ -69,6 +72,7 @@ thetas <- read_csv(here("dev","pnt-old", "data", "thetas_Tscaled_MAPPDn296_R03n3
 #                   end_test_key,
 #                   enter,
 #                   response_keys,
-#                   starting_items, 
-#                   thetas)
+#                   starting_items,
+#                   thetas,
+#                   download_df)
 

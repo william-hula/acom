@@ -261,7 +261,7 @@ app_server <- function( input, output, session ) {
     values$notes = input$notes
     values$notes_retest = input$notes_retest
     values$eskimo <- ifelse(values$new_test, input$eskimo, input$eskimo_retest)
-    
+    values$start_time = Sys.time()
     if(isTruthy(values$new_test)){
       values$selected_test = input$numitems
       # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
@@ -457,7 +457,7 @@ app_server <- function( input, output, session ) {
             values$irt_out[[2]][[2]]
           } 
         # values$i = values$i + 1
-      } 
+       
 
       ########################################################################
       # Should the test go to the results page? and subsequent operations
@@ -474,6 +474,7 @@ app_server <- function( input, output, session ) {
       
       # go to results if indicated
       if (isTruthy(go_to_results)){
+        values$end_time = Sys.time()
         
         # if its the end of the test, calculate the final ability/sem values
         values$irt_final <- 
@@ -483,22 +484,19 @@ app_server <- function( input, output, session ) {
         # go to the results page. 
         values$results_data_long = get_results_data_long(values)
         updateNavbarPage(session, "mainpage", selected = "Results")
-        values$current_page = input$mainpage
+        #req(input$mainpage=="Results")
+        #values$current_page = input$mainpage
         # show the download buttons
         shinyjs::show("download_report-report_download")
         shinyjs::show("download_results-results_download")
         
         cat(paste(
           "Key app variables after ending test:", "\n",
-          "Number of items administered:", values$i, "\n", 
-          "The current page is", values$current_page, "\n",
+          "Number of items administered (values$i):", values$i, "\n", 
+          #"The current page is", values$current_page, "\n",
           #"Other way of calc all items:", sum(!is.na(values$results_data_long$key)), "\n",
-          "----------------------------------------"
+          "----------------------------------------", "\n"
         ))
-        
-        
-        
-        
         
       }
       ############################################################################
@@ -507,7 +505,7 @@ app_server <- function( input, output, session ) {
       values$i = values$i + 1 # iterate the items
       values$key_val = NULL # reset the keys
 
-    }
+    }}
     # don't run this on start up. 
   }, ignoreInit = T)
   
@@ -560,6 +558,7 @@ app_server <- function( input, output, session ) {
       shinyjs::show("download_results-results_download")
       values$results_data_long = get_results_data_long(values)
       updateNavbarPage(session, "mainpage", selected = "Results")
+      values$end_time = Sys.time()
       values$current_page = input$mainpage
     }
     removeModal()
@@ -573,12 +572,16 @@ app_server <- function( input, output, session ) {
   #  outputs a summary sentence
   output$results_summary <- renderUI({
     req(values$irt_final)
-    get_text_summary(ability = values$irt_final$ability,
+    req(values$results_data_long)
+    div(
+      get_text_summary(ability = values$irt_final$ability,
                      sem = values$irt_final$sem,
                      last_ability = values$irt_final$last_ability,
                      last_sem = values$irt_final$last_sem,
-                     num_previous = values$num_previous,
-                     n_items = values$i)
+                     num_previous = values$num_previous),
+      get_item_warning(values)
+    )
+      
   })
   
   ################################## DOWNLOADS ###################################
@@ -609,7 +612,9 @@ app_server <- function( input, output, session ) {
   
   output$plot_caption <- renderUI({
       req(values$irt_final)
-      get_caption(repeat_admin = !values$new_test)
+      tags$em(
+        get_caption(repeat_admin = !values$new_test)
+      )
   })
 
   ################################## TABLE #######################################
@@ -766,7 +771,7 @@ app_server <- function( input, output, session ) {
       "pnt-cat-blank.csv"
     },
     content = function(file) {
-      write.csv(items[c("item_number", "target", "key")],
+      write.csv(download_df,
                 file,
                 row.names = FALSE)
     }
@@ -779,6 +784,8 @@ app_server <- function( input, output, session ) {
     # depending on the error message, allow progressing or show the error
     if(is.na(uploadedData$error)){
       shinyjs::enable("score_uploaded_data")
+      values$selected_test <- values$rescore$test[1]
+      cat("The uploaded test was", values$selected_test, "\n")
     } else {
       showNotification(uploadedData$error, type = "error")
       values$rescore <- NULL
@@ -820,6 +827,21 @@ app_server <- function( input, output, session ) {
                    #values = values
   )
   
+  
+  ################################################################################
+  ################################################################################
+  ################################## FEEDBACK MODAL ##############################
+  ################################################################################
+  ################################################################################
+  
+  observeEvent(input$feedback,{
+    showModal(modalDialog(
+      tags$iframe(src="https://docs.google.com/forms/d/e/1FAIpQLSeGOHvhNahDRcGwqQieJSQ_0Zo8LSVJb9dgKMd2YK3OmOeZKw/viewform?embedded=true", style = "width:100%; height:60vh; frameborder:0;"),
+      easyClose = TRUE,
+      size = "l",
+      footer = NULL
+    ))
+  })
   # ----------------------------------------------------------------------------
   ##############################################################################
   ##############################################################################
