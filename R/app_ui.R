@@ -21,6 +21,7 @@ app_ui <- function(request) {
       keys::keysInput("enter_key", enter),
       keys::keysInput("end_test", end_test_key),
       keys::keysInput("clear_key", "0"),
+      keys::keysInput("toggle_key", "9"),
       
       ################################### layout starts here ######################### 
       
@@ -31,14 +32,6 @@ app_ui <- function(request) {
                  ############################ Instructions ############################## 
                  
                  tabPanelBody(value = "Home",
-                              # shiny.pwa::pwa("https://rb-cavanaugh.shinyapps.io/pnt-cat/",
-                              #                output = "inst",
-                              #                title = "shinyCAT",
-                              #                icon = "www/cat.png"),
-                              # tags$audio(id = "audio",
-                              #            src = system.file("app", "www", "click.wav",package = "pnt"),
-                              #            type = "audio/wav",
-                              #            style = "display:none;"),
                               intro_tab_div()
                  ),
                  

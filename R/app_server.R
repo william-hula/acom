@@ -216,11 +216,26 @@ app_server <- function( input, output, session ) {
     values$key_val = input$keys
   })
   
+  observeEvent(input$toggle_key,{
+    if(is.null(values$key_val)){
+      values$key_val = "1"
+      print("changed from null")
+    } else if (values$key_val == "1"){
+      print("changed from 1 to 2")
+      values$key_val = "2"
+    } else if (values$key_val == "2"){
+      print("changed from 2 to 1")
+      values$key_val = "1"
+    } else {
+      print("did not match conditions")
+    }
+  })
+  
   
   output$key_feedback_practice <- renderUI({
     req(values$key_val)
     column(align = "right", width = 12,
-           div(values$key_val, class = "response"))
+           div(values$key_val, class = "response", onclick="Mousetrap.trigger('enter');"))
   })
   
   output$key_feedback_slides <- renderUI({
