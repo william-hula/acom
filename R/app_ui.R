@@ -22,12 +22,17 @@ app_ui <- function(request) {
       keys::keysInput("end_test", end_test_key),
       keys::keysInput("clear_key", "0"),
       keys::keysInput("toggle_key", "9"),
+      # shiny.pwa::pwa("https://aphasia-apps.shinyapps.io/pnt-ipad/",
+      #                output = "inst/app/www",
+      #                title = "PNT-CAT",
+      #                icon = "inst/app/www/cat.png"),
       
       ################################### layout starts here ######################### 
       
       navbarPage(title = "PNT-CAT", #pagetitle(),
                  id = "mainpage",
                  theme = minimal_theme(),
+                 
 
                  ############################ Instructions ############################## 
                  

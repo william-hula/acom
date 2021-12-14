@@ -45,7 +45,7 @@ pagetitle <- function(){
            
              actionButton(
              inputId = "feedback",
-             label = "Leave Feedback!",
+             label = "Feedback",
              icon = icon("comment"),
              style = "background-color:#f8f9fa; border:0px;"
              )

@@ -7,7 +7,7 @@ testthat::test_that("PNT-STANDARD 175-retest", {
   app <- ShinyDriver$new(here::here(), seed = 1)
   responses <- c(rep(c(1,2), 174/2))
   
-  app$setInputs(welcome_next = "click")
+  #app$setInputs(welcome_next = "click")
   app$setInputs(administer_retest = "click")
   app$uploadFile(file1 = here::here("tests", "testthat", "files", "test_upload_standard175.csv"))
   app$setInputs(numitems_retest = "175_standard")

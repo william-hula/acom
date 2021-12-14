@@ -7,7 +7,7 @@ test_that("Walker Form A Retest", {
   app <- ShinyDriver$new(here::here(), seed = 1)
   responses <- c(rep(c(1,2), 15))
   
-  app$setInputs(welcome_next = "click")
+  #app$setInputs(welcome_next = "click")
   
   app$setInputs(administer_retest = "click")
   app$uploadFile(file1 = here::here("tests", "testthat", "files", "test_walker_a.csv"))
