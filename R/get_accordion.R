@@ -148,6 +148,10 @@ accordion_faq <- function(){
         tags$p("The standard PNT instructions suggest giving the examinee feedback after a response. However, giving feedback after each response may lead to undesired item learning if repeated administrations of the same items are anticipated (e.g. re-administering the standard PNT175). Studies for the PNT-CAT did not provide feedback. However, for situations where items will not be re-adminsitered (e.g. PNT-CAT30 and PNT-CAT VL), whether to give feedback is up to the discretion of the clinician.")
       ),
       bs_accordion_item(
+        title = "How can I use the app on an iPad or other tablet device?",
+        tags$p("On a tablet, tap on the center image to advance to the next item (equivalent to pressing enter). Just like on a computer, you must record a resposne for any naming trials. To record a response, tap the far right or far left edge of the screen (either side is fine). Tap once for incorrect (equivalent to pressing 1) and again for correct (equivalent to pressing 2). You can continue to tap on the edge of the screen to toggle between these responses. The same response feedback will be available in the top right of the screen.")
+      ),
+      bs_accordion_item(
         title = "Where can I find the original PNT Instructions?",
         div(
           tags$p("These instructions have been adapted from the original PNT instructions. They can be found at mrri.org:"), tags$a("https://mrri.org/wp-content/uploads/2016/01/PNT-Admin-Instructions.pdf")

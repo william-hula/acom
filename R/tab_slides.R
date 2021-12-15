@@ -7,18 +7,16 @@
 #' @param progbar progress bar (not used)
 #' @export
 slides_tab_div <- function(values){
-tmp_div =  column(width = 12,
-       fluidRow(style = "min-height:36px;",
-         uiOutput("key_feedback_slides")
-       ),
-       fluidRow(
-         column(width = 12, align = "center",
-                #imageOutput("practice_image")
+tmp_div =  
+       fluidRow(class="justify-content-center",
+         column(width=1,class="ipad",onclick="Mousetrap.trigger('9')"),
+         column(width = 10, align = "center",
                 tags$img(src = paste0("slides/Slide", values$n, ".jpeg"),
-                         style = "max-height:80vh;", onclick="Mousetrap.trigger('9');")
-                
-         )
+                         style = "max-height:80vh;touch-action: manipulation;", onclick="Mousetrap.trigger('enter');")
+         ),
+         column(width=1,class="ipad",onclick="Mousetrap.trigger('9')",
+                uiOutput("key_feedback_slides"))
        )
-)
+
   return(tmp_div)
 }

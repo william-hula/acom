@@ -33,7 +33,8 @@ test_that("PNT CAT175 stopped initial", {
     app$executeScript("Mousetrap.trigger('enter');")
   }
   
-  app$executeScript("Mousetrap.trigger('esc');")
+  #app$executeScript("Mousetrap.trigger('esc');")
+  app$setInputs(end_test = "click")
   Sys.sleep(2)
   # test download of incomplete data
   app$setInputs(confirm_end_test = "click") # go to end. 
