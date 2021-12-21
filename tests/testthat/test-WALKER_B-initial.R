@@ -7,7 +7,7 @@ test_that("Walker Form B Initial", {
   app <- ShinyDriver$new(here::here(), seed = 1)
   responses <- c(rep(c(1,2), 15))
   
-  app$setInputs(welcome_next = "click")
+ # app$setInputs(welcome_next = "click")
   app$setInputs(administer_test = "click")
   app$setInputs(numitems = "30_walker")
   app$setInputs(walker = "B")

@@ -22,31 +22,27 @@ pagetitle <- function(){
              downloadReportUI(id = "download_report")
            ),
            shinyjs::hidden(
-             # downloadButton("downloadData",
-             #                "Download results",
-             #                style = "background-color:#f8f9fa; border:0px;")
              downloadResultsUI(id = "download_results")
            ),
           shinyjs::hidden(
              downloadReportUI(id = "download_report_rescore")
          ),
            shinyjs::hidden(
-             # downloadButton("rescore_downloadData",
-             #                "Download results",
-             #                style = "background-color:#f8f9fa; border:0px;")
              downloadResultsUI(id = "download_results_rescore")
            ),
+         shinyjs::hidden(
+           actionButton("end_test", "End Test",
+                        style = "background-color:#f8f9fa; border:0px;")
+         ),
            shinyjs::hidden(
              actionButton("start_over",
                           "Start Over",
-                          icon = icon("undo-alt"),
                           style = "background-color:#f8f9fa; border:0px;")
            ),
            
              actionButton(
              inputId = "feedback",
-             label = "Leave Feedback!",
-             icon = icon("comment"),
+             label = "Give Feedback",
              style = "background-color:#f8f9fa; border:0px;"
              )
            #)#,

@@ -65,14 +65,6 @@ app_server <- function( input, output, session ) {
   }
   
   # INTRO FLOW
-  observeEvent(input$welcome_next,{
-    values$new_test = T
-    changeIntroPage("intro_page")
-  })
-  
-  observeEvent(input$back_intro,{
-    changeIntroPage("welcome_page")
-  })
   
   # TEST FLOW
   observeEvent(input$administer_test,{
@@ -81,7 +73,7 @@ app_server <- function( input, output, session ) {
   })
   
   observeEvent(input$back_test,{
-    changeIntroPage("intro_page")
+    changeIntroPage("welcome_page")
   })
   
   # RETEST FLOW
@@ -91,7 +83,7 @@ app_server <- function( input, output, session ) {
   })
   
   observeEvent(input$back_retest,{
-    changeIntroPage("intro_page")
+    changeIntroPage("welcome_page")
   })
   
   # OFFLINE FLOW
@@ -101,7 +93,7 @@ app_server <- function( input, output, session ) {
   })
   
   observeEvent(input$back_offline,{
-    changeIntroPage("intro_page")
+    changeIntroPage("welcome_page")
   })
   
   observeEvent(input$next_test,{
@@ -216,11 +208,34 @@ app_server <- function( input, output, session ) {
     values$key_val = input$keys
   })
   
+  observeEvent(input$toggle_key,{
+    req(values$i)
+    cat("Current values-i is", values$i, "\n")
+    # if(input$mainpage=="Practice" & values$i %in% c(1, 2)){
+    #   shinyjs::runjs("Mousetrap.trigger('enter');")
+    #   
+    # } else {
+      if(is.null(values$key_val)){
+        values$key_val = "1"
+        print("changed from null")
+      } else if (values$key_val == "1"){
+        print("changed from 1 to 2")
+        values$key_val = "2"
+      } else if (values$key_val == "2"){
+        print("changed from 2 to 1")
+        values$key_val = "1"
+      } else {
+        print("did not match conditions")
+      }
+    #}
+    
+  })
+  
   
   output$key_feedback_practice <- renderUI({
     req(values$key_val)
     column(align = "right", width = 12,
-           div(values$key_val, class = "response"))
+           div(values$key_val, class = "response")) #, onclick="Mousetrap.trigger('enter');"
   })
   
   output$key_feedback_slides <- renderUI({
@@ -252,7 +267,7 @@ app_server <- function( input, output, session ) {
   observeEvent(input$start_practice,{
     
     # save inputs as reactive values for easier use later
-    shinyjs::runjs(values$sound)
+    #shinyjs::runjs(values$sound)
     values$i = 1 # reset values$i
     values$n = NULL # reset 
     values$key_val = NULL # keeps track of button press 1 (error), 2 (correct)
@@ -324,6 +339,7 @@ app_server <- function( input, output, session ) {
     
     # keeps track of button press 1 (error), 2 (correct)
     values$i = 1
+    
     values$n = # slide number for current slide
       # regular old CAT 
       if(isTruthy(values$IRT)){
@@ -340,6 +356,7 @@ app_server <- function( input, output, session ) {
     values$irt_out <- list(0, 0, 11) # reset saved data just in case. 
     # got to slides, reset keyval
     values$key_val = NULL # keeps track of button press 1 (error) or 2 (correct)
+    shinyjs::show("end_test")
     updateNavbarPage(session, "mainpage", selected = "Assessment")
     
     # prints to the console for  troubleshooting
@@ -515,6 +532,7 @@ app_server <- function( input, output, session ) {
   ############################################################################
   ############################################################################
   # Bring up the modal
+  
   observeEvent(input$end_test,{ 
     if(values$i > 1){
       showModal(modalDialog(

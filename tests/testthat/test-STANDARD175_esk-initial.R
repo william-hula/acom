@@ -7,7 +7,7 @@ test_that("PNT-STANDARD 175 eskimo initial", {
   app <- ShinyDriver$new(here::here(), seed = 1)
   responses <- c(rep(c(1,2), 174/2),1)
   
-  app$setInputs(welcome_next = "click")
+ # app$setInputs(welcome_next = "click")
   app$setInputs(administer_test = "click")
   app$setInputs(numitems = "175_standard")
   app$setInputs(eskimo = FALSE)

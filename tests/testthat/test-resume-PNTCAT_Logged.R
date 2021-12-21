@@ -5,7 +5,7 @@ test_that("resume PNT-CAT last response logged", {
   #########################################################
 
   app <- ShinyDriver$new(here::here(), seed = 1)
-  app$setInputs(welcome_next = "click")
+  #app$setInputs(welcome_next = "click")
   app$setInputs(administer_test = "click")
   app$setInputs(numitems = "175_cat")
   app$setInputs(next_test = "click")

@@ -5,40 +5,40 @@
 #' @import shiny
 #' @noRd
 app_ui <- function(request) {
-  tagList(
+  #tagList(
     # Leave this function for adding external resources
-    golem_add_external_resources(),
+     
     # Your application UI logic 
     tagList(
-      
+      golem_add_external_resources(),
       ################################### SETUP ######################################
       tags$head(
+        favicon(ext="png"),
+        tags$meta(name="viewport", content="width=device-width, initial-scale=1.0"),
         tags$link(rel = "stylesheet", type = "text/css", href = file.path("www","style.css"))
       ),
       keys::useKeys(),
       shinyjs::useShinyjs(),
       keys::keysInput("keys", response_keys),
       keys::keysInput("enter_key", enter),
-      keys::keysInput("end_test", end_test_key),
+      #keys::keysInput("end_test", end_test_key),
       keys::keysInput("clear_key", "0"),
+      keys::keysInput("toggle_key", "9"),
+      # shiny.pwa::pwa("https://aphasia-apps.shinyapps.io/pnt-ipad/",
+      #                output = "inst/app/www",
+      #                title = "PNT-CAT",
+      #                icon = "inst/app/www/cat.png"),
       
       ################################### layout starts here ######################### 
       
       navbarPage(title = "PNT-CAT", #pagetitle(),
                  id = "mainpage",
                  theme = minimal_theme(),
+                 
 
                  ############################ Instructions ############################## 
                  
                  tabPanelBody(value = "Home",
-                              # shiny.pwa::pwa("https://rb-cavanaugh.shinyapps.io/pnt-cat/",
-                              #                output = "inst",
-                              #                title = "shinyCAT",
-                              #                icon = "www/cat.png"),
-                              # tags$audio(id = "audio",
-                              #            src = system.file("app", "www", "click.wav",package = "pnt"),
-                              #            type = "audio/wav",
-                              #            style = "display:none;"),
                               intro_tab_div()
                  ),
                  
@@ -71,7 +71,7 @@ app_ui <- function(request) {
       # adjusting for footer. 
       # br(), br(), br(), br(), br(), 
       #end of UI   
-    )
+   # )
   )
 }
 
@@ -94,13 +94,13 @@ golem_add_external_resources <- function(){
   )
  
   tags$head(
-    favicon(ext="png"),
-    bundle_resources(
-      path = app_sys('app/www'),
-      app_title = 'pnt'
-    )
-    # Add here other external resources
-    # for example, you can add shinyalert::useShinyalert() 
+  favicon(ext="png"),
+  bundle_resources(
+    path = app_sys('app/www'),
+    app_title = 'pnt'
+  )
+  # Add here other external resources
+  # for example, you can add shinyalert::useShinyalert()
   )
 }
 

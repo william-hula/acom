@@ -6,7 +6,7 @@ test_that("PNT-CAT30-initial", {
   
   app <- ShinyDriver$new(here::here(), seed = 1)
   responses <- c(rep(c(1,2), 15))
-  app$setInputs(welcome_next = "click", timeout_ = 1000)
+  #app$setInputs(welcome_next = "click", timeout_ = 1000)
   app$setInputs(administer_test = "click")
   app$setInputs(next_test = "click")
   app$setInputs(start_practice = "click")
