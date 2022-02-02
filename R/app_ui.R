@@ -56,9 +56,20 @@ app_ui <- function(request) {
                  tabPanelBody(value = "Results", 
                               results_tab_div()
                  ),
-                 !!!list(bslib::nav_spacer(), bslib::nav_item(pagetitle()), bslib::nav_item(
-                   tags$a(icon("github"), href = "https://github.com/rstudio/shiny", target = "_blank", style = "color:black;")
-                 ))
+                 !!!list(bslib::nav_spacer(),
+                         bslib::nav_item(pagetitle()),
+                         bslib::nav_item(
+                           tags$a(icon("readme"),
+                                  href = "https://aphasia-apps.github.io/pnt",
+                                  target = "_blank",
+                                  style = "color:black;")
+                         )#,
+                         # bslib::nav_item(
+                         #  tags$a(icon("github"),
+                         #          href = "https://github.com/rbcavanaugh/pnt",
+                         #          target = "_blank",
+                         #          style = "color:black;")
+                 )
                  
                  ########################################################################
       )
