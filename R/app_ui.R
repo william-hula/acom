@@ -29,7 +29,7 @@ app_ui <- function(request) {
       
       ################################### layout starts here ######################### 
       
-      navbarPage(title = "PNT-CAT", #pagetitle(),
+      navbarPage(title = "PNT-CAT (beta)", #pagetitle(),
                  id = "mainpage",
                  theme = minimal_theme(),
 
