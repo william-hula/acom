@@ -35,7 +35,9 @@ uploadData <- function(file_input, rescore = F){
         } else if (!all(dat$target %in% item_key$target)){
         # target names must match
         error = "Error: some item names have changed"
-        }
+        } #else if (nrow(dat)<30) {
+         # error = "Error: Less than 30 items were uploaded"
+        #}
     } else {
     # the right columns aren't here. 
     error = "Error: Column names have been changed"

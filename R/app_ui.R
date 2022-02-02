@@ -1,5 +1,6 @@
+
+
 #' The application User-Interface
-#' 
 #' @param request Internal parameter for `{shiny}`. 
 #'     DO NOT REMOVE.
 #' @import shiny
@@ -19,6 +20,7 @@ app_ui <- function(request) {
       ),
       keys::useKeys(),
       shinyjs::useShinyjs(),
+      shinyjs::extendShinyjs(text = jsCode, functions = "gettime"),
       keys::keysInput("keys", response_keys),
       keys::keysInput("enter_key", enter),
       #keys::keysInput("end_test", end_test_key),
@@ -30,7 +32,6 @@ app_ui <- function(request) {
       navbarPage(title = "PNT-CAT", #pagetitle(),
                  id = "mainpage",
                  theme = minimal_theme(),
-                 
 
                  ############################ Instructions ############################## 
                  

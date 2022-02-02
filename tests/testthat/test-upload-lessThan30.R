@@ -9,7 +9,7 @@ test_that("score re-uploaded test PNT-CAT30", {
   app$setInputs(score_test = "click")
   app$uploadFile(file2 = here::here("tests", "testthat", "files", "test_upload_lessThan30.csv"))
   app$setInputs(score_uploaded_data = "click")
-  Sys.sleep(4)
+  Sys.sleep(5)
   val = app$getAllValues()
 
   #########################################################
@@ -18,7 +18,6 @@ test_that("score re-uploaded test PNT-CAT30", {
   
   # are we on the results page?
   testthat::expect_equal(val$export$current_page, "Results")
-
   testthat::expect_true(grepl('<em style="color:darkred;">', val$output$results_summary$html))
 
 })

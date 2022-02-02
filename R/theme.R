@@ -7,14 +7,14 @@
 #' @export
 minimal_theme <- function(){
 
-  versionNumber = if (isTRUE(getOption("shiny.testmode"))) {
-    4
+ if (isTruthy(getOption("shiny.testmode"))) {
+   versionNumber = 4
     cat("Test mode")
   } else {
-    5
+    versionNumber = 5
   }
   
-      bslib::bs_theme(bootswatch = "default",
+    theme_out =  bslib::bs_theme(bootswatch = "default",
                      base_font = bslib::font_google("Open Sans"),
                      heading_font = bslib::font_google("Open Sans"),
                      version = versionNumber,
@@ -22,6 +22,7 @@ minimal_theme <- function(){
                      `enable-transitions` = F,
                      primary = "#1665AC"
     )
-
+    
+    return(theme_out)
   
 }

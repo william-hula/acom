@@ -64,6 +64,12 @@ thetas <- read_csv(here("dev","pnt-old", "data", "thetas_Tscaled_MAPPDn296_R03n3
 download_df = items[c("item_number", "target", "key")]
 download_df$test = "offline"
 
+
+jsCode <- 'shinyjs.gettime = function(params) {
+     var time = Date();
+     Shiny.onInputChange("jstime", time);
+   }' 
+
 # usethis::use_data(internal = T, overwrite = T,
 #                   item_key,
 #                   items,
@@ -74,5 +80,7 @@ download_df$test = "offline"
 #                   response_keys,
 #                   starting_items,
 #                   thetas,
-#                   download_df)
+#                   download_df,
+#                   jsCode
+#                   )
 

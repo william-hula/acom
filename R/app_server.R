@@ -8,7 +8,7 @@
 #' @import shiny
 #' @noRd
 app_server <- function( input, output, session ) {
-
+  
   ################################################################################
   ########################## Initialize reactive values ##########################
   # ------------------------------------------------------------------------------
@@ -25,10 +25,25 @@ app_server <- function( input, output, session ) {
   values$exclude_previous <- NULL
   values$previous <- NULL # previous data if uploaded
   values$num_previous <- 0 # number of previous tests
-  values$datetime <- Sys.time() # establishes datetime when app opens for saving
   values$downloadableData = F # will the download data button appear? starts with no. yes after first response. 
   values$endTestEarly = F
   
+  ################################################################################
+  ########################## Dealing with user's time ############################
+  # ------------------------------------------------------------------------------
+  ################################################################################
+  ################################################################################
+  
+  # runs a jsCode snippet from extendshinyJS (see app_ui)
+  # this gets the users time
+  # when it changes, it is saved in the reactive values
+  shinyjs::js$gettime()
+  observeEvent(input$jstime,{
+    dt <- input$jstime # establishes datetime when app opens for saving
+    values$datetime <- as.character(strptime(dt, format = '%a %b %d %Y %H:%M:%S GMT%z'))
+    cat("app was opened on", values$datetime, "\n",
+        "--------------------------------", "\n")
+  }, once = T) # we only want this to happen once
 
   ################################################################################
   ################################## UPLOADS #####################################
@@ -65,6 +80,7 @@ app_server <- function( input, output, session ) {
   }
   
   # INTRO FLOW
+
   
   # TEST FLOW
   observeEvent(input$administer_test,{
@@ -211,10 +227,7 @@ app_server <- function( input, output, session ) {
   observeEvent(input$toggle_key,{
     req(values$i)
     cat("Current values-i is", values$i, "\n")
-    # if(input$mainpage=="Practice" & values$i %in% c(1, 2)){
-    #   shinyjs::runjs("Mousetrap.trigger('enter');")
-    #   
-    # } else {
+
       if(is.null(values$key_val)){
         values$key_val = "1"
         print("changed from null")
@@ -225,7 +238,7 @@ app_server <- function( input, output, session ) {
         print("changed from 2 to 1")
         values$key_val = "1"
       } else {
-        print("did not match conditions")
+        print("error: did not match conditions")
       }
     #}
     
@@ -266,6 +279,8 @@ app_server <- function( input, output, session ) {
   
   observeEvent(input$start_practice,{
     
+    shinyjs::js$gettime()
+      
     # save inputs as reactive values for easier use later
     #shinyjs::runjs(values$sound)
     values$i = 1 # reset values$i
@@ -276,7 +291,7 @@ app_server <- function( input, output, session ) {
     values$notes = input$notes
     values$notes_retest = input$notes_retest
     values$eskimo <- ifelse(values$new_test, input$eskimo, input$eskimo_retest)
-    values$start_time = Sys.time()
+    
     if(isTruthy(values$new_test)){
       values$selected_test = input$numitems
       # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
@@ -314,7 +329,8 @@ app_server <- function( input, output, session ) {
                      selected = "Practice")
     
     # prints to the console for  troubleshooting
-    cat(paste("Key app variables after selecting start practice:", "\n",
+    cat(paste(
+              "Key app variables after selecting start practice:", "\n",
               "Selected test:", values$selected_test, "\n",
               "New test:", values$new_test, "\n",
               "Exclude previous:", values$exclude_previous, "\n",
@@ -336,6 +352,13 @@ app_server <- function( input, output, session ) {
   # switches to the assessment tab
   # initialize values in here so that they reset whever someone hits start. 
   observeEvent(input$start, {
+    
+    # the start time is initiated from the practice items before...
+    # for some reason, the gettime and accessing the new input
+    # can't be in the save observe event. 
+    values$start_time = as.character(strptime(input$jstime,
+                                              format = '%a %b %d %Y %H:%M:%S GMT%z'))
+    cat("Testing started on", values$start_time, "\n")
     
     # keeps track of button press 1 (error), 2 (correct)
     values$i = 1
@@ -479,19 +502,19 @@ app_server <- function( input, output, session ) {
       ########################################################################
       # Should the test go to the results page? and subsequent operations
       ########################################################################
-      go_to_results <- if(isTruthy(values$endTestEarly)){
-        TRUE
+      if(isTruthy(values$endTestEarly)){
+        go_to_results = TRUE
       } else if (is.na(values$n)){
-        TRUE
+        go_to_results =  TRUE
       } else if(values$test_length == "SEM"){
-        values$irt_out[[3]]<values$min_sem # is the new sem  less than the min of the previos test?
+        go_to_results = values$irt_out[[3]]<values$min_sem # is the new sem  less than the min of the previos test?
       } else {
-        values$i==values$test_length # number of slides seen (+1) exceeds the test length # was < 
+        go_to_results = values$i==values$test_length # number of slides seen (+1) exceeds the test length # was < 
       }
       
       # go to results if indicated
       if (isTruthy(go_to_results)){
-        values$end_time = Sys.time()
+        shinyjs::js$gettime() # log time for end of test. 
         
         # if its the end of the test, calculate the final ability/sem values
         values$irt_final <- 
@@ -551,6 +574,7 @@ app_server <- function( input, output, session ) {
   # If end test has been confirmed in the modal. 
   observeEvent(input$confirm_end_test,{
     values$endTestEarly = T
+    shinyjs::js$gettime()
     if(!is.null(values$key_val)){
       shinyjs::runjs("Mousetrap.trigger('enter');")
       cat("Logged last response before ending test early \n")
@@ -565,7 +589,6 @@ app_server <- function( input, output, session ) {
       shinyjs::show("download_results-results_download")
       values$results_data_long = get_results_data_long(values)
       updateNavbarPage(session, "mainpage", selected = "Results")
-      values$end_time = Sys.time()
       values$current_page = input$mainpage
     }
     removeModal()
@@ -825,7 +848,18 @@ app_server <- function( input, output, session ) {
   observeEvent(input$mainpage,{
     values$current_page = input$mainpage
     cat(paste("The page updated to", values$current_page, "\n"))
-    if(values$current_page == "Results"){shinyjs::hide("end_test")}
+    if(values$current_page == "Results"){
+      shinyjs::hide("end_test")
+      if(!isTruthy(values$score_uploaded_test)){
+        values$end_time = as.character(strptime(input$jstime,
+                                                format = '%a %b %d %Y %H:%M:%S GMT%z'))
+        values$duration = as.POSIXlt(values$end_time)-as.POSIXlt(values$start_time)
+        cat("Testing ended on", values$end_time, "\n",
+            "Total testing time was", round(values$duration[[1]], 2),
+                                          units(values$duration), "\n")
+      }
+
+      }
   })
   
   # This makes the above data available after running unit test.
