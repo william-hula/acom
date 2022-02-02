@@ -9,6 +9,7 @@ minimal_theme <- function(){
 
   versionNumber = if (isTRUE(getOption("shiny.testmode"))) {
     4
+    cat("Test mode")
   } else {
     5
   }

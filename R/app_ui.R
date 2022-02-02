@@ -24,10 +24,6 @@ app_ui <- function(request) {
       #keys::keysInput("end_test", end_test_key),
       keys::keysInput("clear_key", "0"),
       keys::keysInput("toggle_key", "9"),
-      # shiny.pwa::pwa("https://aphasia-apps.shinyapps.io/pnt-ipad/",
-      #                output = "inst/app/www",
-      #                title = "PNT-CAT",
-      #                icon = "inst/app/www/cat.png"),
       
       ################################### layout starts here ######################### 
       
@@ -64,14 +60,7 @@ app_ui <- function(request) {
                  ))
                  
                  ########################################################################
-                 
-                 # close navbar page
-      ),
-      
-      # adjusting for footer. 
-      # br(), br(), br(), br(), br(), 
-      #end of UI   
-   # )
+      )
   )
 }
 
@@ -88,7 +77,7 @@ golem_add_external_resources <- function(){
   add_resource_path(
     'www', app_sys('app/www')
   )
-  
+
   add_resource_path(
     'slides', app_sys('app/www/slides')
   )

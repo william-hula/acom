@@ -546,19 +546,8 @@ app_server <- function( input, output, session ) {
       ))
     }
   })
-  # Download data before ending the test early. 
-  # output$downloadIncompleteData <- downloadHandler(
-  #   filename = function() {
-  #     paste(gsub(" ", "-", input$name),
-  #           as.character(Sys.Date()),
-  #           "pnt.csv", sep = "_")
-  #   },
-  #   content = function(file) {
-  #     write.csv(get_data_for_download(values = values,
-  #                                     in_progress = input$mainpage
-  #     ), file, row.names = FALSE)
-  #   }
-  # )
+
+
   # If end test has been confirmed in the modal. 
   observeEvent(input$confirm_end_test,{
     values$endTestEarly = T
@@ -836,6 +825,7 @@ app_server <- function( input, output, session ) {
   observeEvent(input$mainpage,{
     values$current_page = input$mainpage
     cat(paste("The page updated to", values$current_page, "\n"))
+    if(values$current_page == "Results"){shinyjs::hide("end_test")}
   })
   
   # This makes the above data available after running unit test.
