@@ -5,7 +5,6 @@ test_that("score uploaded test 175", {
   #########################################################
 
   app <- ShinyDriver$new(here::here(), seed = 1)
- # app$setInputs(welcome_next = "click")
   app$setInputs(score_test = "click")
   app$uploadFile(file2 = here::here("tests", "testthat", "files", "blank_upload2.csv"))
   app$setInputs(score_uploaded_data = "click")

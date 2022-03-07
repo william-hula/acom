@@ -22,6 +22,10 @@
 #' @export
 irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exclude_eskimo = T, walker = F){
 
+      ##############################################################################
+      # Set up necessary data for the catR function
+      ##############################################################################
+  
       # this is for the out argument. 
       # creates a vector of the items that have already been completed
       # to be fed to IRT so they don't get chosen again
@@ -39,7 +43,12 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
         previously_completed = previous$item_number
         completed = c(completed, previously_completed)
       }
-      # dataframe of inputs
+
+      ##############################################################################
+      # catR functions for calculating ability and SEM go in here
+      ##############################################################################
+      # These will always be the same - takes in data of completed items and scores
+      
       pars = data.frame(a = all_items$discrimination,
                         b = all_items$itemDifficulty, # CHANGE TO T SCORES 50 +/- 10
                         c = rep(1), #1PL has no guessing parameter ,
@@ -57,19 +66,21 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
        # standard error of the mean
        # CHANGE FOR T-SCORE HERE
        sem = catR::semTheta(ability, bank, x, method = "EAP", parInt = c(5, 95, 33), priorPar = c(50,10))
+       
+       ##############################################################################
+       # Choosing the next item however depends on the kind of test that we're doing
+       ##############################################################################
+       
+       # If we're doing a computer adaptive test:
        if(IRT){
-         # removes eskimo
-
-         completed = c(completed, 49)
-         
-         next_item = if(length(completed)<175){
-           # CHANGE FOR T SCORE HERE
+         completed = c(completed, 49) # removes eskimo from the item pool. 
+         next_item = if(length(completed)<175){ # as long as we haven't done 175 items
            catR::nextItem(itemBank = bank, theta = ability, out = completed,
                           method = "EAP", range = c(5, 95), priorPar = c(50,10))
          } else {
-           NA
+           NA # returning NA will end the test?
          }
-
+          # save ability, sem, and next item in a list, return the list, end the function. 
          tmp_list = list(
          ability,
          next_item,
@@ -77,18 +88,18 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
          )
        return(tmp_list)
          
+        # If we're doing one of the walker short-forms
        } else if(walker) {
-         # randomize? if true, then use random order column
-         # next_slide_num <- all_items %>%
-         #   dplyr::mutate(next_item = ifelse(!is.na(response), walker_order+1, NA)) %>%
-         #   dplyr::filter(walker_order == max(next_item, na.rm = T)) 
+
          next_slide_num <- all_items
          next_slide_num$next_item = ifelse(!is.na(next_slide_num$response), next_slide_num$walker_order+1, NA)
          next_slide_num <- next_slide_num[next_slide_num$walker_order==max(next_slide_num$next_item, na.rm = T),]
          
          tmp_list = list(
            ability,
-           list(
+           # structured like this becasue the catR::nextItem function returns a list
+           # where the second item in teh list is the next slide number
+           list( 
              NA,
              slide_num_out = ifelse(nrow(next_slide_num) < 1, 190, next_slide_num$slide_num)
            ),
@@ -96,38 +107,25 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
          )
          
          return(tmp_list)
-    } else { # this is the full PNT
-        if(exclude_eskimo){
-          
-        # next_slide_num <- all_items %>%
-        #   dplyr::filter(item_number != 49) %>% 
-        #   dplyr::filter(is.na(response))
-        
+         
+      # IF we're doing the standard PNT
+    } else { 
+        if(exclude_eskimo){ # if excluding eskimo...
+      
+          # deal with eskimo here...
         next_slide_num <- all_items[all_items$item_number != 49 & is.na(all_items$response),]
-
             if(nrow(next_slide_num)>=1){
-              # next_slide_num <- next_slide_num %>%
-              #   dplyr::filter(pnt_order == min(pnt_order))
-              
               next_slide_num <- next_slide_num[next_slide_num$pnt_order==min(next_slide_num$pnt_order),]
-
             }
         
         # helps with ending the test
         out_stop = 189
         
-        } else {
-          
-          # next_slide_num <- all_items %>%
-          #   dplyr::filter(is.na(response)) 
-          
+        } else { # if not excluding eskimo...
+
           next_slide_num <- all_items[is.na(all_items$response),]
-          
             if(nrow(next_slide_num)>=1){
-              # next_slide_num <- next_slide_num %>%
-              #   dplyr::filter(pnt_order == min(pnt_order))
               next_slide_num <- next_slide_num[next_slide_num$pnt_order==min(next_slide_num$pnt_order),]
-              
             }
         # helps with ending the test. see tmp list
         out_stop = 190

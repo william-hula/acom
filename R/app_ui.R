@@ -6,32 +6,38 @@
 #' @import shiny
 #' @noRd
 app_ui <- function(request) {
-  #tagList(
-    # Leave this function for adding external resources
      
-    # Your application UI logic 
+    # User Interface (UI)
     tagList(
-      golem_add_external_resources(),
+      golem_add_external_resources(), # makes inst www folder available to app
       ################################### SETUP ######################################
       tags$head(
+        # adds icon in browser tab
         favicon(ext="png"),
+        # device width fix
         tags$meta(name="viewport", content="width=device-width, initial-scale=1.0"),
+        # link the style sheet
         tags$link(rel = "stylesheet", type = "text/css", href = file.path("www","style.css"))
       ),
-      keys::useKeys(),
+      # allows use of shinyjs() package
       shinyjs::useShinyjs(),
+      # imports a js code snippet to get the users current time
+      # sys.Time() gets the servers time, but not always the users time due
+      # to timezone changes
       shinyjs::extendShinyjs(text = jsCode, functions = "gettime"),
-      keys::keysInput("keys", response_keys),
-      keys::keysInput("enter_key", enter),
-      #keys::keysInput("end_test", end_test_key),
-      keys::keysInput("clear_key", "0"),
-      keys::keysInput("toggle_key", "9"),
+      # allows us to use keys to enter responses
+      keys::useKeys(),
+      keys::keysInput("keys", response_keys), # 1 or 2. saved in sysdata.rda internal file
+      keys::keysInput("enter_key", enter), # enter key and space bar used to progress response
+      keys::keysInput("end_test", end_test_key), # esc is the end test key
+      keys::keysInput("clear_key", "0"), # the 0 clears the current response
+      keys::keysInput("toggle_key", "9"), # toggles between a 1 or 2 response
       
       ################################### layout starts here ######################### 
       
-      navbarPage(title = "PNT-CAT (beta)", #pagetitle(),
-                 id = "mainpage",
-                 theme = minimal_theme(),
+      navbarPage(title = "PNT-CAT (beta)", # App title
+                 id = "mainpage", # id of page so you can access current page with input$mainpage
+                 theme = minimal_theme(), # theme function from {bslib}. see theme.R
 
                  ############################ Instructions ############################## 
                  
@@ -56,6 +62,8 @@ app_ui <- function(request) {
                  tabPanelBody(value = "Results", 
                               results_tab_div()
                  ),
+                 # Adds information to the right of the navbar. navspacer moves it to
+                 # the right. nav_items inserts each item
                  !!!list(bslib::nav_spacer(),
                          bslib::nav_item(pagetitle()),
                          bslib::nav_item(
@@ -63,12 +71,7 @@ app_ui <- function(request) {
                                   href = "https://aphasia-apps.github.io/pnt",
                                   target = "_blank",
                                   style = "color:black;")
-                         )#,
-                         # bslib::nav_item(
-                         #  tags$a(icon("github"),
-                         #          href = "https://github.com/rbcavanaugh/pnt",
-                         #          target = "_blank",
-                         #          style = "color:black;")
+                         )
                  )
                  
                  ########################################################################
@@ -99,9 +102,6 @@ golem_add_external_resources <- function(){
   bundle_resources(
     path = app_sys('app/www'),
     app_title = 'pnt'
-  )
-  # Add here other external resources
-  # for example, you can add shinyalert::useShinyalert()
-  )
+  ))
 }
 

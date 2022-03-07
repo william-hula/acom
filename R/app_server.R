@@ -16,13 +16,15 @@ app_server <- function( input, output, session ) {
   ################################################################################
   
   # reactiveValues is a list where elements of the list can change
+  # this can be passed in its entirety to any function
   values = reactiveValues()
+  # The following sets the initial values at app startup. 
   values$item_difficulty <- items #items...see observe #dataframe of potential values
   values$i = 0 # this is the counter to track the slide number
   values$test_length <- NULL # number of items to test
   values$irt_out <- list(0, 0, 11) # will be overwritten if IRT 
   values$min_sem <- NULL # sem precision
-  values$exclude_previous <- NULL
+  values$exclude_previous <- NULL # exclude previous items 
   values$previous <- NULL # previous data if uploaded
   values$num_previous <- 0 # number of previous tests
   values$downloadableData = F # will the download data button appear? starts with no. yes after first response. 
@@ -57,10 +59,13 @@ app_server <- function( input, output, session ) {
     uploadedData <- uploadData(file_input = input$file1)
     values$previous <- uploadedData$dat
     
+    # sets upload conditions
     if(nrow(values$previous)>1){
         values$num_previous <- 1
         values$min_sem <- min(values$previous$sem, na.rm = T)
         shinyjs::enable("next_retest")
+      # triggered if uploadedData function returns an error
+      # resets the upload function. 
     } else {
         showNotification(uploadedData$error, type = "error")
         values$previous <- NULL
@@ -75,51 +80,56 @@ app_server <- function( input, output, session ) {
   ##############################################################################
   ##############################################################################
   
+  # This section creates the navigation for input$mainpage == "Home" otherwise
+  # known as the introduction page. 
+  
+  # this function will change the intro page to the desired page. used below. 
   changeIntroPage <- function(go_to_page){
     updateTabsetPanel(session, "glide", go_to_page)
   }
   
-  # INTRO FLOW
-
-  
   # TEST FLOW
+  # If you press administer test, then change to the new_pnt page. 
+  # reactive value holding new test set to TRUE
   observeEvent(input$administer_test,{
-    values$new_test = T
+    values$new_test = TRUE
     changeIntroPage("new_pnt_page")
   })
-  
+  # go back to welcome page
   observeEvent(input$back_test,{
     changeIntroPage("welcome_page")
   })
-  
-  # RETEST FLOW
+  # If you press retest...
   observeEvent(input$administer_retest,{
-    values$new_test = F
+    values$new_test = FALSE
     changeIntroPage("retest_pnt_page")
   })
-  
+  # go back to welcome page
   observeEvent(input$back_retest,{
     changeIntroPage("welcome_page")
   })
-  
-  # OFFLINE FLOW
+  # If you press score offline test...
   observeEvent(input$score_test,{
-    values$new_test = F
+    values$new_test = FALSE
     changeIntroPage("score_offline_page")
   })
-  
+  # go back to welcome page
   observeEvent(input$back_offline,{
     changeIntroPage("welcome_page")
   })
-  
+  # This is the next button which takes you to the 
+  # instruction page. 
   observeEvent(input$next_test,{
     changeIntroPage("instructions_page")
   })
-  
+  # next on retest takes you to the same page
+  # because the instructions are the same
   observeEvent(input$next_retest,{
     changeIntroPage("instructions_page")
   })
-  
+  # this goes back either to the test
+  # or retest page depending on which you 
+  # initially elevted. 
   observeEvent(input$back_to_test_or_retest,{
     if(isTruthy(values$new_test)){
       changeIntroPage("new_pnt_page")
@@ -135,15 +145,20 @@ app_server <- function( input, output, session ) {
   ##############################################################################
   ##############################################################################
   # controls available options for selecting a test or retest
+  # the observe({ function means that the app is always monitoring these values})
+  # in this case, its because we want to keep changing the possible options for 
+  # the tests depending on which test is selected. 
   observe({
+    # These options are available for new_test. 
+    # They are shown on the new test page. 
     if(isTruthy(values$new_test)){
        if(input$numitems == "175_standard"){
-          # full pnt
+          # full pnt standard administration
           values$test_length = ifelse(input$eskimo, 174, 175)
           shinyjs::show("eskimo")
           shinyjs::hide("walker")
         } else if(input$numitems == "175_cat"){
-          # full pnt
+          # full pnt cat administration
           values$test_length = 174
           shinyjs::hide("eskimo")
           shinyjs::hide("walker")
@@ -152,27 +167,30 @@ app_server <- function( input, output, session ) {
           values$test_length = 30
           shinyjs::hide("eskimo")
           shinyjs::hide("walker")
-        } else { #if(input$num_items == "30_walker")
+        } else { # this is the walker condition
           values$test_length = 30
           shinyjs::show("walker")
           shinyjs::hide("eskimo")
         }
-    } else { # retest conditions
+    } else { # These options are for the rettest page. 
       
+      # if the second test is a variable length. 
       if(input$numitems_retest == "SEM"){
-        
+        # set values. 
         values$test_length <- "SEM"
+        # by default the exclude previous option is set to TRUE
         shinyjs::disable("exclude_previous")
-        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = T)
+        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = TRUE)
+        # hide these options
         shinyjs::hide("walker_retest")
         shinyjs::hide("eskimo_retest")
         
       } else if(input$numitems_retest == "30_cat"){
         
-        # fixed length IRT
+        # fixed length IRT of length 30
         values$test_length = 30
-        shinyjs::enable("exclude_previous")
-        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = T)
+        shinyjs::enable("exclude_previous") # option is available to exlcude previous. 
+        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = TRUE)
         shinyjs::hide("walker_retest")
         shinyjs::hide("eskimo_retest")
         
@@ -180,22 +198,22 @@ app_server <- function( input, output, session ) {
         
         values$test_length = 174
         shinyjs::disable("exclude_previous")
-        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = F)
+        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = FALSE)
         shinyjs::hide("walker_retest")
         shinyjs::hide("eskimo_retest")
         
       } else if(input$numitems_retest == "175_standard"){# full pnt
         values$test_length = ifelse(input$eskimo_retest, 174, 175)
         shinyjs::disable("exclude_previous")
-        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = F)
+        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = FALSE)
         shinyjs::hide("walker_retest")
         shinyjs::show("eskimo_retest")
         
-      } else { #if(input$numitems_retest == "30_walker")
+      } else { #Final condition is for the walker test. No need to exclude previous
         
         values$test_length = 30
         shinyjs::disable("exclude_previous")
-        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = F)
+        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = FALSE)
         shinyjs::show("walker_retest")
         shinyjs::hide("eskimo_retest")
         
@@ -209,6 +227,8 @@ app_server <- function( input, output, session ) {
   ##############################################################################
   ##############################################################################
   
+  # Start over just refreshes the page/ app. This felt like the safest option
+  # to ensure that nothing was carried over from the previous adminsitration. 
   observeEvent(input$start_over,{
     session$reload()
   })
@@ -219,11 +239,16 @@ app_server <- function( input, output, session ) {
   ##############################################################################
   ##############################################################################
   
+  # Logic for how the key presses work. 
+  
   # tracks the key inputs
+  # When a key is selected (1 or 2) it logs the key. 
   observeEvent(input$keys, {
     values$key_val = input$keys
   })
   
+  # the toggle key can also change the current selection.
+  # it depends on what the current selection is. 
   observeEvent(input$toggle_key,{
     req(values$i)
     cat("Current values-i is", values$i, "\n")
@@ -237,20 +262,25 @@ app_server <- function( input, output, session ) {
       } else if (values$key_val == "2"){
         print("changed from 2 to 1")
         values$key_val = "1"
-      } else {
+      } else { # this should never happen. 
         print("error: did not match conditions")
       }
-    #}
     
   })
   
+  # and the clear key can just remove the key_val input
+  # you should not be able to progress to the next item after hitting clear
+  observeEvent(input$clear_key, {
+    values$key_val = NULL
+  })
   
+  # this is the green circle with the number in the top right on the practice slides
   output$key_feedback_practice <- renderUI({
     req(values$key_val)
     column(align = "right", width = 12,
-           div(values$key_val, class = "response")) #, onclick="Mousetrap.trigger('enter');"
+           div(values$key_val, class = "response"))
   })
-  
+  # and the green circle for the assessment slides. 
   output$key_feedback_slides <- renderUI({
     req(values$key_val)
     column(align = "right", width = 12,
@@ -258,7 +288,7 @@ app_server <- function( input, output, session ) {
   })
   
   
-  #no key presses on home or results page
+  #no key presses on home or results page. this turns off all key presses. 
   observe({
     if(isTruthy(input$mainpage=="Results" || input$mainpage=="Home")){
       keys::pauseKey()
@@ -266,69 +296,71 @@ app_server <- function( input, output, session ) {
       keys::unpauseKey()
     }
   })
-  
-  observeEvent(input$clear_key, {
-    values$key_val = NULL
-  })
-  
+
   ##############################################################################
   ##############################################################################
   ################################ START PRACTICE ##############################
   ##############################################################################
   ##############################################################################
   
+  # This section holds logic for what happens when you hit the start practice button
+  
   observeEvent(input$start_practice,{
     
+    # gets the current USER time. 
     shinyjs::js$gettime()
       
     # save inputs as reactive values for easier use later
     #shinyjs::runjs(values$sound)
     values$i = 1 # reset values$i
-    values$n = NULL # reset 
-    values$key_val = NULL # keeps track of button press 1 (error), 2 (correct)
+    values$n = NULL # reset values$n - this is the slide number (e.g. slide1 if n =1)
+    values$key_val = NULL # keeps track of button press 1 (error), 2 (correct)...make sure empty
     values$exclude_previous <- ifelse(values$new_test, F, input$exclude_previous) 
-    #values$name = input$name
-    values$notes = input$notes
-    values$notes_retest = input$notes_retest
-    values$eskimo <- ifelse(values$new_test, input$eskimo, input$eskimo_retest)
+    values$notes = input$notes # holds notes
+    values$notes_retest = input$notes_retest # holds notes for retest
+    values$eskimo <- ifelse(values$new_test, input$eskimo, input$eskimo_retest) # include eskimo?
     
+    # These things need to happen for new tests
+    # also saving values for the test item selections
     if(isTruthy(values$new_test)){
       values$selected_test = input$numitems
       # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
       # computer adaptive if the string cat is in the num items inputs
       values$IRT = ifelse(grepl( "cat", input$numitems), TRUE, FALSE)
+      
       # walker is true if the string walker is in the num items inputs
       values$walker = ifelse(grepl("walker", input$numitems), TRUE, FALSE)
       values$walker_form = ifelse(isTruthy(values$walker), input$walker, NA)
-      
+      # If the input is walker, grab the right walker items
       if(isTruthy(values$walker)){
         values$item_difficulty = subset(values$item_difficulty, walker == input$walker)
       }
       
-    } else {
+    } else { # essentially retest
       values$selected_test = input$numitems_retest
       # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
       # computer adaptive if the string cat is in the num items inputs
       values$IRT = ifelse(grepl( "cat", input$numitems_retest), TRUE,
                           ifelse(grepl("SEM", input$numitems_retest), TRUE,
                                        FALSE))
+      
       # walker is true if the string walker is in the num items inputs
       values$walker = ifelse(grepl("walker", input$numitems_retest), TRUE, FALSE)
       values$walker_form = ifelse(isTruthy(values$walker), input$walker_retest, NA)
-      
+      # walker again
       if(isTruthy(values$walker)){
         values$item_difficulty = subset(values$item_difficulty, walker == input$walker_retest)
       }
       
     }
-    
+    # show the start over button now, which will refresh the app. 
     shinyjs::show("start_over")
     
     # go to practice slides
     updateNavbarPage(session, "mainpage",
                      selected = "Practice")
     
-    # prints to the console for  troubleshooting
+    # prints to the console for debugging
     cat(paste(
               "Key app variables after selecting start practice:", "\n",
               "Selected test:", values$selected_test, "\n",
@@ -348,6 +380,9 @@ app_server <- function( input, output, session ) {
   ##############################################################################
   ##############################################################################
   
+  # What happens when you press start assessment at the end of practice
+  # Mostly, what is the first item to show?
+  
   # start button. sets the i value to 1 corresponding to the first slide
   # switches to the assessment tab
   # initialize values in here so that they reset whever someone hits start. 
@@ -360,12 +395,11 @@ app_server <- function( input, output, session ) {
                                               format = '%a %b %d %Y %H:%M:%S GMT%z'))
     cat("Testing started on", values$start_time, "\n")
     
-    # keeps track of button press 1 (error), 2 (correct)
+    # keeps track of the number of items
     values$i = 1
     
-    values$n = # slide number for current slide
-      # regular old CAT 
-      if(isTruthy(values$IRT)){
+    values$n = # slide number for first slide
+      if(isTruthy(values$IRT)){ # if computer adaptive...
       # samples one of four first possible items, unless used previously...
       # returns the first item number
       get_first_item(previous = values$previous,
@@ -379,7 +413,6 @@ app_server <- function( input, output, session ) {
     values$irt_out <- list(0, 0, 11) # reset saved data just in case. 
     # got to slides, reset keyval
     values$key_val = NULL # keeps track of button press 1 (error) or 2 (correct)
-    shinyjs::show("end_test")
     updateNavbarPage(session, "mainpage", selected = "Assessment")
     
     # prints to the console for  troubleshooting
@@ -437,20 +470,10 @@ app_server <- function( input, output, session ) {
       values$downloadableData = T
       shinyjs::enable("downloadIncompleteData")
       
-      ##########################################################################
-      # Should the test show another item? 
-      ##########################################################################
-      # another_item <- 
-      #     if(values$test_length == "SEM"){
-      #     values$min_sem<values$irt_out[[3]]
-      #     } else {
-      #     values$i<=values$test_length
-      #     }
-      
       # require a key input response
       if(is.null(values$key_val)){ 
         showNotification("Enter a score", type = "error")
-      } else { #} if (another_item) {
+      } else { 
         
         ########################################################################
         # store key press in our dataframe of items,
@@ -498,9 +521,8 @@ app_server <- function( input, output, session ) {
           } 
         # values$i = values$i + 1
        
-
       ########################################################################
-      # Should the test go to the results page? and subsequent operations
+      # Should the test end and go to the results page? and subsequent operations
       ########################################################################
       if(isTruthy(values$endTestEarly)){
         go_to_results = TRUE
@@ -557,7 +579,7 @@ app_server <- function( input, output, session ) {
   # Bring up the modal
   
   observeEvent(input$end_test,{ 
-    if(values$i > 1){
+    if(values$i > 1 & input$mainpage == "Assessment"){
       showModal(modalDialog(
         get_endtest_div(),
         easyClose = TRUE,
@@ -570,17 +592,20 @@ app_server <- function( input, output, session ) {
     }
   })
 
-
   # If end test has been confirmed in the modal. 
   observeEvent(input$confirm_end_test,{
-    values$endTestEarly = T
-    shinyjs::js$gettime()
+    values$endTestEarly = T # marker indicating test was ended manually
+    shinyjs::js$gettime() #end time
     if(!is.null(values$key_val)){
-      shinyjs::runjs("Mousetrap.trigger('enter');")
+      shinyjs::runjs("Mousetrap.trigger('enter');") # hit enter if there is a response to log it
       cat("Logged last response before ending test early \n")
     } else {
+      # if there's no current response, nothing to log.
       cat("Ended test early without logging last response \n")
       req(values$irt_out)
+      # gets the final number. thisstuff would normally be done if the test
+      # was going to end on its own, but have to do it manually here when
+      # the test is ended by the user. 
       values$irt_final <-
         get_final_numbers(out = values$irt_out,
                           previous = values$previous,
@@ -591,7 +616,7 @@ app_server <- function( input, output, session ) {
       updateNavbarPage(session, "mainpage", selected = "Results")
       values$current_page = input$mainpage
     }
-    removeModal()
+    removeModal() # modal go bye bye
     
   })
   
@@ -609,7 +634,7 @@ app_server <- function( input, output, session ) {
                      last_ability = values$irt_final$last_ability,
                      last_sem = values$irt_final$last_sem,
                      num_previous = values$num_previous),
-      get_item_warning(values)
+      get_item_warning(values) # show a warning if not enugh items were given. 
     )
       
   })
@@ -618,6 +643,7 @@ app_server <- function( input, output, session ) {
   # ------------------------------------------------------------------------------
   ################################################################################
   # Data
+  # Code held in shiny modules download_report.R and download results.R
   downloadResultsServer(id = "download_results",
                        values = values,
                        in_progress = input$mainpage) 
@@ -635,7 +661,7 @@ app_server <- function( input, output, session ) {
   ################################## PLOT ######################################## 
   # ------------------------------------------------------------------------------
   ################################################################################
-  output$plot <- renderPlot({# Fergadiotis, 2019
+  output$plot <- renderPlot({
       req(values$irt_final)
       get_plot(irt_final = values$irt_final)
   })
@@ -682,8 +708,11 @@ app_server <- function( input, output, session ) {
   ##############################################################################
   ##############################################################################
   ######################## Continue stopped test ###############################
-  #########################UPDATE THIS SECTION WITH COMMENTED CODE#######################################!!!!!!!!!!
   ##############################################################################
+  # upload the file, check the file for any chagnes that will break the app
+  # then start the test where it left off. 
+  # this requires re-doing much of the above start functions because tehre
+  # is already some data and that has to be specifically handled here. 
   
   # observer for uploading data
   observeEvent(input$file_incomplete,{
@@ -713,8 +742,6 @@ app_server <- function( input, output, session ) {
     }
 
   })
-  
-  
   
   observeEvent(input$resume,{
     showModal(modalDialog(
@@ -849,7 +876,6 @@ app_server <- function( input, output, session ) {
     values$current_page = input$mainpage
     cat(paste("The page updated to", values$current_page, "\n"))
     if(values$current_page == "Results"){
-      shinyjs::hide("end_test")
       if(!isTruthy(values$score_uploaded_test)){
         values$end_time = as.character(strptime(input$jstime,
                                                 format = '%a %b %d %Y %H:%M:%S GMT%z'))
@@ -878,12 +904,14 @@ app_server <- function( input, output, session ) {
   
   observeEvent(input$feedback,{
     showModal(modalDialog(
-      tags$iframe(src="https://docs.google.com/forms/d/e/1FAIpQLSeGOHvhNahDRcGwqQieJSQ_0Zo8LSVJb9dgKMd2YK3OmOeZKw/viewform?embedded=true", style = "width:100%; height:60vh; frameborder:0;"),
+      tags$iframe(src="https://docs.google.com/forms/d/e/1FAIpQLSeGOHvhNahDRcGwqQieJSQ_0Zo8LSVJb9dgKMd2YK3OmOeZKw/viewform?embedded=true",
+                  style = "width:100%; height:60vh; frameborder:0;"),
       easyClose = TRUE,
       size = "l",
       footer = NULL
     ))
   })
+  
   # ----------------------------------------------------------------------------
   ##############################################################################
   ##############################################################################

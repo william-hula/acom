@@ -2,11 +2,6 @@
 # pnt: Computer adaptive forms of the Philadelphia Naming Test
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<!-- badges: start -->
-
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-<!-- badges: end -->
 
 This application allows clinician users to administer adaptive (PNT-CAT)
 and static versions of the Philadelphia Naming Test ([Roach et al.,

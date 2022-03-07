@@ -30,7 +30,6 @@ get_results_data_long <- function(values){
   tmp = tmp[order(tmp$order), , drop = FALSE]
   
   tmp$notes[[1]] = ifelse(values$new_test, values$notes, values$notes_retest)
-  #cat("The number of rows is ", nrow(tmp), ".\n")
   return(tmp)
   
 }

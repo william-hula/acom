@@ -11,8 +11,6 @@
 #' @export
 get_first_item <- function(all_items, previous, exclude_previous = F){ 
   
-  #choices = c(130, 25, 39, 154)
-  
   items$near_zero = abs(50-items$itemDifficulty)
   
   if(!exclude_previous){
@@ -29,7 +27,6 @@ get_first_item <- function(all_items, previous, exclude_previous = F){
   }
   
   return(next_slide_num)
-  
   
 }
 
