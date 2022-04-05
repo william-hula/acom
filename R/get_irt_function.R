@@ -51,8 +51,8 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
       
       pars = data.frame(a = all_items$discrimination,
                         b = all_items$itemDifficulty, # CHANGE TO T SCORES 50 +/- 10
-                        c = rep(1), #1PL has no guessing parameter ,
-                        d = rep(0), #1PL has no innatention parameter,
+                        c = rep(0), #1PL has no guessing parameter ,
+                        d = rep(1), #1PL has no innatention parameter,
                         cbGroup = rep(1))
       # breaks it down into what gets fed into the 1PL IRT
       prov = catR::breakBank(pars)
@@ -61,11 +61,12 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
       x = all_items$response
        # ability estimate using bayes modal:
       # 10-6 CHANGING TO T ESTIMATES
-       ability = catR::thetaEst(bank, x, method = "EAP", parInt = c(5, 95, 33), priorPar = c(50,10))
+       ability = catR::thetaEst(bank, x, method = "EAP", parInt = c(10, 90, 33), priorPar = c(50,10))
+       cat(paste0("The current ability estimate is: ", ability))
        # generates the next item
        # standard error of the mean
        # CHANGE FOR T-SCORE HERE
-       sem = catR::semTheta(ability, bank, x, method = "EAP", parInt = c(5, 95, 33), priorPar = c(50,10))
+       sem = catR::semTheta(ability, bank, x, method = "EAP", parInt = c(10, 90, 33), priorPar = c(50,10))
        
        ##############################################################################
        # Choosing the next item however depends on the kind of test that we're doing
@@ -74,11 +75,12 @@ irt_function <- function(all_items, IRT = T, exclude_previous = F, previous, exc
        # If we're doing a computer adaptive test:
        if(IRT){
          completed = c(completed, 49) # removes eskimo from the item pool. 
-         next_item = if(length(completed)<175){ # as long as we haven't done 175 items
-           catR::nextItem(itemBank = bank, theta = ability, out = completed,
-                          method = "EAP", range = c(5, 95), priorPar = c(50,10))
+         print(completed)
+         if(length(completed)<175){ # as long as we haven't done 175 items
+           next_item = catR::nextItem(itemBank = bank, theta = ability, out = completed,
+                          method = "EAP", range = c(10, 90), priorPar = c(50,10))
          } else {
-           NA # returning NA will end the test?
+           next_item = NA # returning NA will end the test?
          }
           # save ability, sem, and next item in a list, return the list, end the function. 
          tmp_list = list(

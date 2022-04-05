@@ -10,6 +10,8 @@ test_that("resume PNT-CAT last response logged", {
   app$setInputs(numitems = "175_cat")
   app$setInputs(next_test = "click")
   app$uploadFile(file_incomplete = here::here("tests", "testthat", "files", "resume_pntcat175_keyLogged.csv"))
+  #app$uploadFile(file_incomplete = here::here("tests", "testthat", "files", "2022-04-05_amb_logged.csv"))
+  
   app$setInputs(resume = "click")
   val = app$getAllValues()
 

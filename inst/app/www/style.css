@@ -13,18 +13,18 @@ h2{
 }
 
 .navbar:not(.fixed-bottom):not(.navbar-fixed-bottom):not(.navbar-fixed-bottom) {
-    margin-bottom: 5px;
+    margin-bottom: 0px;
 }
 
 .response {
-  height: 30px;
-  width: 30px;
-  border-radius: 50%;
-  border: 0px solid black;
-  background: #00CC0050;
-  vertical-align:middle;
+  height: auto;
+  width: 100%;
+  /*border-radius: 5%;*/
+  border: 0px;
+  background: white;
+  vertical-align: middle;
   padding: 3px;
-  text-align: center;
+  /*text-align: center;*/
 }
 
 #funding{

@@ -245,6 +245,8 @@ app_server <- function( input, output, session ) {
   # When a key is selected (1 or 2) it logs the key. 
   observeEvent(input$keys, {
     values$key_val = input$keys
+    #cat(paste0("The input key was: ", input$keys), "\n")
+    #cat(paste0("The saved key value was: ", values$key_val), "\n")
   })
   
   # the toggle key can also change the current selection.
@@ -276,15 +278,37 @@ app_server <- function( input, output, session ) {
   
   # this is the green circle with the number in the top right on the practice slides
   output$key_feedback_practice <- renderUI({
-    req(values$key_val)
+    #req(values$key_val)
+    if(!is.null(values$key_val)){
+      val = values$key_val
+    } else {
+      val = "\u2013"
+    }
+    txt = paste0("Key: ", val)
     column(align = "right", width = 12,
-           div(values$key_val, class = "response"))
+           div(txt, class = "response"))
   })
   # and the green circle for the assessment slides. 
   output$key_feedback_slides <- renderUI({
-    req(values$key_val)
+    #req(values$key_val)
+    if(!is.null(values$key_val)){
+      val = values$key_val
+    } else {
+      val = "\u2013"
+    }
+    txt = paste0("Key: ", val)
     column(align = "right", width = 12,
-           div(values$key_val, class = "response"))
+           div(txt, class = "response"))
+  })
+  
+  # and the green circle for the assessment slides. 
+  output$item_number_slides <- renderUI({
+    req(values$i)
+    denom = strsplit(values$selected_test, split = "_")[[1]][1]
+    denom = ifelse(denom == "SEM", "VL", denom)
+    txt = paste0(values$i, "/", denom)
+    column(align = "left", width = 12,
+           div(txt, class = "response"))
   })
   
   
@@ -479,9 +503,23 @@ app_server <- function( input, output, session ) {
         # store key press in our dataframe of items,
         # 1 is incorrect (1) and 2 is correct (0); (IRT model reverses 1 and 0...)
         ########################################################################
-        values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <-
-          ifelse(values$key_val == incorrect_key_response, 1,
-                 ifelse(values$key_val == correct_key_response, 0, "NR"))
+        if(values$key_val == incorrect_key_response){
+          values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response = 0
+          # cat(paste0("logged key press: ", values$key_val, "\n"))
+          # cat(paste0("incorrect_key_response: ", incorrect_key_response, "\n"))
+          # cat("Incorrect response logged (1)")
+        } else if(values$key_val == correct_key_response){
+          values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response = 1
+          # cat(paste0("logged key press: ", values$key_val, "\n"))
+          # cat(paste0("correct_key_response: ", correct_key_response, "\n"))
+          # cat("Correct response logged (0)")
+        } else{
+          values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response = "NR"
+          cat("Warning: No response logged \n")
+        }
+        # values$item_difficulty[values$item_difficulty$slide_num==values$n,]$response <-
+        #   ifelse(values$key_val == incorrect_key_response, 1,
+        #          ifelse(values$key_val == correct_key_response, 0, "NR"))
         values$item_difficulty[values$item_difficulty$slide_num == values$n,]$order = values$i
         values$item_difficulty[values$item_difficulty$slide_num == values$n,]$key = values$key_val
         values$item_difficulty[values$item_difficulty$slide_num == values$n,]$resp = 
@@ -739,6 +777,7 @@ app_server <- function( input, output, session ) {
       shinyjs::enable("resume")
       values$item_difficulty <- incomplete_dat
       values$item_difficulty <- values$item_difficulty[order(values$item_difficulty$item_number), , drop = FALSE]
+     # print(head(values$item_difficulty, 10))
     }
 
   })

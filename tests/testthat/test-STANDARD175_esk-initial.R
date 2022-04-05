@@ -41,8 +41,7 @@ test_that("PNT-STANDARD 175 eskimo initial", {
   # TESTS
   #########################################################
   
-  # are we on the results page?
-  testthat::expect_equal(val$export$current_page, "Results")
+
   # are responses tracked accurately? 
   testthat::expect_equal(sum(val$export$results$key=='2', na.rm = T), sum(responses==2))
   testthat::expect_equal(sum(val$export$results$key=='1', na.rm = T), sum(responses==1))
@@ -53,4 +52,6 @@ test_that("PNT-STANDARD 175 eskimo initial", {
   # can we download data and the results?
   testthat::expect_gt(length(app$snapshotDownload("download_results-results_download")), 100)
   testthat::expect_gt(length(app$snapshotDownload("download_report-report_download")), 100)
+  # are we on the results page?
+  testthat::expect_equal(val$export$current_page, "Results")
 })
