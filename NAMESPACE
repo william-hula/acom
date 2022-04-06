@@ -2,8 +2,6 @@
 
 export("%>%")
 export(accordion_faq)
-export(accordion_rescore)
-export(accordion_retest)
 export(accordion_test)
 export(bs_accordion)
 export(bs_accordion_item)

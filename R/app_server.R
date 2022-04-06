@@ -63,7 +63,7 @@ app_server <- function( input, output, session ) {
     if(nrow(values$previous)>1){
         values$num_previous <- 1
         values$min_sem <- min(values$previous$sem, na.rm = T)
-        shinyjs::enable("next_retest")
+        shinyjs::enable("next_test")
       # triggered if uploadedData function returns an error
       # resets the upload function. 
     } else {
@@ -91,23 +91,15 @@ app_server <- function( input, output, session ) {
   # TEST FLOW
   # If you press administer test, then change to the new_pnt page. 
   # reactive value holding new test set to TRUE
+
   observeEvent(input$administer_test,{
-    values$new_test = TRUE
     changeIntroPage("new_pnt_page")
   })
   # go back to welcome page
   observeEvent(input$back_test,{
     changeIntroPage("welcome_page")
   })
-  # If you press retest...
-  observeEvent(input$administer_retest,{
-    values$new_test = FALSE
-    changeIntroPage("retest_pnt_page")
-  })
-  # go back to welcome page
-  observeEvent(input$back_retest,{
-    changeIntroPage("welcome_page")
-  })
+
   # If you press score offline test...
   observeEvent(input$score_test,{
     values$new_test = FALSE
@@ -122,20 +114,12 @@ app_server <- function( input, output, session ) {
   observeEvent(input$next_test,{
     changeIntroPage("instructions_page")
   })
-  # next on retest takes you to the same page
-  # because the instructions are the same
-  observeEvent(input$next_retest,{
-    changeIntroPage("instructions_page")
-  })
+
   # this goes back either to the test
   # or retest page depending on which you 
   # initially elevted. 
   observeEvent(input$back_to_test_or_retest,{
-    if(isTruthy(values$new_test)){
       changeIntroPage("new_pnt_page")
-    } else {
-      changeIntroPage("retest_pnt_page")
-    }
   })
   
   
@@ -148,6 +132,40 @@ app_server <- function( input, output, session ) {
   # the observe({ function means that the app is always monitoring these values})
   # in this case, its because we want to keep changing the possible options for 
   # the tests depending on which test is selected. 
+  observeEvent(input$retest,{
+    values$new_test = !input$retest
+    if(isTruthy(input$retest)){
+      shinyjs::disable("next_test")
+      shinyjs::show("file1")
+      updateRadioButtons(session, "numitems", 
+                         label = NULL, #"Select PNT Test Administration",
+                         choices = c(
+                           "30-item Computer Adaptive PNT" = "30_cat",
+                           #"175-item Computer Adaptive PNT" = "175_cat",
+                           "Variable length Computer Adaptive PNT" = "SEM",
+                           "30-item PNT Short form (Walker)" = "30_walker",
+                           "175-item Standard PNT" = "175_standard"
+                         ),
+                         selected = "30_cat",
+                         inline = F)
+    } else {
+      shinyjs::hide("file1")
+      shinyjs::reset("file1")
+      shinyjs::enable("next_test")
+      updateRadioButtons(session, "numitems",
+                         label = NULL, #"Select PNT Test Administration",
+                         choices = c(
+                           "30-item Computer Adaptive PNT" = "30_cat",
+                           "175-item Computer Adaptive PNT" = "175_cat",
+                           #"Variable length Computer Adaptive PNT" = "SEM",
+                           "30-item PNT Short form (Walker)" = "30_walker",
+                           "175-item Standard PNT" = "175_standard"
+                         ),
+                         selected = "30_cat",
+                         inline = F)
+    }
+  })
+  
   observe({
     # These options are available for new_test. 
     # They are shown on the new test page. 
@@ -173,49 +191,48 @@ app_server <- function( input, output, session ) {
           shinyjs::hide("eskimo")
         }
     } else { # These options are for the rettest page. 
-      
       # if the second test is a variable length. 
-      if(input$numitems_retest == "SEM"){
+      if(input$numitems == "SEM"){
         # set values. 
         values$test_length <- "SEM"
         # by default the exclude previous option is set to TRUE
         shinyjs::disable("exclude_previous")
-        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = TRUE)
+        updateCheckboxInput(session, "exclude_previous", value = TRUE)
         # hide these options
-        shinyjs::hide("walker_retest")
-        shinyjs::hide("eskimo_retest")
+        shinyjs::hide("walker")
+        shinyjs::hide("eskimo")
         
-      } else if(input$numitems_retest == "30_cat"){
+      } else if(input$numitems == "30_cat"){
         
         # fixed length IRT of length 30
         values$test_length = 30
-        shinyjs::enable("exclude_previous") # option is available to exlcude previous. 
-        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = TRUE)
-        shinyjs::hide("walker_retest")
-        shinyjs::hide("eskimo_retest")
+        shinyjs::enable("exclude_previous") # option is available to exclude previous. 
+        updateCheckboxInput(session, "exclude_previous", value = TRUE)
+        shinyjs::hide("walker")
+        shinyjs::hide("eskimo")
         
-      } else if(input$numitems_retest == "175_cat"){
+      } else if(input$numitems == "175_cat"){
         
         values$test_length = 174
         shinyjs::disable("exclude_previous")
-        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = FALSE)
-        shinyjs::hide("walker_retest")
-        shinyjs::hide("eskimo_retest")
+        updateCheckboxInput(session, "exclude_previous", value = FALSE)
+        shinyjs::hide("walker")
+        shinyjs::hide("eskimo")
         
-      } else if(input$numitems_retest == "175_standard"){# full pnt
-        values$test_length = ifelse(input$eskimo_retest, 174, 175)
+      } else if(input$numitems == "175_standard"){# full pnt
+        values$test_length = ifelse(input$eskimo, 174, 175)
         shinyjs::disable("exclude_previous")
-        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = FALSE)
-        shinyjs::hide("walker_retest")
-        shinyjs::show("eskimo_retest")
+        updateCheckboxInput(session, "exclude_previous", value = FALSE)
+        shinyjs::hide("walker")
+        shinyjs::show("eskimo")
         
       } else { #Final condition is for the walker test. No need to exclude previous
         
         values$test_length = 30
         shinyjs::disable("exclude_previous")
-        updateCheckboxInput(getDefaultReactiveDomain(), "exclude_previous", value = FALSE)
-        shinyjs::show("walker_retest")
-        shinyjs::hide("eskimo_retest")
+        updateCheckboxInput(session, "exclude_previous", value = FALSE)
+        shinyjs::show("walker")
+        shinyjs::hide("eskimo")
         
       }
     }
@@ -245,8 +262,6 @@ app_server <- function( input, output, session ) {
   # When a key is selected (1 or 2) it logs the key. 
   observeEvent(input$keys, {
     values$key_val = input$keys
-    #cat(paste0("The input key was: ", input$keys), "\n")
-    #cat(paste0("The saved key value was: ", values$key_val), "\n")
   })
   
   # the toggle key can also change the current selection.
@@ -341,12 +356,11 @@ app_server <- function( input, output, session ) {
     values$key_val = NULL # keeps track of button press 1 (error), 2 (correct)...make sure empty
     values$exclude_previous <- ifelse(values$new_test, F, input$exclude_previous) 
     values$notes = input$notes # holds notes
-    values$notes_retest = input$notes_retest # holds notes for retest
-    values$eskimo <- ifelse(values$new_test, input$eskimo, input$eskimo_retest) # include eskimo?
+    values$eskimo <- input$eskimo# include eskimo?
     
     # These things need to happen for new tests
     # also saving values for the test item selections
-    if(isTruthy(values$new_test)){
+    #if(isTruthy(values$new_test)){
       values$selected_test = input$numitems
       # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
       # computer adaptive if the string cat is in the num items inputs
@@ -360,23 +374,23 @@ app_server <- function( input, output, session ) {
         values$item_difficulty = subset(values$item_difficulty, walker == input$walker)
       }
       
-    } else { # essentially retest
-      values$selected_test = input$numitems_retest
-      # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
-      # computer adaptive if the string cat is in the num items inputs
-      values$IRT = ifelse(grepl( "cat", input$numitems_retest), TRUE,
-                          ifelse(grepl("SEM", input$numitems_retest), TRUE,
-                                       FALSE))
+    #} else { # essentially retest
+      # values$selected_test = input$numitems_retest
+      # # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
+      # # computer adaptive if the string cat is in the num items inputs
+      # values$IRT = ifelse(grepl( "cat", input$numitems_retest), TRUE,
+      #                     ifelse(grepl("SEM", input$numitems_retest), TRUE,
+      #                                  FALSE))
+      # 
+      # # walker is true if the string walker is in the num items inputs
+      # values$walker = ifelse(grepl("walker", input$numitems_retest), TRUE, FALSE)
+      # values$walker_form = ifelse(isTruthy(values$walker), input$walker_retest, NA)
+      # # walker again
+      # if(isTruthy(values$walker)){
+      #   values$item_difficulty = subset(values$item_difficulty, walker == input$walker_retest)
+      # }
       
-      # walker is true if the string walker is in the num items inputs
-      values$walker = ifelse(grepl("walker", input$numitems_retest), TRUE, FALSE)
-      values$walker_form = ifelse(isTruthy(values$walker), input$walker_retest, NA)
-      # walker again
-      if(isTruthy(values$walker)){
-        values$item_difficulty = subset(values$item_difficulty, walker == input$walker_retest)
-      }
-      
-    }
+    #}
     # show the start over button now, which will refresh the app. 
     shinyjs::show("start_over")
     
@@ -757,7 +771,7 @@ app_server <- function( input, output, session ) {
     file <- input$file_incomplete
 
     incomplete_dat <- read.csv(file$datapath)
-    current_test = ifelse(values$new_test, input$numitems, input$numitems_retest)
+    current_test = input$numitems
     
     if (!all(c("key", "sem", "ability", "order", "test", "resp", "response",
               "item_number", "itemDifficulty", "discrimination") %in% colnames(incomplete_dat))) {
@@ -796,9 +810,7 @@ app_server <- function( input, output, session ) {
     # only use IRT function if NOT 175 items
     #values$name = input$name
     values$notes = input$notes
-    values$notes_retest = input$notes_retest
-    values$eskimo <- ifelse(values$new_test, input$eskimo, input$eskimo_retest)
-    if(isTruthy(values$new_test)){
+    values$eskimo <- input$eskimo
       # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
       # computer adaptive if the string cat is in the num items inputs
       values$selected_test = input$numitems
@@ -811,20 +823,7 @@ app_server <- function( input, output, session ) {
         values$item_difficulty = values$item_difficulty[values$item_difficulty$walker == input$walker,]
         
       }
-      
-    } else {
-      # IRT is poorly named - this should say CAT - aka not computer adaptive is CAT = F
-      # computer adaptive if the string cat is in the num items inputs
-      values$selected_test = input$numitems_retest
-      values$IRT = ifelse(grepl(input$numitems_retest, "cat"), TRUE, FALSE)
-      # walker is true if the string walker is in the num items inputs
-      values$walker = ifelse(grepl(input$numitems_retest, "walker"), TRUE, FALSE)
-      values$walker_form = input$walker_retest
-      if(isTruthy(values$walker)){
-        values$item_difficulty = values$item_difficulty[values$item_difficulty$walker == input$walker_retest,]
-      }
-      
-    }
+
 
     shinyjs::show("start_over")
 
