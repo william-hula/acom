@@ -86,7 +86,7 @@ intro_tab_div <- function() {
                                 )
                               ), br(),
                                 #textInput("name", "Enter a Name (optional)"),
-                                textInput("notes", "Enter any notes (optional)"),
+                                textInput("notes", "Notes (optional):"),
                                 tags$em("If continuing an incomplete test, reselect your original choices and proceed to the next page."), br(), br(),
                                 div(
                                   align = "center",
