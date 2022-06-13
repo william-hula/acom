@@ -42,31 +42,28 @@ intro_tab_div <- function() {
                           fluidRow(class = "justify-content-around",
                             column(class="col-sm-4 col-md-4 col-lg-3",
                               width = 3,
-                                h5("Administer PNT"),
-                                br(),
+                                h4("Administer PNT", align = "center"),hr(),
+                                #br(),
+                              tags$b("Administration:"),
+                              radioButtons("retest", label = NULL, inline = TRUE,
+                                           choices = c("Initial test" = "1",
+                                                                 "Retest" = "2")),
+                            
+                              tags$b("Select Test Version:", style="margin-bottom:50px;"),
                                 ### Use this to set how many items to run.
                                 radioButtons(
-                                  inputId = "numitems",
-                                  label = NULL, #"Select PNT Test Administration",
+                                  inputId = "numitems", 
+                                  label = NULL,
                                   choices = c(
-                                    "30-item Computer Adaptive PNT" = "30_cat",
-                                    "175-item Computer Adaptive PNT" = "175_cat",
-                                    #"Variable length Computer Adaptive PNT" = "SEM",
-                                    "30-item PNT Short form (Walker)" = "30_walker",
-                                    "175-item Standard PNT" = "175_standard"
+                                    "30-item Computer Adaptive" = "30_cat",
+                                    "175-item Computer Adaptive" = "175_cat",
+                                    "30-item Short form (Walker)" = "30_walker",
+                                    "175-item Standard" = "175_standard"
                                   ),
                                   selected = "30_cat",
                                   inline = F
                                 ),
-                                checkboxInput("retest", "Select for retest"),
-                                shinyjs::hidden(
-                                  fileInput("file1", "Upload previous results", accept = ".csv")
-                                  ),
-                                shinyjs::hidden(
-                                  checkboxInput("exclude_previous",value = T,
-                                    "Exclude items from first administration"
-                                  )
-                                ),
+                                
                                 shinyjs::hidden(checkboxInput(
                                   "eskimo",
                                   'Exclude item "Eskimo"',
@@ -80,6 +77,14 @@ intro_tab_div <- function() {
                                     selected = "A"
                                   )
                                 ),
+                              shinyjs::hidden(
+                                div(id="retest_div", class = "testinfo",
+                                    fileInput("file1", "Upload previous results", accept = ".csv"),
+                                    checkboxInput("exclude_previous",value = T,
+                                                  "Exclude items from first administration"
+                                    )
+                                )
+                              ), br(),
                                 #textInput("name", "Enter a Name (optional)"),
                                 textInput("notes", "Enter any notes (optional)"),
                                 tags$em("If continuing an incomplete test, reselect your original choices and proceed to the next page."), br(), br(),

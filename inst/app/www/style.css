@@ -36,6 +36,10 @@ h2{
   font-size: 0.8em;
 }
 
+#numitems{
+  margin-top:12px;
+}
+
 .ipad{
   height:80vh;
   border-radius:10px;

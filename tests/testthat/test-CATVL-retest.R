@@ -9,7 +9,7 @@ test_that("PNT-CATVL-retest", {
   
   #app$setInputs(welcome_next = "click")
   app$setInputs(administer_test = "click")
-  app$setInputs(retest = "click")
+  app$setInputs(retest = "2")
 
   app$uploadFile(file1 = here::here("tests", "testthat", "files", "test_upload_cat30.csv"))
   app$setInputs(numitems = "SEM")

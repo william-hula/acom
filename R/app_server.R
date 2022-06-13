@@ -133,36 +133,40 @@ app_server <- function( input, output, session ) {
   # in this case, its because we want to keep changing the possible options for 
   # the tests depending on which test is selected. 
   observeEvent(input$retest,{
-    values$new_test = !input$retest
-    if(isTruthy(input$retest)){
-      shinyjs::disable("next_test")
-      shinyjs::show("file1")
-      updateRadioButtons(session, "numitems", 
-                         label = NULL, #"Select PNT Test Administration",
-                         choices = c(
-                           "30-item Computer Adaptive PNT" = "30_cat",
-                           #"175-item Computer Adaptive PNT" = "175_cat",
-                           "Variable length Computer Adaptive PNT" = "SEM",
-                           "30-item PNT Short form (Walker)" = "30_walker",
-                           "175-item Standard PNT" = "175_standard"
-                         ),
-                         selected = "30_cat",
-                         inline = F)
-    } else {
-      shinyjs::hide("file1")
+    values$new_test = ifelse(input$retest == "1", TRUE, FALSE)#!input$retest
+    if(isTruthy(values$new_test)){
+     
+      shinyjs::hide("retest_div")
       shinyjs::reset("file1")
       shinyjs::enable("next_test")
       updateRadioButtons(session, "numitems",
                          label = NULL, #"Select PNT Test Administration",
                          choices = c(
-                           "30-item Computer Adaptive PNT" = "30_cat",
-                           "175-item Computer Adaptive PNT" = "175_cat",
+                           "30-item Computer Adaptive" = "30_cat",
+                           "175-item Computer Adaptive" = "175_cat",
                            #"Variable length Computer Adaptive PNT" = "SEM",
-                           "30-item PNT Short form (Walker)" = "30_walker",
-                           "175-item Standard PNT" = "175_standard"
+                           "30-item Short form (Walker)" = "30_walker",
+                           "175-item Standard" = "175_standard"
                          ),
                          selected = "30_cat",
                          inline = F)
+      
+    } else {
+     
+      shinyjs::show("retest_div")
+      shinyjs::disable("next_test")
+      updateRadioButtons(session, "numitems", 
+                         label = NULL, #"Select PNT Test Administration",
+                         choices = c(
+                           "30-item Computer Adaptive" = "30_cat",
+                           "175-item Computer Adaptive" = "175_cat",
+                           "30-item Short form (Walker)" = "30_walker",
+                           "175-item Standard" = "175_standard",
+                           "Variable length Computer Adaptive" = "SEM"
+                         ),
+                         selected = "30_cat",
+                         inline = F)
+    
     }
   })
   
@@ -170,7 +174,7 @@ app_server <- function( input, output, session ) {
     # These options are available for new_test. 
     # They are shown on the new test page. 
     if(isTruthy(values$new_test)){
-      shinyjs::hide("exclude_previous")
+      
        if(input$numitems == "175_standard"){
           # full pnt standard administration
           values$test_length = ifelse(input$eskimo, 174, 175)
@@ -192,7 +196,7 @@ app_server <- function( input, output, session ) {
           shinyjs::hide("eskimo")
         }
     } else { # These options are for the rettest page. 
-      shinyjs::show("exclude_previous")
+      
       # if the second test is a variable length. 
       if(input$numitems == "SEM"){
         # set values. 
