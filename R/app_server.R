@@ -691,7 +691,7 @@ app_server <- function( input, output, session ) {
                      sem = values$irt_final$sem,
                      last_ability = values$irt_final$last_ability,
                      last_sem = values$irt_final$last_sem,
-                     num_previous = values$num_previous),
+                     num_previous = values$num_previous),br(),
       get_item_warning(values) # show a warning if not enugh items were given. 
     )
       

@@ -3,11 +3,11 @@
 #' @export
 results_tab_div <- function(){
   fluidRow(
-  column(width = 8,offset = 2,
+  column(width = 8,offset = 2, br(),
          tabsetPanel(type = "pills",
                      tabPanel("Summary",br(),
                               uiOutput("results_summary"), 
-                              plotOutput("plot"),
+                              plotOutput("plot"), br(),
                               uiOutput("plot_caption")
                      ),
                      tabPanel("Data", 

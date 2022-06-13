@@ -23,7 +23,7 @@ get_item_warning <- function(values){
     )
     return(out)
   } else {
-    return("Check passed")
+    return("")
   }
   
   
