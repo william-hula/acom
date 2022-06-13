@@ -138,8 +138,8 @@ intro_tab_div <- function() {
              tabPanelBody(value = "instructions_page",
                           fluidRow(class = "justify-content-center",
                             column(style = "padding-right:2%;",
-                              width = 5,
-                              h3("Administration Instructions"),
+                              width = 4,
+                              h4("Administration Instructions", align = "center"),hr(),
                               includeMarkdown(system.file("app/www/instructions.md",
                                                           package = "pnt")),
                               div(
@@ -157,9 +157,9 @@ intro_tab_div <- function() {
                                   )
                                 )
                             ),
-                            column(width = 6,
+                            column(width = 7,
                                    class = "testinfo",
-                                   h5("Notes on test administration", style = "margin-top:0;margin-bottom:1.25rem;"),
+                                   h5("Test Administration Frequently Asked Questions", style = "margin-top:0;margin-bottom:1.25rem;"),
                                    accordion_faq()
                             )
                           ))
