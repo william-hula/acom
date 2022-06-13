@@ -17,11 +17,7 @@ get_plot <- function(irt_final, basesize = 18, sample_thetas = thetas, line_weig
   # 91 and 9 are used here so that the added value to thetas isn't
   # shown in the plot which has cutoffs of 10 and 90. 
   theta_df = tibble::tibble( thetas = c(thetas, 91, 9) )
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> simplifyP1
   # starts the plot and then has the data extracted from the plot
   q = ggplot2::ggplot(data = theta_df,
                       ggplot2::aes(x = thetas)
@@ -36,11 +32,7 @@ get_plot <- function(irt_final, basesize = 18, sample_thetas = thetas, line_weig
   
   # data of rows for shading
   y_dens = subset(q_dat$data[[1]], abs(x-irt_final$ability) == min(abs(x - irt_final$ability)))$y
-<<<<<<< HEAD
-  
-=======
-        
->>>>>>> simplifyP1
+
   # build the rest of the plot
   q <- q +
     ggplot2::geom_area(data=data.frame(x=q_dat$data[[1]]$x[x1:x2],

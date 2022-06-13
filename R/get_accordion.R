@@ -59,7 +59,7 @@ accordion_faq <- function(){
     items = tagList(
       bs_accordion_item(
         title = "How long should I wait for a response?",
-        tags$p("While the standard and short-form PNT administration rules (Roach et al., 1996; Walker and Schwartz 2012) allow examinees up to 30 seconds to respond to each item, studies for the PNT-CAT short forms (Fergadiotis et al., 2019; Hula et al., 2020) allowed only 10 seconds."),
+        tags$p("While the standard and short-form PNT administration rules (Roach et al., 1996) allow examinees up to 30 seconds to respond to each item, studies for the PNT-CAT short forms (Fergadiotis et al., 2019; Hula et al., 2020; Walker and Schwartz 2012) allowed only 10 seconds."),
         active = TRUE
       ),
       bs_accordion_item(
