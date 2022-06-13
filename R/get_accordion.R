@@ -15,18 +15,24 @@ accordion_test <- function(){
         active = TRUE
       ),
       bs_accordion_item(
+        title = "PNT-CAT175: Full 175-item version in adaptive order (Fergadiotis et al., 2019):",
+        div(
+          tags$p("This test provides administration of (up to) 175 items in adaptive order, beginning with an item targeting average naming ability, and proceeding as described above for the PNT-CAT30. This test should be used when a more, or maximally precise score estimate is required relative to the PNT-CAT30. Users can stop this test at any point during administration. Provided that at least 30 items were administered, this test should have psychometric properties similar to or better than those reported for the PNT-CAT30. This option is available for an initial test only."),
+          tags$b("Average administration time: 20-40 minutes.")
+        )
+      ),
+      bs_accordion_item(
+        title = "PNT-CATVL: Variable-length Computer Adaptive Alternate Form (Hula et al., 2020):",
+        div(
+          tags$p("This test adaptively administers items until the standard error of the score estimate is as precise as it was for a previously administered PNT-CAT30. It also excludes the items given in the previous PNT-CAT30 (required). Score estimates from the PNT-CATVL correlated 0.89 with independent estimates from the PNT-CAT30. Although the PNT-CATVL administers up to 100 items, the median number of items administered by Hula et al. (2020) was 43.5 and the minimum number was 21. This option is available for retest only. Average administration time: 9-10 minutes."),
+          tags$b("Required upload: A previous PNT-CAT30.")
+        )
+      ),
+      bs_accordion_item(
         title = "PNT-30A, PNT-30B: 30-item static short forms A & B (Walker & Schwartz, 2012):",
         div(
           tags$p("These are two static 30-item PNT short forms with non-overlapping items. The two short forms correlated highly with each other (0.93), and with the full PNT (0.93 and 0.98). This application provides T-score estimates for these short forms on the same scale as the other test versions. Change in naming ability can be assessed using the alternate form."),
         tags$b("Average administration time: similar to PNT-CAT30.")
-        )
-        
-      ),
-      bs_accordion_item(
-        title = "PNT-CAT175: Full 175-item version in adaptive order (Fergadiotis et al., 2019):",
-        div(
-          tags$p("This test provides administration of (up to) all 175 items in adaptive order, beginning with an item targeting average naming ability, and proceeding as described above for the PNT-CAT30. This test should be used when a more, or maximally precise score estimate is required relative to the PNT-CAT30. Users can stop this test at any point during administration. Provided that at least 30 items were administered, this test should have psychometric properties similar to or better than those reported for the PNT-CAT30. "),
-        tags$b("Average administration time: 20-40 minutes.")
         )
       ),
       bs_accordion_item(
@@ -42,77 +48,6 @@ accordion_test <- function(){
 }
 
 
-#' Generates faq for accordions
-#'
-#' @export
-accordion_retest <- function(){
-  
-  bs_accordion(
-    id = "accordion_retest",
-    items = tagList(
-      bs_accordion_item(
-        title = "PNT-CAT30: 30-item Computer Adaptive Version (Fergadiotis et al., 2019):",
-        div(
-          tags$p("This test adaptively administers 30 items, beginning with an item targeting average naming ability, excluding those delivered in a previous PNT-CAT30 (recommended). Items are selected to provide the maximum reduction in the standard error of measurement based on the cumulative responses collected. Score estimates from the PNT-CAT30 correlated 0.95 with scores from the full PNT and are suitable for estimating the overall severity of anomia in persons with aphasia. Average administration time: 8-9 Minutes."),
-          tags$b(" Required upload: A previous PNT-CAT30.")
-        ),
-        active = TRUE
-      ),
-      bs_accordion_item(
-        title = "PNT-CATVL: Variable-length Computer Adaptive Alternate Form (Hula et al., 2020):",
-        div(
-          tags$p("This test adaptively administers items until the standard error of the score estimate is as precise as it was for a previously administered PNT-CAT30. It also excludes the items given in the previous PNT-CAT30 (required). Score estimates from the PNT-CATVL correlated 0.89 with independent estimates from the PNT-CAT30. Although the PNT-CATVL administers up to 100 items, the median number of items administered by Hula et al. (2020) was 43.5 and the minimum number was 21. Average administration time: 9-10 minutes."),
-          tags$b("Required upload: A previous PNT-CAT30.")
-        )
-      ),
-      bs_accordion_item(
-        title = "PNT-30A, PNT-30B: 30-item static short forms A & B (Walker & Schwartz, 2012):",
-        div(
-          tags$p("These are two static 30-item PNT short forms with non-overlapping items. For a second assessment, the alternative form should be chosen. The two short forms correlated highly with each other (0.93), and with the full PNT (0.93 and 0.98). This application provides T-score estimates for these short forms on the same scale as the other test versions. Average administration time: similar to PNT-CAT30."),
-          tags$b("Required upload: A previous PNT-30A or PNT-30B.")
-        )
-      ),
-      bs_accordion_item(
-        title = "PNT-175: Full 175-item version* in standard administration order (Roach et al., 1996):",
-        div(
-          tags$p("This option provides administration of all 175 items in standard PNT administration order. Although this test can also be stopped at any point during administration and will provide a theoretically valid score estimate and standard error, this is not recommended because we have not collected evidence regarding the validity of short form score estimates obtained in this way."),
-          tags$b(" Required upload: A Previous PNT-175.")
-        )
-      )
-    )
-  )
-  
-}
-
-#' Generates faq for accordions
-#'
-#' @export
-accordion_rescore <- function(){
-  
-  # bs_accordion(
-  #   id = "accordion_page1",
-  #   items = tagList(
-  #     bs_accordion_item(
-  #       title = "PNT-CAT30: 30-item Computer Adaptive Version (Fergadiotis et al., 2019):",
-  #       tags$p("This test adaptively administers 30 items, beginning with an item targeting average naming ability. Items are selected to provide the maximum reduction in the standard error of measurement based on the cumulative responses collected. Score estimates from the PNT-CAT30 correlated 0.95 with scores from the full PNT and are suitable for estimating the overall severity of anomia in persons with aphasia. Change in naming ability can be assessed using a subsequent PNT-CAT30 or Variable Length PNT-CAT. Average administration time: 8-9 Minutes. "),
-  #       active = TRUE
-  #     ),
-  #     bs_accordion_item(
-  #       title = "PNT-30A, PNT-30B: 30-item static short forms A & B (Walker & Schwartz, 2012):",
-  #       tags$p("These are two static 30-item PNT short forms with non-overlapping items. The two short forms correlated highly with each other (0.93), and with the full PNT (0.93 and 0.98). This application provides T-score estimates for these short forms on the same scale as the other test versions. Change in naming ability can be assessed using the alternate form. Average administration time: similar to PNT-CAT30.")
-  #     ),
-  #     bs_accordion_item(
-  #       title = "PNT-CAT175: Full 175-item version in adaptive order (Fergadiotis et al., 2019):",
-  #       tags$p("This test provides administration of (up to) all 175 items in adaptive order, beginning with an item targeting average naming ability, and proceeding as described above for the PNT-CAT30. This test should be used when a more, or maximally precise score estimate is required relative to the PNT-CAT30. Users can stop this test at any point during administration. Provided that at least 30 items were administered, this test should have psychometric properties similar to or better than those reported for the PNT-CAT30. Average administration time: 20-40 minutes."),
-  #     ),
-  #     bs_accordion_item(
-  #       title = "PNT-175: Full 175-item version* in standard administration order (Roach et al., 1996):",
-  #       tags$p("This option provides administration of all 175 items in standard PNT administration order. Although this test can also be stopped at any point during administration and will provide a theoretically valid score estimate and standard error, this is not recommended because we have not collected evidence regarding the validity of short form score estimates obtained in this way."),
-  #     ),
-  #   )
-  # )
-  # 
-}
 
 #' Generates faq for accordions
 #'

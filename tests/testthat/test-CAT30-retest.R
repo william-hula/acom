@@ -7,10 +7,12 @@ test_that("PNT-CAT30-retest", {
   app <- ShinyDriver$new(here::here(), seed = 1)
   responses <- c(rep(c(2,2), 15))
   
-  #app$setInputs(welcome_next = "click")
-  app$setInputs(administer_retest = "click")
+  app$setInputs(administer_test = "click")
+  app$setInputs(retest = "2")
+  
+  
   app$uploadFile(file1 = here::here("tests", "testthat", "files", "test_upload_cat30.csv"))
-  app$setInputs(next_retest = "click")
+  app$setInputs(next_test = "click")
   
   app$setInputs(start_practice = "click")
 
@@ -52,6 +54,8 @@ test_that("PNT-CAT30-retest", {
   testthat::expect_equal(
     sum(val$export$results$key=='2', na.rm = T)+sum(val$export$results$key=='1', na.rm = T),
     30)
+  # make sure SEM difference exists
+  testthat::expect_lt((val$export$irt_final$last_sem-val$export$irt_final$sem), 10)
   # can we download data and the results?
   testthat::expect_gt(length(app$snapshotDownload("download_results-results_download")), 100)
   testthat::expect_gt(length(app$snapshotDownload("download_report-report_download")), 100)

@@ -9,11 +9,12 @@ test_that("Walker Form A Retest", {
   
   #app$setInputs(welcome_next = "click")
   
-  app$setInputs(administer_retest = "click")
+  app$setInputs(administer_test = "click")
+  app$setInputs(retest = "2")
   app$uploadFile(file1 = here::here("tests", "testthat", "files", "test_walker_a.csv"))
-  app$setInputs(numitems_retest = "30_walker")
+  app$setInputs(numitems = "30_walker")
   app$setInputs(walker = "B")
-  app$setInputs(next_retest = "click")
+  app$setInputs(next_test = "click")
 
   app$setInputs(start_practice = "click")
 
@@ -51,6 +52,8 @@ test_that("Walker Form A Retest", {
   testthat::expect_equal(sum(val$export$results$key=='1', na.rm = T), sum(responses==1))
   # Are the test administration final numbers saved?
   testthat::expect_equal(sum(!is.na(val$export$irt_final)), 4)
+  # make sure SEM difference exists
+  testthat::expect_lt((val$export$irt_final$last_sem-val$export$irt_final$sem), 10)
   # can we download data and the results?
   testthat::expect_gt(length(app$snapshotDownload("download_results-results_download")), 100)
   testthat::expect_gt(length(app$snapshotDownload("download_report-report_download")), 100)

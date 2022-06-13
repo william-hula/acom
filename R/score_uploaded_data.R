@@ -28,8 +28,8 @@ score_uploaded_data <- function(values){
   
   pars = data.frame(a = dat$discrimination,
                     b = dat$itemDifficulty,
-                    c = rep(1), #1PL has no guessing parameter ,
-                    d = rep(0), #1PL has no innatention parameter,
+                    c = rep(0), #1PL has no guessing parameter ,
+                    d = rep(1), #1PL has no innatention parameter,
                     cbGroup = rep(1))
   # breaks it down into what gets fed into the 1PL IRT
   prov = catR::breakBank(pars)
@@ -37,10 +37,16 @@ score_uploaded_data <- function(values){
   rownames(bank) <- dat$target
   x = dat$response
   # ability estimate using bayes modal:
-  ability = catR::thetaEst(bank, x, method = "EAP", parInt = c(5, 95, 33), priorPar = c(50,10))
+  ability = catR::thetaEst(bank, x,
+                           method = irt_params$method,
+                           parInt = irt_params$parInt,
+                           priorPar = irt_params$priorPar)
   # generates the next item
   # standard error of the mean
-  sem = catR::semTheta(ability, bank, x, method = "EAP", parInt = c(5, 95, 33), priorPar = c(50,10))
+  sem = catR::semTheta(ability, bank, x,
+                       method = irt_params$method,
+                       parInt = irt_params$parInt,
+                       priorPar = irt_params$priorPar)
   ci_95 = sem*1.96
   accuracy = sum(dat$key==2, na.rm = T)/(sum(dat$key==1, na.rm = T)+sum(dat$key==2, na.rm = T))
     

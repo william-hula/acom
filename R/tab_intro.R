@@ -26,8 +26,8 @@ intro_tab_div <- function() {
                                 ),
                               br(),
                               div(align = "center",
-                                  actionButton("administer_test", "Administer new PNT"),
-                                  actionButton("administer_retest", "Re-administer PNT"),
+                                  actionButton("administer_test", "Administer PNT"),
+                                  #actionButton("administer_retest", "Re-administer PNT"),
                                   actionButton("score_test", "Rescore PNT / Score offline test")),
                                   #actionButton("welcome_next", "Get Started")),
                               br(), #br(),
@@ -42,21 +42,28 @@ intro_tab_div <- function() {
                           fluidRow(class = "justify-content-around",
                             column(class="col-sm-4 col-md-4 col-lg-3",
                               width = 3,
-                                h5("Administer PNT"),
-                                br(),
+                                h4("Administer PNT", align = "center"),hr(),
+                                #br(),
+                              tags$b("Administration:"),
+                              radioButtons("retest", label = NULL, inline = TRUE,
+                                           choices = c("Initial test" = "1",
+                                                                 "Retest" = "2")),
+                            
+                              tags$b("Select Test Version:", style="margin-bottom:50px;"),
                                 ### Use this to set how many items to run.
                                 radioButtons(
-                                  inputId = "numitems",
-                                  label = NULL, #"Select PNT Test Administration",
+                                  inputId = "numitems", 
+                                  label = NULL,
                                   choices = c(
-                                    "30-item Computer Adaptive PNT" = "30_cat",
-                                    "175-item Computer Adaptive PNT" = "175_cat",
-                                    "30-item PNT Short form (Walker)" = "30_walker",
-                                    "175-item Standard PNT" = "175_standard"
+                                    "30-item Computer Adaptive" = "30_cat",
+                                    "175-item Computer Adaptive" = "175_cat",
+                                    "30-item Short form (Walker)" = "30_walker",
+                                    "175-item Standard" = "175_standard"
                                   ),
                                   selected = "30_cat",
                                   inline = F
                                 ),
+                                
                                 shinyjs::hidden(checkboxInput(
                                   "eskimo",
                                   'Exclude item "Eskimo"',
@@ -70,8 +77,17 @@ intro_tab_div <- function() {
                                     selected = "A"
                                   )
                                 ),
+                              shinyjs::hidden(
+                                div(id="retest_div", class = "testinfo",
+                                    fileInput("file1", "Upload previous results", accept = ".csv"),
+                                    checkboxInput("exclude_previous",value = T,
+                                                  "Exclude items from first administration"
+                                    )
+                                )
+                              ), br(),
                                 #textInput("name", "Enter a Name (optional)"),
                                 textInput("notes", "Enter any notes (optional)"),
+                                tags$em("If continuing an incomplete test, reselect your original choices and proceed to the next page."), br(), br(),
                                 div(
                                   align = "center",
                                   actionButton("back_test", "Back"),
@@ -89,68 +105,7 @@ intro_tab_div <- function() {
                             )
                           )),
              # PAGE 4 #########################################################
-             tabPanelBody(value = "retest_pnt_page",
-                          fluidRow(class = "justify-content-around",
-                            column(class="col-sm-4 col-md-4 col-lg-3",
-                              width = 3,
-                              div(
-                                h5("Readminister PNT"),
-                                br(),
-                                
-                                fileInput("file1", "Upload previous results", accept = ".csv"),
-                                ### Use this to set how many items to run.
-                                radioButtons(
-                                  inputId = "numitems_retest",
-                                  label = NULL,#"Select PNT Re-Administration",
-                                  choices = c(
-                                    "30-item Computer Adaptive PNT" = "30_cat",
-                                    "Variable length Computer Adaptive PNT" = "SEM",
-                                    #"175-item Computer Adaptive PNT" = "175_cat",
-                                    "30-item PNT Short form (Walker)" = "30_walker",
-                                    "175-item Standard PNT" = "175_standard"
-                                  ),
-                                  selected = "30_cat",
-                                  inline = F
-                                ),
-                                # should only be available for the 30 item
-                                shinyjs::disabled(
-                                  checkboxInput(
-                                    "exclude_previous",
-                                    "Exclude items from first administration",
-                                    value = T
-                                  )
-                                ),
-                                shinyjs::hidden(checkboxInput(
-                                  "eskimo_retest",
-                                  'Exclude item "Eskimo"',
-                                  value = T
-                                )),
-                                shinyjs::hidden(
-                                  radioButtons(
-                                    "walker_retest",
-                                    "Choose 30-item short form",
-                                    choices = c("A", "B"),
-                                    selected = "A"
-                                  )
-                                ),
-                                textInput("notes_retest", "Enter any notes (optional)"),
-                                div(
-                                  align = "center",
-                                  actionButton("back_retest", "Back"),
-                                  shinyjs::disabled(actionButton("next_retest", "Next"))
-                                )
-                              )
-                              # )
-                            ),
-                            column(class="col-sm-7, col-md-8, col-lg-8",
-                                   width = 7,
-                                   class = "testinfo",
-                                   h5("About the PNT test Versions", style = "margin-top:0;margin-bottom:1.25rem;"),
-                                   accordion_retest(),br(), br(),
-                                   includeMarkdown(system.file("app/www/esk_footnote.md", package = "pnt"))
-                            )
-                            
-                          )),
+             # Deleted!
              # PAGE 5 #########################################################
              tabPanelBody(value = "score_offline_page",
                           fluidRow(class = "justify-content-around",
@@ -158,7 +113,6 @@ intro_tab_div <- function() {
                               width = 4,
                               div(
                                 h5("Scoring an offline or completed test"),
-                                
                                 fileInput("file2", "Upload offline or re-scored data", accept = ".csv"),
                                 shinyjs::hidden(div(id = "input_file_warning", uiOutput("upload_error"))),
                                 div(
@@ -191,11 +145,13 @@ intro_tab_div <- function() {
                               div(
                                 align = "center",
                                 actionButton("back_to_test_or_retest", "Back"),
-                                #actionButton("continue_test", "Resume incomplete test"),
                                 actionButton("start_practice","Start Practice")
                               ),br(),
                               div(
-                                fileInput("file_incomplete", h5("Continue incomplete test")),
+                                h5("Resume incomplete test"),
+                                p("To resume an incomplete test, upload file with in-progress
+                                  data then select continue test below."),
+                                fileInput("file_incomplete", ""),
                                   div( align = "center",
                                     shinyjs::disabled(actionButton("resume", "Continue Test"))
                                   )

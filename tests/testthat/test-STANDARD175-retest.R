@@ -8,9 +8,11 @@ testthat::test_that("PNT-STANDARD 175-retest", {
   responses <- c(rep(c(1,2), 174/2))
   
   #app$setInputs(welcome_next = "click")
-  app$setInputs(administer_retest = "click")
+  app$setInputs(administer_test = "click")
+  app$setInputs(retest = "2")
+  
   app$uploadFile(file1 = here::here("tests", "testthat", "files", "test_upload_standard175.csv"))
-  app$setInputs(numitems_retest = "175_standard")
+  app$setInputs(numitems = "175_standard")
   app$setInputs(next_test = "click")
   app$setInputs(start_practice = "click")
 
@@ -34,7 +36,7 @@ testthat::test_that("PNT-STANDARD 175-retest", {
     app$executeScript("Mousetrap.trigger('enter');")
   }
 
-  Sys.sleep(5)
+  Sys.sleep(10)
   val = app$getAllValues()
   
   #########################################################
@@ -43,6 +45,7 @@ testthat::test_that("PNT-STANDARD 175-retest", {
   
   # are we on the results page?
   testthat::expect_equal(val$export$current_page, "Results")
+  
   # are responses tracked accurately? 
   testthat::expect_equal(sum(val$export$results$key=='2', na.rm = T), sum(responses==2))
   testthat::expect_equal(sum(val$export$results$key=='1', na.rm = T), sum(responses==1))
@@ -52,6 +55,9 @@ testthat::test_that("PNT-STANDARD 175-retest", {
   testthat::expect_equal(
     sum(val$export$results$key=='2', na.rm = T)+sum(val$export$results$key=='1', na.rm = T),
     174)
+  print(sum(val$export$results$key=='2', na.rm = T)+sum(val$export$results$key=='1', na.rm = T))
+  # make sure SEM difference exists
+  testthat::expect_lt((val$export$irt_final$last_sem-val$export$irt_final$sem), 10)
   # can we download data and the results?
   testthat::expect_gt(length(app$snapshotDownload("download_results-results_download")), 100)
   testthat::expect_gt(length(app$snapshotDownload("download_report-report_download")), 100)

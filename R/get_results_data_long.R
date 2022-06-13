@@ -29,7 +29,7 @@ get_results_data_long <- function(values){
   
   tmp = tmp[order(tmp$order), , drop = FALSE]
   
-  tmp$notes[[1]] = ifelse(values$new_test, values$notes, values$notes_retest)
+  tmp$notes[[1]] = values$notes
   return(tmp)
   
 }
