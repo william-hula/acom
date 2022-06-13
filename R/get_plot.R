@@ -13,20 +13,27 @@
 #' @export
 get_plot <- function(irt_final, basesize = 18, sample_thetas = thetas, line_weight = 1.25){
   
-  
-  theta_df = tibble::tibble( thetas = c(thetas, 80, 20) )
+  # fix for shading areas beyond what is in the 335 sample
+  # 91 and 9 are used here so that the added value to thetas isn't
+  # shown in the plot which has cutoffs of 10 and 90. 
+  theta_df = tibble::tibble( thetas = c(thetas, 91, 9) )
 
+  # starts the plot and then has the data extracted from the plot
   q = ggplot2::ggplot(data = theta_df,
     ggplot2::aes(x = thetas)
     ) + 
   ggplot2::geom_density(alpha = 0.4, fill = "lightgrey", adjust = 1.5)
   
+  # extract plot data
   q_dat <- ggplot2::ggplot_build(q)
+  # these refer to rows in the data extracted for wehere to shade the CI
   x1 <- min(which(q_dat$data[[1]]$x >=irt_final$ability-(irt_final$sem*1.96)))
   x2 <- max(which(q_dat$data[[1]]$x <=irt_final$ability+(irt_final$sem*1.96)))
   
+  # data of rows for shading
   y_dens = subset(q_dat$data[[1]], abs(x-irt_final$ability) == min(abs(x - irt_final$ability)))$y
         
+  # build the rest of the plot
   q <- q +
     ggplot2::geom_area(data=data.frame(x=q_dat$data[[1]]$x[x1:x2],
                               y=q_dat$data[[1]]$y[x1:x2]),
