@@ -13,8 +13,10 @@
 #' @export
 get_plot <- function(irt_final, basesize = 18, sample_thetas = thetas, line_weight = 1.25){
   
-  
-  theta_df = tibble::tibble( thetas = c(thetas, 80, 20) )
+  # adds two values to allow CIs to go above and below
+  # the extreme values in the normative sample. they are 
+  # excluded by the plot.
+  theta_df = tibble::tibble( thetas = c(thetas, 91, 9) )
 
   q = ggplot2::ggplot(data = theta_df,
     ggplot2::aes(x = thetas)
