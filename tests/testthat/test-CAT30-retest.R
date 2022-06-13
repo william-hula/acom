@@ -7,10 +7,12 @@ test_that("PNT-CAT30-retest", {
   app <- ShinyDriver$new(here::here(), seed = 1)
   responses <- c(rep(c(2,2), 15))
   
-  #app$setInputs(welcome_next = "click")
-  app$setInputs(administer_retest = "click")
+  app$setInputs(administer_test = "click")
+  app$setInputs(retest = "click")
+  
+  
   app$uploadFile(file1 = here::here("tests", "testthat", "files", "test_upload_cat30.csv"))
-  app$setInputs(next_retest = "click")
+  app$setInputs(next_test = "click")
   
   app$setInputs(start_practice = "click")
 

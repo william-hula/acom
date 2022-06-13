@@ -170,6 +170,7 @@ app_server <- function( input, output, session ) {
     # These options are available for new_test. 
     # They are shown on the new test page. 
     if(isTruthy(values$new_test)){
+      shinyjs::hide("exclude_previous")
        if(input$numitems == "175_standard"){
           # full pnt standard administration
           values$test_length = ifelse(input$eskimo, 174, 175)
@@ -191,6 +192,7 @@ app_server <- function( input, output, session ) {
           shinyjs::hide("eskimo")
         }
     } else { # These options are for the rettest page. 
+      shinyjs::show("exclude_previous")
       # if the second test is a variable length. 
       if(input$numitems == "SEM"){
         # set values. 

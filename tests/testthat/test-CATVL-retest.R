@@ -5,14 +5,16 @@ test_that("PNT-CATVL-retest", {
   #########################################################
   
   app <- ShinyDriver$new(here::here(), seed = 1)
-  responses <- c(rep(c(1,2), 14), 1)
+  responses <- c(rep(c(1,2), 15), 1)
   
   #app$setInputs(welcome_next = "click")
-  app$setInputs(administer_retest = "click")
+  app$setInputs(administer_test = "click")
+  app$setInputs(retest = "click")
+
   app$uploadFile(file1 = here::here("tests", "testthat", "files", "test_upload_cat30.csv"))
-  app$setInputs(numitems_retest = "SEM")
+  app$setInputs(numitems = "SEM")
   
-  app$setInputs(next_retest = "click")
+  app$setInputs(next_test = "click")
   
   app$setInputs(start_practice = "click")
 
@@ -52,6 +54,8 @@ test_that("PNT-CATVL-retest", {
   testthat::expect_equal(sum(!is.na(val$export$irt_final)), 4)
   # did the test stop when the second SEM was less than the first?
   testthat::expect_lt(val$export$irt_final$sem, val$export$irt_final$last_sem)
+  # make sure SEM difference isn't crazy
+  testthat::expect_lt((val$export$irt_final$last_sem-val$export$irt_final$sem), 1)
   # can we download data and the results?
   testthat::expect_gt(length(app$snapshotDownload("download_results-results_download")), 100)
   testthat::expect_gt(length(app$snapshotDownload("download_report-report_download")), 100)
