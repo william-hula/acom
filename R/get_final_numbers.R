@@ -9,17 +9,17 @@
 get_final_numbers <- function(out,
                               previous,
                               num_previous){
-  df = data.frame(
-    ability = out[[1]],
-    sem = out[[3]],
-    last_ability = NA,
-    last_sem = NA
-  )
-  
-  if(!is.null(previous)){
-      df$last_ability = previous[previous$order==max(previous$order, na.rm = T),]$ability
-      df$last_sem = previous[previous$order==max(previous$order, na.rm = T),]$sem
-    }
-
-  return(df)
+  # df = data.frame(
+  #   ability = out[[1]],
+  #   sem = out[[3]],
+  #   last_ability = NA,
+  #   last_sem = NA
+  # )
+  # 
+  # if(!is.null(previous)){
+  #     df$last_ability = previous[previous$order==max(previous$order, na.rm = T),]$ability
+  #     df$last_sem = previous[previous$order==max(previous$order, na.rm = T),]$sem
+  #   }
+  # 
+  # return(df)
 }

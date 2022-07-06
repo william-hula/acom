@@ -26,49 +26,40 @@ app_ui <- function(request) {
       # to timezone changes
       shinyjs::extendShinyjs(text = jsCode, functions = "gettime"),
       # allows us to use keys to enter responses
-      keys::useKeys(),
-      keys::keysInput("keys", response_keys), # 1 or 2. saved in sysdata.rda internal file
-      keys::keysInput("enter_key", enter), # enter key and space bar used to progress response
-      keys::keysInput("end_test", end_test_key), # esc is the end test key
-      keys::keysInput("clear_key", "0"), # the 0 clears the current response
-      keys::keysInput("toggle_key", "9"), # toggles between a 1 or 2 response
+       # keys::useKeys(),
+       # keys::keysInput("enter_key", "enter"), # enter key and space bar used to progress response
+     # keys::keysInput("end_test", end_test_key), # esc is the end test key
       
       ################################### layout starts here ######################### 
       
-      navbarPage(title = "PNT-CAT (beta)", # App title
+      navbarPage(title = "ACOM (in development)", # App title
                  id = "mainpage", # id of page so you can access current page with input$mainpage
                  theme = minimal_theme(), # theme function from {bslib}. see theme.R
 
                  ############################ Instructions ############################## 
                  
-                 tabPanelBody(value = "Home",
+                 tabPanelBody(value = "intro",
                               intro_tab_div()
-                 ),
-                 
-                 ############################ Practice ##################################
-                 
-                 tabPanelBody(value = "Practice", 
-                              uiOutput("practice_tab")
                  ),
                  
                  ############################ Assessment ################################
                  
-                 tabPanelBody(value = "Assessment", 
-                              uiOutput("slides_tab")
+                 tabPanelBody(value = "acom", 
+                              acom_tab_div()
                  ),
                  
                  ############################ Results ###################################
                  
-                 tabPanelBody(value = "Results", 
+                 tabPanelBody(value = "results", 
                               results_tab_div()
-                 ),
+                 ),#,
                  # Adds information to the right of the navbar. navspacer moves it to
                  # the right. nav_items inserts each item
                  !!!list(bslib::nav_spacer(),
                          bslib::nav_item(pagetitle()),
                          bslib::nav_item(
-                           tags$a(icon("readme"),
-                                  href = "https://aphasia-apps.github.io/pnt",
+                           tags$a(icon("github"),
+                                  href = "https://github.com/rbcavanaugh/acom",
                                   target = "_blank",
                                   style = "color:black;")
                          )
@@ -92,16 +83,16 @@ golem_add_external_resources <- function(){
   add_resource_path(
     'www', app_sys('app/www')
   )
-
-  add_resource_path(
-    'slides', app_sys('app/www/slides')
-  )
  
+  add_resource_path(
+    'assets', app_sys('app/www/assets')
+  )
+  
   tags$head(
   favicon(ext="png"),
   bundle_resources(
     path = app_sys('app/www'),
-    app_title = 'pnt'
+    app_title = 'acom'
   ))
 }
 

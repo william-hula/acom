@@ -4,16 +4,12 @@
 \alias{downloadReportServer}
 \title{Download report module}
 \usage{
-downloadReportServer(id, values, name, notes)
+downloadReportServer(id, v)
 }
 \arguments{
 \item{id}{}
 
-\item{values}{}
-
-\item{name}{}
-
-\item{notes}{}
+\item{v}{}
 }
 \description{
 Download report module

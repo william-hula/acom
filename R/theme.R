@@ -20,6 +20,7 @@ minimal_theme <- function(){
                      version = versionNumber,
                      `enable-rounded` = FALSE,
                      `enable-transitions` = F,
+                     font_scale = 0.9,
                      primary = "#1665AC"
     )
     

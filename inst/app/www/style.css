@@ -1,20 +1,80 @@
-html {
-     font-size: 14px; 
+.container {
+  position: relative;
+  
 }
 
-img {
-  max-width: 100%;
-  width: auto;
-  height: auto;
+.container input[type="radio"] {
+  position: absolute;
 }
 
-h2{
-  margin-top:0px;
+input[type="radio"] + span {
+  position:absolute;
+  width:200px;
+  color:transparent;
+}
+input[value="Completely"] {
+  top:45px;
+  left:213px;
 }
 
-.navbar:not(.fixed-bottom):not(.navbar-fixed-bottom):not(.navbar-fixed-bottom) {
-    margin-bottom: 0px;
+input[value="Completely"] +span{
+  top:45px;
+  left:218px;
+  cursor: pointer;
+  padding-bottom: 10px;
 }
+
+input[value="Mostly"] {
+  top:109px;
+  left:213px;
+}
+
+input[value="Mostly"] + span{
+  top:109px;
+  left:218px;
+  cursor: pointer;
+  padding-bottom: 10px;
+}
+
+input[value="Somewhat"] {
+  top:250px;
+  left:213px;
+}
+
+input[value="Somewhat"] + span{
+  top:250px;
+  left:218px;
+  cursor: pointer;
+  padding-bottom: 10px;
+}
+
+input[value="Not very"] {
+  top:392px;
+  left:213px;
+}
+
+input[value="Not very"] + span {
+  top:392px;
+  left:218px;
+  cursor: pointer;
+  padding-bottom: 10px;
+}
+
+
+input[value="Doesn't apply to me"] {
+  top:485px;
+  left:213px;
+}
+
+
+input[value="Doesn't apply to me"] + span{
+  top:485px;
+  left:218px;
+  cursor: pointer;
+  padding-bottom: 10px;
+  padding-right:5px;
+}
+
 
 .response {
   height: auto;
@@ -40,81 +100,11 @@ h2{
   margin-top:12px;
 }
 
-.ipad{
-  height:80vh;
-  border-radius:10px;
-  /*background-color:#f1f1f1;*/
-  touch-action: manipulation;
+.navbar:not(.fixed-bottom):not(.navbar-fixed-bottom):not(.navbar-fixed-bottom) {
+    margin-bottom: 0px;
 }
 
-.testinfo{
-  background-color: #f2f5f7;
-  border: 1px solid rgba(0, 0, 0, .3);
-  border-radius:5px;
-  padding: 2%;
-  margin-bottom:0;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-.page2{
-  /*background-color: #f2f5f7;*/
-  border: 1px solid rgba(0, 0, 0, .3);
-  border-radius:5px;
-  padding: 20px;
-  width: 95%;
-  /*height: 300px;*/
-  margin-left: auto;
-  margin-right: auto;
-  position:relative;
-  min-height: 220px;
-}
-
-.page2buttons{
-  position: absolute;
-  right:    5px;
-  bottom:   5px;
-}
-
-p:last-child {
-  margin-bottom: 0;
-}
-
-.fa, .fab {
-  margin-right: 5px;
-  z-index: 1000;
-}
-
-li > ul {
-  padding-bottom: 0.5em;
-}
-
-.accordion-button:not(.collapsed)::after {
-    transition: transform .3s ease-in-out;
-}
-
-
-.accordion-button::after {
-    transition: transform .3s ease-in-out;
-}
-
-.accordion-button {
-  background: transparent;
-}
-
-.accordion-button:not(.collapsed) {
-    color: #000;
-    background-color: #FFF;
-    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 13%);
-}
-
-.accordion-collapse {
-  transition: all .3s ease;
-}
-
-.accordion-body {
-  background-color: #FFF;
-}
-.accordion-item {
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
+    color: transparent;
     background-color: transparent;
 }

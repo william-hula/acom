@@ -15,12 +15,10 @@ downloadReportUI <- function(id) {
 #' Download report module
 #'
 #' @param id 
-#' @param values 
-#' @param name 
-#' @param notes 
+#' @param v 
 #'
 #' @export
-downloadReportServer <- function(id, values, name, notes) {
+downloadReportServer <- function(id, v) {
   
   moduleServer(id, function(input, output, session){
       output$report_download <- downloadHandler(
@@ -29,22 +27,13 @@ downloadReportServer <- function(id, values, name, notes) {
         filename = "report.pdf",
         content = function(file) {
           withProgress(message = 'Rendering, please wait!', {
-            tempReport <- system.file("report.Rmd", package = "pnt")
+            tempReport <- system.file("report.Rmd", package = "acom")
             file.copy("report.Rmd", tempReport, overwrite = TRUE)
             
             # Set up parameters to pass to Rmd document
             params <- list(
-              values = values,
-              irt_final = values$irt_final,
-              text = get_text_summary(ability = values$irt_final$ability,
-                                      sem = values$irt_final$sem,
-                                      last_ability = values$irt_final$last_ability,
-                                      last_sem = values$irt_final$last_sem,
-                                      num_previous = values$num_previous,
-                                      n_items = values$i,
-                                      html_p = F),
-              caption = get_caption(repeat_admin = !values$new_test),
-              download_time = Sys.time()
+              v = v
+              #download_time = Sys.time()
             )
             
             rmarkdown::render(tempReport, output_file = file,

@@ -1,5 +1,5 @@
-Package: pnt
-Title: Computer adaptive forms of the Philadelphia Naming Test
+Package: acom
+Title: Aphasia Communication Outcome Measure
 Version: 0.0.0.9000
 Date: 2021-10-6
 Authors@R: 
@@ -8,12 +8,6 @@ Authors@R:
            family = 'Cavanaugh',
            email = 'rob.cavanaugh@pitt.edu',
            role = c('cre', 'aut')),
-    person(given = "Alexander",
-           family = "Swiderski",
-           role = "aut"),
-    person(given = "Gerasimos",
-           family = "Fergadiotis",
-           role = "aut"),
     person(given = "William D.",
            family = "Hula",
            role = "aut")
@@ -31,18 +25,21 @@ Imports:
     shinyjs,
     tibble,
     ggplot2,
-    bslib (>= 0.2.5.0),
+    tidyr,
+    dplyr,
+    shinyWidgets,
     pkgload,
     htmltools,
     markdown,
     magrittr,
     utils,
-    stats
+    stats,
+    knitr
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.0
-URL: https://aphasia-apps.github.io/pnt/, https://github.com/aphasia-apps/pnt
-BugReports: https://github.com/aphasia-apps/pnt/issues
+URL: https://rbcavanaugh.github.io/acom/, https://github.com/rbcavanaugh/acom
+BugReports: https://github.com/rbcavanaugh/acom/issues
 Suggests: 
     rmarkdown,
     testthat (>= 3.0.0)

@@ -16,39 +16,22 @@ pagetitle <- function(){
            shinyjs::hidden(
              downloadResultsUI(id = "download_results")
            ),
-          shinyjs::hidden(
-             downloadReportUI(id = "download_report_rescore")
-         ),
-           shinyjs::hidden(
-             downloadResultsUI(id = "download_results_rescore")
-           ),
-         shinyjs::hidden(
-           actionButton("end_test", "End Test",
-                        style = "background-color:#f8f9fa; border:0px;")
-         ),
+         #  shinyjs::hidden(
+         #     downloadReportUI(id = "download_report_rescore")
+         # ),
+           # shinyjs::hidden(
+           #   downloadResultsUI(id = "download_results_rescore")
+           # ),
+         # shinyjs::hidden(
+         #   actionButton("end_test", "End Test",
+         #                style = "background-color:#f8f9fa; border:0px;")
+         # ),
            shinyjs::hidden(
              actionButton("start_over",
                           "Start Over",
                           style = "background-color:#f8f9fa; border:0px;")
-           ),
-           
-             actionButton(
-             inputId = "feedback",
-             label = "Give Feedback",
-             style = "background-color:#f8f9fa; border:0px;"
-             )
-           #)#,
-           # actionButton(
-           #   inputId='source',
-           #   label="",#Source Code",
-           #   icon = icon("github"),
-           #   onclick ="window.open('https://github.com/rbcavanaugh/pnt', '_blank')",
-           #   style = "background:transparent; border:none;"
-           #   
-           # ),
-           #style = "position: absolute; right: 5px; top: 8px;")
+           )
      )
      )
-   # }
   return(title)
 }

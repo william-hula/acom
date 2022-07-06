@@ -1,1 +1,0 @@
-for(i in list.files(here::here("inst", "app", "www", "slides"), pattern = " 2", full.names = T)){file.remove(i)}

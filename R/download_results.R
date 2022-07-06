@@ -29,9 +29,7 @@ downloadResultsServer <- function(id, values, in_progress) {
         )
       },
       content = function(file) {
-        write.csv(get_data_for_download(values = values,
-                                        in_progress = in_progress
-        ), file, row.names = FALSE)
+        write.csv(values, file, row.names = FALSE)
       }
     )
   })
