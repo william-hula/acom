@@ -100,5 +100,12 @@ shiny::setProgress(0.9)
 ```
 
 ### References
+Doyle, P. J., McNeil, M. R., Le, K., Hula, W. D., & Ventura, M. B. (2008). Measuring communicative functioning in community‐dwelling stroke survivors: Conceptual foundation and item development. Aphasiology, 22(7–8), 718–728.
+
+Hula, W. D., & Doyle, P. J. (2021). The Aphasia Communication Outcome Measure: Motivation, development, validity evidence, and interpretation of change scores. Seminars in Speech and Language, 42(03), 211–224.
+
+Hula, W. D., Doyle, P. J., Stone, C. A., Austermann Hula, S. N., Kellough, S., Wambaugh, J. L., Ross, K. B., Schumacher, J. G., & St. Jacque, A. (2015). The Aphasia Communication Outcome Measure (ACOM): Dimensionality, item bank calibration, and initial validation. Journal of Speech Language and Hearing Research, 58(3), 906.
+
+Hula, W. D., Kellough, S., & Doyle, P. J. (2015). Reliability and validity of adaptive and static short forms of the Aphasia Communication Outcome Measure. Presentation to the Clinical Aphaisology Conference, Monterey, CA.
 
 \textcolor{red}{REFERENCES}
